@@ -1,6 +1,7 @@
 package com.ccwsz.server.controller;
 
 import com.ccwsz.server.service.ScheduleService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,13 +20,15 @@ public class ScheduleController {
     @ResponseBody
     public String getCousreName(MultipartHttpServletRequest request){
         String studentId=request.getParameter("studentId");
-        long studentIdtmp;
         try{
-            studentIdtmp=Long.getLong(studentId);
+            long studentIdtmp=Long.parseLong(studentId);
+            return scheduleService.getCourseNameByStudentId(studentIdtmp);
         }
         catch (NumberFormatException e) {
             e.printStackTrace();
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("msg","error");
+            return jsonObject.toString();
         }
-        return scheduleService.getCourseNameByStudentId(studentIdtmp);
     }
 }
