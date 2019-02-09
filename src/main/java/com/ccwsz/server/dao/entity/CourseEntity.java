@@ -18,6 +18,7 @@ public class CourseEntity {
     private String classroomLocation;
     private String classTime;
     private String description;
+    private String classWeek;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -119,6 +120,16 @@ public class CourseEntity {
         this.description = description;
     }
 
+    @Basic
+    @Column(name = "class_week", nullable = false, length = 10)
+    public String getClassWeek() {
+        return classWeek;
+    }
+
+    public void setClassWeek(String classWeek) {
+        this.classWeek = classWeek;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -133,11 +144,12 @@ public class CourseEntity {
                 Objects.equals(teacherName, that.teacherName) &&
                 Objects.equals(classroomLocation, that.classroomLocation) &&
                 Objects.equals(classTime, that.classTime) &&
-                Objects.equals(description, that.description);
+                Objects.equals(description, that.description) &&
+                Objects.equals(classWeek, that.classWeek);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, courseNumber, courseName, teacherId, teacherName, classroomLocation, classTime, description);
+        return Objects.hash(id, gmtCreate, gmtModified, courseNumber, courseName, teacherId, teacherName, classroomLocation, classTime, description, classWeek);
     }
 }
