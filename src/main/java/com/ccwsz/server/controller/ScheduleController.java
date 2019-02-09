@@ -18,11 +18,11 @@ public class ScheduleController {
     //课表的控制器,第一行等待确认！！
     @RequestMapping(value = "getSchedule",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getCousreName(MultipartHttpServletRequest request){
+    public String getCourseName(MultipartHttpServletRequest request){
         String studentId=request.getParameter("studentId");
         try{
-            long studentIdtmp=Long.parseLong(studentId);
-            return scheduleService.getCourseNameByStudentId(studentIdtmp);
+            long studentIdTmp=Long.parseLong(studentId);
+            return scheduleService.getCourseNameByStudentId(studentIdTmp);
         }
         catch (NumberFormatException e) {
             e.printStackTrace();

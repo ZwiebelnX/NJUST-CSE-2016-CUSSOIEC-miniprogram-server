@@ -2,14 +2,12 @@ package com.ccwsz.server.service;
 
 import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.CourseEntity;
-import com.ccwsz.server.dao.repository.CourseChooseDB;
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.ccwsz.server.dao.CourseChooseDB;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 @Service
 public class ScheduleService {
@@ -18,11 +16,11 @@ public class ScheduleService {
     @Autowired
     public ScheduleService(CourseChooseDB courseChooseDB){this.courseChooseDB=courseChooseDB;}
     public String getCourseNameByStudentId(long studentId){
-        List<CourseChooseEntity> courseChooseEntitieslist=courseChooseDB.getCourseChooseEntitiesByStudentId(studentId);
+        List<CourseChooseEntity> courseChooseEntitiesList=courseChooseDB.getCourseChooseEntitiesByStudentId(studentId);
         try {
             JSONObject tmp=new JSONObject();
             JSONArray jsonArray=new JSONArray();
-            for (CourseChooseEntity courseChoose : courseChooseEntitieslist) {
+            for (CourseChooseEntity courseChoose : courseChooseEntitiesList) {
                 long courseId = courseChoose.getCourseId();
                 CourseEntity course = courseChooseDB.getCourseEntityById(courseId);
                 String courseName = course.getCourseName();
@@ -30,7 +28,7 @@ public class ScheduleService {
                 jsonObject.put("courseName",courseName);
                 jsonArray.put(jsonObject);
             }
-            tmp.put("courseNamelist",jsonArray);
+            tmp.put("courseNameList",jsonArray);
             tmp.put("msg","SUCCESS");
             return tmp.toString();
         }
