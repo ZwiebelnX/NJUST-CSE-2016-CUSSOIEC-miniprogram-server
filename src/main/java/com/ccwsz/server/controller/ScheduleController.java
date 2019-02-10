@@ -38,13 +38,6 @@ public class ScheduleController {
 //        String data=request.getParameter("data");
 //        return scheduleService.getWeekMessage(data);
 //    }
-//    //获取学号
-//    @RequestMapping(value="/global/student_id",produces = "application/json;charset=UTF-8")
-//    @ResponseBody
-//    public String getStudentId(MultipartHttpServletRequest request){
-//        String openId=request.getParameter("openid");
-//        return"1";
-//    }
 //    //获取openid
 //    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
 //    @ResponseBody

@@ -11,4 +11,7 @@ import java.util.List;
 public interface User  extends CrudRepository<UserEntity,Integer> {
     @Query("select u from UserEntity u where u.studentId=:id")
     UserEntity getUserEntitiesByStudentId(@Param("id") long studentId);
+
+    @Query("select u from UserEntity u where u.openid=:id")
+    UserEntity getStudentIdByOpenId(@Param("id") String openId);
 }
