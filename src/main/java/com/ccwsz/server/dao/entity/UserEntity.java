@@ -11,6 +11,7 @@ public class UserEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp getModified;
+    private String openid;
     private Object userType;
     private String personNumber;
     private String realName;
@@ -51,6 +52,16 @@ public class UserEntity {
 
     public void setGetModified(Timestamp getModified) {
         this.getModified = getModified;
+    }
+
+    @Id
+    @Column(name = "openid", nullable = false, length = 50)
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
     @Basic
@@ -171,6 +182,7 @@ public class UserEntity {
         return id == that.id &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(getModified, that.getModified) &&
+                Objects.equals(openid, that.openid) &&
                 Objects.equals(userType, that.userType) &&
                 Objects.equals(personNumber, that.personNumber) &&
                 Objects.equals(realName, that.realName) &&
@@ -186,6 +198,6 @@ public class UserEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, getModified, userType, personNumber, realName, nickName, gender, college, grade, academy, major, phone, email);
+        return Objects.hash(id, gmtCreate, getModified, openid, userType, personNumber, realName, nickName, gender, college, grade, academy, major, phone, email);
     }
 }
