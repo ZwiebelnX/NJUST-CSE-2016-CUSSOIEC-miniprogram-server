@@ -102,8 +102,8 @@ public class ScheduleService {
         }
     }
     //获取周次信息
-    public String getWeekMessage(String data){
-        JSONObject result=new JSONObject();
-        return "1";
-    }
+//    public String getWeekMessage(String data){
+//        JSONObject result=new JSONObject();
+//        return "1";
+//    }
 }
