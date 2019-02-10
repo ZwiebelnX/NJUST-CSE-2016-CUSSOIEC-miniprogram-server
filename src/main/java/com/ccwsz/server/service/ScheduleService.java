@@ -1,6 +1,8 @@
 package com.ccwsz.server.service;
 
+import com.ccwsz.server.dao.College;
 import com.ccwsz.server.dao.User;
+import com.ccwsz.server.dao.entity.CollegeEntity;
 import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.CourseEntity;
 import com.ccwsz.server.dao.CourseChoose;
@@ -10,6 +12,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,16 +22,25 @@ import java.util.List;
 public class ScheduleService {
     private CourseChoose courseChooseDB;
     private User user;
+    private College college;
     //通过学生id找到所有课程名字
     @Autowired
-    public ScheduleService(CourseChoose courseChooseDB,User user){this.courseChooseDB=courseChooseDB;this.user=user;}
-    public String getCourseNameByStudentId(long studentId){
+    public ScheduleService(CourseChoose courseChooseDB,User user,College college){this.courseChooseDB=courseChooseDB;this.user=user;this.college=college;}
+    public String getCourseNameByStudentId(String personId,String collegeName){
         //获取开学时间以字符串的形式
-        UserEntity currentUser=user.getUserEntitiesByStudentId(studentId);
-        String collegeName=currentUser.getCollege();
-        String openingTime="2019-2-20 17:00:00";
+//        List<CollegeEntity> currentCollegeList=college.getByName(collegeName);
+//        CollegeEntity currentCollege=currentCollegeList.get(0);
+       UserEntity currentUser=user.getUserEntitiesByStudentNumber(personId,collegeName);
+//        String grade=currentUser.getGrade();
+//        if(grade.equals("本科一年级"))
+//            Date openingTime=currentCollege.getOpeningDate1();
+//        else if(grade.equals("本科二年级"))
+//            Date openingTime=currentCollege.getOpeningDate2();
+//        else if(grade.equals("本科三年级"))
+//            Date openingTime=currentCollege.getOpeningDate3();
+//        else Date openingTime=currentCollege.getOpeningDate4();
         //获取了该学生的课程列表
-        List<CourseChooseEntity> courseChooseEntitiesList=courseChooseDB.getCourseChooseEntitiesByStudentId(studentId);
+        List<CourseChooseEntity> courseChooseEntitiesList=courseChooseDB.getCourseChooseEntitiesByStudentId(currentUser.getId());
         try {
             //为最后传出的json
             JSONObject tmp=new JSONObject();
@@ -38,18 +50,23 @@ public class ScheduleService {
                 long courseId = courseChoose.getCourseId();
                 CourseEntity course = courseChooseDB.getCourseEntityById(courseId);
                 String classWeek=course.getClassWeek();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date startWeek= format.parse(classWeek.split(",")[0]);
-                Date endWeek=format.parse(classWeek.split(",")[1]);
-                Date openingWeek=format.parse(openingTime);
-                Integer[] active=new Integer[110];
-                long diffStart = startWeek.getTime() - openingWeek.getTime();
-                long start = diffStart / (24 * 60 * 60 * 1000)/7;
-                long diffEnd = endWeek.getTime()-openingWeek.getTime();
-                long end=diffEnd / (24 * 60 * 60 * 1000)/7;
-                int len=(int)(end-start);
-                for(int i=0;i<=len;i++){
-                    active[i]=i+(int)start;
+                String startWeek=classWeek.split(",")[0];
+                String endWeek=classWeek.split(",")[1];
+                int start=Integer.parseInt(startWeek);
+                int end=Integer.parseInt(endWeek);
+//                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                Date startWeek= format.parse(classWeek.split(",")[0]);
+//                Date endWeek=format.parse(classWeek.split(",")[1]);
+//                Date openingWeek=format.parse(openingTime);
+//                Integer[] active=new Integer[110];
+//                long diffStart = startWeek.getTime() - openingWeek.getTime();
+//                long start = diffStart / (24 * 60 * 60 * 1000)/7;
+//                long diffEnd = endWeek.getTime()-openingWeek.getTime();
+//                long end=diffEnd / (24 * 60 * 60 * 1000)/7;
+                int len=end-start+1;
+                Integer[] active=new Integer[len];
+                for(int i=0;i<len;i++){
+                    active[i]=i+start;
                 }
                 JSONObject jsonObject=new JSONObject();
                 jsonObject.put("courseID",course.getId());

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.annotation.Resource;
+
 @RestController
 public class ScheduleController {
     private final ScheduleService scheduleService;
@@ -19,17 +21,10 @@ public class ScheduleController {
     @RequestMapping(value = "/course/courses",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getCourseName(MultipartHttpServletRequest request){
-        String studentID=request.getParameter("studentID");
-        try{
-            long studentIdTmp=Long.parseLong(studentID);
-            return scheduleService.getCourseNameByStudentId(studentIdTmp);
-        }
-        catch (NumberFormatException e) {
-            e.printStackTrace();
-            JSONObject jsonObject=new JSONObject();
-            jsonObject.put("success",false);
-            return jsonObject.toString();
-        }
+        String personId=request.getParameter("personID");
+        System.out.print("hahahahahah"+personId);
+        String college=request.getParameter("college");
+        return scheduleService.getCourseNameByStudentId(personId,college);
     }
 //    //获取周次信息
 //    @RequestMapping(value="/global/week_info",produces = "application/json;charset=UTF-8")
@@ -38,11 +33,5 @@ public class ScheduleController {
 //        String data=request.getParameter("data");
 //        return scheduleService.getWeekMessage(data);
 //    }
-//    //获取openid
-//    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
-//    @ResponseBody
-//    public String getOpenid(MultipartHttpServletRequest request){
-//        String code=request.getParameter("code");
-//        return "1";
-//    }
+
 }

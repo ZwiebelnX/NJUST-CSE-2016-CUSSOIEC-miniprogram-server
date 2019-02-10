@@ -18,6 +18,15 @@ public class UserController {
     @ResponseBody
     public String getStudentId(MultipartHttpServletRequest request){
         String openId=request.getParameter("openid");
+        System.out.print(openId);
         return userService.getStudentId(openId);
+    }
+
+    //获取openid
+    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getOpenid(MultipartHttpServletRequest request){
+        String code=request.getParameter("code");
+        return userService.getOpenId(code);
     }
 }

@@ -11,14 +11,19 @@ public class UserService {
     private User user;
     @Autowired
     public UserService(User user){this.user=user;}
+    //获取学号
     public String getStudentId(String openId){
         JSONObject jsonObject=new JSONObject();
         try{
             UserEntity student=user.getStudentIdByOpenId(openId);
             if(student!=null) {
                 String studentId = student.getPersonNumber();
+                String collegeName=student.getCollege();
                 jsonObject.put("success", true);
-                jsonObject.put("result", studentId);
+                JSONObject result=new JSONObject();
+                result.put("college",collegeName);
+                result.put("personID",studentId);
+                jsonObject.put("result", result);
             }
             else jsonObject.put("success",false);
         }
@@ -27,5 +32,9 @@ public class UserService {
             jsonObject.put("success",false);
         }
         return  jsonObject.toString();
+    }
+    //获取openid
+    public String getOpenId(String code){
+        return "1";
     }
 }
