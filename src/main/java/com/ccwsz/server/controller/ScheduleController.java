@@ -20,10 +20,9 @@ public class ScheduleController {
     @ResponseBody
     public String getCourseName(MultipartHttpServletRequest request){
         String studentID=request.getParameter("studentID");
-        String data=request.getParameter("data");
         try{
             long studentIdTmp=Long.parseLong(studentID);
-            return scheduleService.getCourseNameByStudentId(studentIdTmp,data);
+            return scheduleService.getCourseNameByStudentId(studentIdTmp);
         }
         catch (NumberFormatException e) {
             e.printStackTrace();
