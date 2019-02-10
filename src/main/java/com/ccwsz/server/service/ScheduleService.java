@@ -2,7 +2,7 @@ package com.ccwsz.server.service;
 
 import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.CourseEntity;
-import com.ccwsz.server.dao.CourseChooseDB;
+import com.ccwsz.server.dao.CourseChoose;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public class ScheduleService {
-    private CourseChooseDB courseChooseDB;
+    private CourseChoose courseChooseDB;
     //通过学生id找到所有课程名字
     @Autowired
-    public ScheduleService(CourseChooseDB courseChooseDB){this.courseChooseDB=courseChooseDB;}
+    public ScheduleService(CourseChoose courseChooseDB){this.courseChooseDB=courseChooseDB;}
     public String getCourseNameByStudentId(long studentId,String data){
         List<CourseChooseEntity> courseChooseEntitiesList=courseChooseDB.getCourseChooseEntitiesByStudentId(studentId);
         try {

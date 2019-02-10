@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
 
-public interface CourseChooseDB extends CrudRepository<CourseChooseEntity,Integer> {
+public interface CourseChoose extends CrudRepository<CourseChooseEntity,Integer> {
     //通过学生id返回所有选课信息
     @Query("select c from CourseChooseEntity c where c.studentId=:id")
     List<CourseChooseEntity> getCourseChooseEntitiesByStudentId(@Param("id") long studentId);
