@@ -15,20 +15,42 @@ public class ScheduleController {
     @Autowired
     public ScheduleController(ScheduleService scheduleService){this.scheduleService=scheduleService;}
 
-    //课表的控制器,第一行等待确认！！
-    @RequestMapping(value = "getSchedule",produces = "application/json;charset=UTF-8")
+    //课表的控制器,获取课程信息
+    @RequestMapping(value = "/course/courses",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getCourseName(MultipartHttpServletRequest request){
-        String studentId=request.getParameter("studentId");
+        String studentID=request.getParameter("studentID");
+        String data=request.getParameter("data");
         try{
-            long studentIdTmp=Long.parseLong(studentId);
-            return scheduleService.getCourseNameByStudentId(studentIdTmp);
+            long studentIdTmp=Long.parseLong(studentID);
+            return scheduleService.getCourseNameByStudentId(studentIdTmp,data);
         }
         catch (NumberFormatException e) {
             e.printStackTrace();
             JSONObject jsonObject=new JSONObject();
-            jsonObject.put("msg","error");
+            jsonObject.put("success",false);
             return jsonObject.toString();
         }
+    }
+    //获取周次信息
+    @RequestMapping(value="/global/week_info",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getWeekMessage(MultipartHttpServletRequest request){
+        String data=request.getParameter("data");
+        return scheduleService.getWeekMessage(data);
+    }
+    //获取学号
+    @RequestMapping(value="/global/student_id",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getStudentId(MultipartHttpServletRequest request){
+        String openId=request.getParameter("openid");
+        return"1";
+    }
+    //获取openid
+    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getOpenid(MultipartHttpServletRequest request){
+        String code=request.getParameter("code");
+        return "1";
     }
 }

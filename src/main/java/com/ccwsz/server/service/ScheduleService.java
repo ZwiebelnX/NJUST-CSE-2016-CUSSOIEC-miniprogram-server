@@ -15,20 +15,29 @@ public class ScheduleService {
     //通过学生id找到所有课程名字
     @Autowired
     public ScheduleService(CourseChooseDB courseChooseDB){this.courseChooseDB=courseChooseDB;}
-    public String getCourseNameByStudentId(long studentId){
+    public String getCourseNameByStudentId(long studentId,String data){
         List<CourseChooseEntity> courseChooseEntitiesList=courseChooseDB.getCourseChooseEntitiesByStudentId(studentId);
         try {
+            String[] currentTime=data.split("-");
             JSONObject tmp=new JSONObject();
-            JSONArray jsonArray=new JSONArray();
+            JSONArray result=new JSONArray();
             for (CourseChooseEntity courseChoose : courseChooseEntitiesList) {
                 long courseId = courseChoose.getCourseId();
                 CourseEntity course = courseChooseDB.getCourseEntityById(courseId);
-                String courseName = course.getCourseName();
+                String classWeek=course.getClassWeek();
+                String startWeek=classWeek.split(",")[0];
+                String endWeek=classWeek.split(",")[1];
                 JSONObject jsonObject=new JSONObject();
-                jsonObject.put("courseName",courseName);
-                jsonArray.put(jsonObject);
+                jsonObject.put("courseID",course.getId());
+                //jsonObject.put("active",);
+                JSONArray position=new JSONArray();
+
+                jsonObject.put("position",course.getClassroomLocation());
+
+                result.put(jsonObject);
             }
-            tmp.put("courseNameList",jsonArray);
+            tmp.put("success",true);
+            tmp.put("result",result);
             tmp.put("msg","SUCCESS");
             return tmp.toString();
         }
@@ -38,5 +47,10 @@ public class ScheduleService {
             jsonObject.put("msg","SERVER_ERROR");
             return  jsonObject.toString();
         }
+    }
+    //获取周次信息
+    public String getWeekMessage(String data){
+        JSONObject result=new JSONObject();
+        return "1";
     }
 }
