@@ -12,13 +12,13 @@ public class UserEntity {
     private Timestamp gmtCreate;
     private Timestamp getModified;
     private String openid;
-    private Object userType;
+    private String userType;
     private String personNumber;
     private String realName;
     private String nickName;
-    private Object gender;
+    private String gender;
     private String college;
-    private Object grade;
+    private String grade;
     private String academy;
     private String major;
     private String phone;
@@ -65,12 +65,12 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "user_type", nullable = false)
-    public Object getUserType() {
+    @Column(name = "user_type", nullable = false, length = 7)
+    public String getUserType() {
         return userType;
     }
 
-    public void setUserType(Object userType) {
+    public void setUserType(String userType) {
         this.userType = userType;
     }
 
@@ -105,12 +105,12 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "gender", nullable = false)
-    public Object getGender() {
+    @Column(name = "gender", nullable = false, length = 5)
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Object gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -125,12 +125,12 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "grade", nullable = false)
-    public Object getGrade() {
+    @Column(name = "grade", nullable = false, length = 5)
+    public String getGrade() {
         return grade;
     }
 
-    public void setGrade(Object grade) {
+    public void setGrade(String grade) {
         this.grade = grade;
     }
 

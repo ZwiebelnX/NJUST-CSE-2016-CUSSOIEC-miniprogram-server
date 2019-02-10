@@ -1,0 +1,155 @@
+package com.ccwsz.server.dao.entity;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Objects;
+
+@Entity
+@Table(name = "college", schema = "online_cussoiec", catalog = "")
+@IdClass(CollegeEntityPK.class)
+public class CollegeEntity {
+    private long id;
+    private Timestamp gmtCreate;
+    private Timestamp gemtModified;
+    private String name;
+    private String englishName;
+    private String collegeNumber;
+    private String location;
+    private Timestamp openingDate1;
+    private Timestamp openingDate2;
+    private Timestamp openingDate3;
+    private Timestamp openingDate4;
+
+    @Id
+    @Column(name = "id", nullable = false)
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    @Basic
+    @Column(name = "gmt_create", nullable = false)
+    public Timestamp getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Timestamp gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    @Basic
+    @Column(name = "gemt_modified", nullable = false)
+    public Timestamp getGemtModified() {
+        return gemtModified;
+    }
+
+    public void setGemtModified(Timestamp gemtModified) {
+        this.gemtModified = gemtModified;
+    }
+
+    @Id
+    @Column(name = "name", nullable = false, length = 30)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Basic
+    @Column(name = "english_name", nullable = true, length = 40)
+    public String getEnglishName() {
+        return englishName;
+    }
+
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
+    }
+
+    @Basic
+    @Column(name = "college_number", nullable = true, length = 10)
+    public String getCollegeNumber() {
+        return collegeNumber;
+    }
+
+    public void setCollegeNumber(String collegeNumber) {
+        this.collegeNumber = collegeNumber;
+    }
+
+    @Basic
+    @Column(name = "location", nullable = true, length = 100)
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    @Basic
+    @Column(name = "opening_date_1", nullable = false)
+    public Timestamp getOpeningDate1() {
+        return openingDate1;
+    }
+
+    public void setOpeningDate1(Timestamp openingDate1) {
+        this.openingDate1 = openingDate1;
+    }
+
+    @Basic
+    @Column(name = "opening_date_2", nullable = false)
+    public Timestamp getOpeningDate2() {
+        return openingDate2;
+    }
+
+    public void setOpeningDate2(Timestamp openingDate2) {
+        this.openingDate2 = openingDate2;
+    }
+
+    @Basic
+    @Column(name = "opening_date_3", nullable = false)
+    public Timestamp getOpeningDate3() {
+        return openingDate3;
+    }
+
+    public void setOpeningDate3(Timestamp openingDate3) {
+        this.openingDate3 = openingDate3;
+    }
+
+    @Basic
+    @Column(name = "opening_date_4", nullable = false)
+    public Timestamp getOpeningDate4() {
+        return openingDate4;
+    }
+
+    public void setOpeningDate4(Timestamp openingDate4) {
+        this.openingDate4 = openingDate4;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CollegeEntity that = (CollegeEntity) o;
+        return id == that.id &&
+                Objects.equals(gmtCreate, that.gmtCreate) &&
+                Objects.equals(gemtModified, that.gemtModified) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(englishName, that.englishName) &&
+                Objects.equals(collegeNumber, that.collegeNumber) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(openingDate1, that.openingDate1) &&
+                Objects.equals(openingDate2, that.openingDate2) &&
+                Objects.equals(openingDate3, that.openingDate3) &&
+                Objects.equals(openingDate4, that.openingDate4);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, gmtCreate, gemtModified, name, englishName, collegeNumber, location, openingDate1, openingDate2, openingDate3, openingDate4);
+    }
+}

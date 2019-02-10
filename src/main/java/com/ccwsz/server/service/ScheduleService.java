@@ -1,8 +1,8 @@
 package com.ccwsz.server.service;
 
+import com.ccwsz.server.dao.CourseChoose;
 import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.CourseEntity;
-import com.ccwsz.server.dao.CourseChoose;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
