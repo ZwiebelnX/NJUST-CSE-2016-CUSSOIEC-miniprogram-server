@@ -29,4 +29,14 @@ public class UserController {
         String code=request.getParameter("code");
         return userService.getOpenId(code);
     }
+
+    //获取周次信息
+    @RequestMapping(value="/global/week_info",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getWeekMessage(MultipartHttpServletRequest request){
+        String data=request.getParameter("data");
+        String college=request.getParameter("college");
+        String personID=request.getParameter("personID");
+        return userService.getWeekMessage(data,college,personID);
+    }
 }

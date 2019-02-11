@@ -27,18 +27,7 @@ public class ScheduleService {
     @Autowired
     public ScheduleService(CourseChoose courseChooseDB,User user,College college){this.courseChooseDB=courseChooseDB;this.user=user;this.college=college;}
     public String getCourseNameByStudentId(String personId,String collegeName){
-        //获取开学时间以字符串的形式
-//        List<CollegeEntity> currentCollegeList=college.getByName(collegeName);
-//        CollegeEntity currentCollege=currentCollegeList.get(0);
-       UserEntity currentUser=user.getUserEntitiesByStudentNumber(personId,collegeName);
-//        String grade=currentUser.getGrade();
-//        if(grade.equals("本科一年级"))
-//            Date openingTime=currentCollege.getOpeningDate1();
-//        else if(grade.equals("本科二年级"))
-//            Date openingTime=currentCollege.getOpeningDate2();
-//        else if(grade.equals("本科三年级"))
-//            Date openingTime=currentCollege.getOpeningDate3();
-//        else Date openingTime=currentCollege.getOpeningDate4();
+        UserEntity currentUser=user.getUserEntitiesByStudentNumber(personId,collegeName);
         //获取了该学生的课程列表
         List<CourseChooseEntity> courseChooseEntitiesList=courseChooseDB.getCourseChooseEntitiesByStudentId(currentUser.getId());
         try {
@@ -54,15 +43,6 @@ public class ScheduleService {
                 String endWeek=classWeek.split(",")[1];
                 int start=Integer.parseInt(startWeek);
                 int end=Integer.parseInt(endWeek);
-//                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                Date startWeek= format.parse(classWeek.split(",")[0]);
-//                Date endWeek=format.parse(classWeek.split(",")[1]);
-//                Date openingWeek=format.parse(openingTime);
-//                Integer[] active=new Integer[110];
-//                long diffStart = startWeek.getTime() - openingWeek.getTime();
-//                long start = diffStart / (24 * 60 * 60 * 1000)/7;
-//                long diffEnd = endWeek.getTime()-openingWeek.getTime();
-//                long end=diffEnd / (24 * 60 * 60 * 1000)/7;
                 int len=end-start+1;
                 Integer[] active=new Integer[len];
                 for(int i=0;i<len;i++){

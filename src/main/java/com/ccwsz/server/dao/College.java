@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface College extends CrudRepository<CollegeEntity,Integer> {
     @Query("select c from CollegeEntity c where c.name=:name")
-    List<CollegeEntity> getByName(@Param("name") String college);
+    CollegeEntity getByName(@Param("name") String college);
 }

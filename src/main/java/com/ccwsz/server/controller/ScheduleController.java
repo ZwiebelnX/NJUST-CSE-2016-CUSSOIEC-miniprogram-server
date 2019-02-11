@@ -26,12 +26,5 @@ public class ScheduleController {
         String college=request.getParameter("college");
         return scheduleService.getCourseNameByStudentId(personId,college);
     }
-//    //获取周次信息
-//    @RequestMapping(value="/global/week_info",produces = "application/json;charset=UTF-8")
-//    @ResponseBody
-//    public String getWeekMessage(MultipartHttpServletRequest request){
-//        String data=request.getParameter("data");
-//        return scheduleService.getWeekMessage(data);
-//    }
 
 }
