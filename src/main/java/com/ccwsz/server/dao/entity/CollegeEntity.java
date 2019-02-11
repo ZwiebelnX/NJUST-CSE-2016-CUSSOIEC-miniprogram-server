@@ -20,6 +20,7 @@ public class CollegeEntity {
     private Date openingDate2;
     private Date openingDate3;
     private Date openingDate4;
+    private Date endingDate;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -152,5 +153,15 @@ public class CollegeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, gmtCreate, gmtModified, name, englishName, collegeNumber, location, openingDate1, openingDate2, openingDate3, openingDate4);
+    }
+
+    @Basic
+    @Column(name = "ending_date", nullable = false)
+    public Date getEndingDate() {
+        return endingDate;
+    }
+
+    public void setEndingDate(Date endingDate) {
+        this.endingDate = endingDate;
     }
 }
