@@ -45,7 +45,7 @@ public class CourseService {
             //为最后传出的json
             JSONObject tmp = new JSONObject();
             //名字和说明分别对应前段的
-            JSONArray result = new JSONArray();
+            List<JSONObject> result = new ArrayList<>();
             for (CourseChooseEntity courseChoose : courseChooseEntitiesList) {
                 long courseId = courseChoose.getCourseId();
                 CourseEntity course = courseRepository.findById(courseId);
@@ -62,11 +62,11 @@ public class CourseService {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("courseID", course.getId());
                 jsonObject.put("active", active);
-                JSONArray positionTmp=new JSONArray();
-                JSONObject positionTtmp=new JSONObject();
+                List<JSONObject> positionTmp=new ArrayList<>();
                 String courseTime = course.getClassTime();
                 String[] classTime = courseTime.split(";");
                 for (String time : classTime) {
+                    JSONObject positionTtmp=new JSONObject();
                     int timeLen = time.length();
                     int flagTmp = 0;
                     Integer sumTmp = 0;
@@ -88,8 +88,7 @@ public class CourseService {
                     indexOfDay.add(sumTmp);
                     positionTtmp.put("dayOfWeek", dayOfWeek);
                     positionTtmp.put("indexOfDay", indexOfDay);
-                    positionTmp.put(positionTtmp);
-                    System.out.print(positionTtmp);
+                    positionTmp.add(positionTtmp);
                 }
                 jsonObject.put("position",positionTmp);
                 JSONObject info = new JSONObject();
@@ -97,7 +96,7 @@ public class CourseService {
                 info.put("teacher", course.getTeacherName());
                 info.put("location", course.getClassroomLocation());
                 jsonObject.put("info", info);
-                result.put(jsonObject);
+                result.add(jsonObject);
             }
             tmp.put("success", true);
             tmp.put("result", result);

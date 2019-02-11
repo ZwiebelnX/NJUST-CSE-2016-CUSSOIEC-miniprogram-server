@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -67,8 +69,10 @@ public class UserService {
         try{
             //获取开学时间以字符串的形式
             CollegeEntity currentCollege = collegeRepository.findByName(collegeName);
-            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personId);
+            System.out.print(personId+" "+collegeName);
+            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(personId,collegeName);
             //空查询处理
+            System.out.println(currentUser.getNickName()+" "+currentCollege.getOpeningDate1());
             if (currentUser == null) {
                 JSONObject tempJson = new JSONObject();
                 tempJson.put("success", false);
@@ -101,8 +105,10 @@ public class UserService {
             Date currentDate = format.parse(data);
             long diffEnd = currentDate.getTime() - openingDate.getTime();
             int currentWeek = (int) (diffEnd / (24 * 60 * 60 * 1000) / 7);
-            Array[] range = new Array[2];
+            List<Integer> range = new ArrayList<>();
+            range.add(1);
             //TODO 更新期末日期计算周数
+
             result.put("success",true);
             JSONObject resultTmp=new JSONObject();
             resultTmp.put("numOfWeek",currentWeek+1);

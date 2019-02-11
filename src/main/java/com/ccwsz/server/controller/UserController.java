@@ -47,7 +47,7 @@ public class UserController {
         String date = request.getParameter("date");
         String college = request.getParameter("college");
         String personID = request.getParameter("personID");
-        logger.info("request received:" + "date:" + date + " ,college:" + college + " ,personID:" + personID);
+        //logger.info("request received:" + "date:" + date + " ,college:" + college + " ,personID:" + personID);
         return userService.getWeekMessage(date, college, personID);
     }
 
