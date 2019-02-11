@@ -1,6 +1,7 @@
 package com.ccwsz.server.dao.entity;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -10,15 +11,15 @@ import java.util.Objects;
 public class CollegeEntity {
     private long id;
     private Timestamp gmtCreate;
-    private Timestamp gemtModified;
+    private Timestamp gmtModified;
     private String name;
     private String englishName;
     private String collegeNumber;
     private String location;
-    private Timestamp openingDate1;
-    private Timestamp openingDate2;
-    private Timestamp openingDate3;
-    private Timestamp openingDate4;
+    private Date openingDate1;
+    private Date openingDate2;
+    private Date openingDate3;
+    private Date openingDate4;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -41,13 +42,13 @@ public class CollegeEntity {
     }
 
     @Basic
-    @Column(name = "gemt_modified", nullable = false)
-    public Timestamp getGemtModified() {
-        return gemtModified;
+    @Column(name = "gmt_modified", nullable = false)
+    public Timestamp getGmtModified() {
+        return gmtModified;
     }
 
-    public void setGemtModified(Timestamp gemtModified) {
-        this.gemtModified = gemtModified;
+    public void setGmtModified(Timestamp gmtModified) {
+        this.gmtModified = gmtModified;
     }
 
     @Id
@@ -92,41 +93,41 @@ public class CollegeEntity {
 
     @Basic
     @Column(name = "opening_date_1", nullable = false)
-    public Timestamp getOpeningDate1() {
+    public Date getOpeningDate1() {
         return openingDate1;
     }
 
-    public void setOpeningDate1(Timestamp openingDate1) {
+    public void setOpeningDate1(Date openingDate1) {
         this.openingDate1 = openingDate1;
     }
 
     @Basic
     @Column(name = "opening_date_2", nullable = false)
-    public Timestamp getOpeningDate2() {
+    public Date getOpeningDate2() {
         return openingDate2;
     }
 
-    public void setOpeningDate2(Timestamp openingDate2) {
+    public void setOpeningDate2(Date openingDate2) {
         this.openingDate2 = openingDate2;
     }
 
     @Basic
     @Column(name = "opening_date_3", nullable = false)
-    public Timestamp getOpeningDate3() {
+    public Date getOpeningDate3() {
         return openingDate3;
     }
 
-    public void setOpeningDate3(Timestamp openingDate3) {
+    public void setOpeningDate3(Date openingDate3) {
         this.openingDate3 = openingDate3;
     }
 
     @Basic
     @Column(name = "opening_date_4", nullable = false)
-    public Timestamp getOpeningDate4() {
+    public Date getOpeningDate4() {
         return openingDate4;
     }
 
-    public void setOpeningDate4(Timestamp openingDate4) {
+    public void setOpeningDate4(Date openingDate4) {
         this.openingDate4 = openingDate4;
     }
 
@@ -137,7 +138,7 @@ public class CollegeEntity {
         CollegeEntity that = (CollegeEntity) o;
         return id == that.id &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
-                Objects.equals(gemtModified, that.gemtModified) &&
+                Objects.equals(gmtModified, that.gmtModified) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(englishName, that.englishName) &&
                 Objects.equals(collegeNumber, that.collegeNumber) &&
@@ -150,6 +151,6 @@ public class CollegeEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gemtModified, name, englishName, collegeNumber, location, openingDate1, openingDate2, openingDate3, openingDate4);
+        return Objects.hash(id, gmtCreate, gmtModified, name, englishName, collegeNumber, location, openingDate1, openingDate2, openingDate3, openingDate4);
     }
 }
