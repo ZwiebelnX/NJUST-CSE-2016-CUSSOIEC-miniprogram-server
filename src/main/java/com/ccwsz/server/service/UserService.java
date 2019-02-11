@@ -44,9 +44,25 @@ public class UserService {
         return  jsonObject.toString();
     }
     //获取openid
-    public String getOpenId(String code){
-        return "1";
-    }
+//    public String getOpenId(String code){
+//        JSONObject result=new JSONObject();
+//        try {
+//            String wechatAppId = "";
+//            String wechatSecretKey = "";
+//            String grantType = "authorization_code";
+//            String params = "appid=" + wechatAppId + "&secret=" + wechatSecretKey + "&js_code=" + code + "&grant_type=" + grantType;
+//            String sr = HttpRequest.sendGet("https://api.weixin.qq.com/sns/jscode2session", params);
+//            JSONObject json = new JSONObject(sr);
+//            String openId = json.get("openid").toString();
+//            result.put("success",true);
+//            result.put("result",openId);
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//            result.put("success",false);
+//        }
+//        return result.toString();
+//    }
     //获取周次信息
     public String getWeekMessage(String data,String collegeName,String personId) {
         JSONObject result=new JSONObject();
@@ -100,7 +116,7 @@ public class UserService {
             user.updateUserRealName(openId,realName);
             Timestamp nowTimestamp = new Timestamp(new Date().getTime());
             user.updateUserGetModified(openId,nowTimestamp);
-            user.updateUserGmtCreate(openId,nowTimestamp);
+//            user.updateUserGmtCreate(openId,nowTimestamp);
             result.put("success",true);
         }
         catch (Exception e){

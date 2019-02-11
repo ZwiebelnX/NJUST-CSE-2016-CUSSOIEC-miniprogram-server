@@ -28,20 +28,21 @@ public class UserController {
     }
 
     //获取openid
-    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String getOpenid(MultipartHttpServletRequest request){
-        String code=request.getParameter("code");
-        return userService.getOpenId(code);
-    }
+//    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//    public String getOpenid(MultipartHttpServletRequest request){
+//        String code=request.getParameter("code");
+//        return userService.getOpenId(code);
+//    }
 
     //获取周次信息
     @RequestMapping(value="/global/week_info",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getWeekMessage(MultipartHttpServletRequest request){
-        String data=request.getParameter("data");
-        String college=request.getParameter("college");
-        String personID=request.getParameter("personID");
+    public String getWeekMessage(@RequestBody String jsonString){
+        JSONObject jsonObject = new JSONObject(jsonString);
+        String data=jsonObject.getString("data");
+        String college=jsonObject.getString("college");
+        String personID=jsonObject.getString("personID");
         return userService.getWeekMessage(data,college,personID);
     }
 
@@ -65,8 +66,9 @@ public class UserController {
     //获取用户信息
     @RequestMapping(value="/user/info",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getUserMessage(MultipartHttpServletRequest request){
-        String openid=request.getParameter("openid");
+    public String getUserMessage(@RequestBody String jsonString){
+        JSONObject jsonObject = new JSONObject(jsonString);
+        String openid=jsonObject.getString("openid");
         return userService.getUserMessage(openid);
     }
 }
