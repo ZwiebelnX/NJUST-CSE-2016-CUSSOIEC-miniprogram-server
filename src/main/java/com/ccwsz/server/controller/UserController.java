@@ -5,13 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 //用户相关控制器，分发绑定用户、查找用户信息等请求
 @RestController
@@ -69,11 +67,10 @@ public class UserController {
     }
 
     //获取用户信息
-    @RequestMapping(value = "/user/info", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/user/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getUserMessage(@RequestBody String jsonString) {
-        JSONObject jsonObject = new JSONObject(jsonString);
-        String openid = jsonObject.getString("openid");
+    public String getUserMessage(HttpServletRequest request) {
+        String openid = request.getParameter("openid");
         return userService.getUserMessage(openid);
     }
 }

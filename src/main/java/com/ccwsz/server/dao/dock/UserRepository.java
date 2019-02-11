@@ -20,6 +20,7 @@ public interface UserRepository extends CrudRepository<UserEntity,Integer> {
 
 //    @Query("select u from UserEntity u where u.openid=:id")
 //    UserEntity findByOpenid(@Param("id") String openId);
+    @Nullable
     UserEntity findByOpenid(String openId);
     @Modifying
     @Query("update UserEntity u set u.college=:ai where u.openid=:id")

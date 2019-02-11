@@ -117,7 +117,7 @@ public class UserService {
 
     //绑定学号/.教工号
     public String updateUser(String openId,JSONObject data){
-        String college=data.getString("CollegeRepository");
+        String college=data.getString("college");
         String personID=data.getString("personID");
         String realName=data.getString("realName");
         String nickName=data.getString("nickName");
@@ -141,26 +141,24 @@ public class UserService {
     //获取用户信息
     public String getUserMessage(String openId){
         JSONObject result=new JSONObject();
-        try {
-            UserEntity currentUser = userRepository.findByOpenid(openId);
-            result.put("success",true);
-            JSONObject resultTmp=new JSONObject();
-            resultTmp.put("userType",currentUser.getUserType());
-            resultTmp.put("CollegeRepository",currentUser.getCollege());
-            resultTmp.put("personID",currentUser.getPersonNumber());
-            resultTmp.put("realName",currentUser.getRealName());
-            resultTmp.put("nickName",currentUser.getNickName());
-            resultTmp.put("gender",currentUser.getGender());
-            resultTmp.put("grade",currentUser.getGrade());
-            resultTmp.put("academy",currentUser.getAcademy());
-            resultTmp.put("major",currentUser.getMajor());
-            resultTmp.put("phone",currentUser.getPhone());
-            resultTmp.put("email",currentUser.getEmail());
+        UserEntity currentUser = userRepository.findByOpenid(openId);
+        if(currentUser == null){
+            //TODO 空查询处理
+            result.put("success", false);
+            return result.toString();
         }
-        catch (Exception e){
-            e.printStackTrace();
-            result.put("success",false);
-        }
+        result.put("success",true);
+        result.put("userType",currentUser.getUserType());
+        result.put("CollegeRepository",currentUser.getCollege());
+        result.put("personID",currentUser.getPersonNumber());
+        result.put("realName",currentUser.getRealName());
+        result.put("nickName",currentUser.getNickName());
+        result.put("gender",currentUser.getGender());
+        result.put("grade",currentUser.getGrade());
+        result.put("academy",currentUser.getAcademy());
+        result.put("major",currentUser.getMajor());
+        result.put("phone",currentUser.getPhone());
+        result.put("email",currentUser.getEmail());
         return result.toString();
     }
 }
