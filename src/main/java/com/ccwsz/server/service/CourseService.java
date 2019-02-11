@@ -11,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,16 +62,16 @@ public class CourseService {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("courseID", course.getId());
                 jsonObject.put("active", active);
-                JSONObject position = new JSONObject();
+                JSONArray positionTmp=new JSONArray();
+                JSONObject positionTtmp=new JSONObject();
                 String courseTime = course.getClassTime();
-                String[] classTime = courseTime.split(",");
-                Integer[] indexOfDay = new Integer[20];
-                Integer dayOfWeek = 0;
+                String[] classTime = courseTime.split(";");
                 for (String time : classTime) {
                     int timeLen = time.length();
                     int flagTmp = 0;
-                    int index = 0;
                     Integer sumTmp = 0;
+                    Integer dayOfWeek = 0;
+                    List indexOfDay=new ArrayList();
                     for (int i = 0; i < timeLen; i++) {
                         int chr = time.charAt(i);
                         if (chr < 48 || chr > 57) {
@@ -79,16 +79,19 @@ public class CourseService {
                                 flagTmp = 1;
                                 dayOfWeek = sumTmp;
                             } else {
-                                indexOfDay[index] = sumTmp;
-                                index = index + 1;
+                                indexOfDay.add(sumTmp);
                             }
+                            System.out.println(sumTmp);
                             sumTmp = 0;
-                        } else sumTmp += (chr - 48);
+                        } else sumTmp = sumTmp*10+ (chr - 48);
                     }
+                    indexOfDay.add(sumTmp);
+                    positionTtmp.put("dayOfWeek", dayOfWeek);
+                    positionTtmp.put("indexOfDay", indexOfDay);
+                    positionTmp.put(positionTtmp);
+                    System.out.print(positionTtmp);
                 }
-                position.put("dayOfWeek", dayOfWeek);
-                position.put("indexOfDay", indexOfDay);
-                jsonObject.put("position", position);
+                jsonObject.put("position",positionTmp);
                 JSONObject info = new JSONObject();
                 info.put("name", course.getCourseName());
                 info.put("teacher", course.getTeacherName());
