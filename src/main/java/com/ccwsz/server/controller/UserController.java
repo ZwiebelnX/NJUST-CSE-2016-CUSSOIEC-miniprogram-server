@@ -1,12 +1,17 @@
 package com.ccwsz.server.controller;
 
 import com.ccwsz.server.service.UserService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.annotation.Resource;
 
 @RestController
 public class UserController {
@@ -38,5 +43,23 @@ public class UserController {
         String college=request.getParameter("college");
         String personID=request.getParameter("personID");
         return userService.getWeekMessage(data,college,personID);
+    }
+
+    //绑定学号/.教工号
+    @RequestMapping(value="/user/binding",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateUser(@RequestBody String jsonString){
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            String openid = jsonObject.getString("openid");
+            JSONObject data = jsonObject.getJSONObject("data");
+            return userService.updateUser(openid,data);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            JSONObject result=new JSONObject();
+            result.put("success",false);
+            return result.toString();
+        }
     }
 }

@@ -85,4 +85,25 @@ public class UserService {
         }
         return result.toString();
     }
+
+    //绑定学号/.教工号
+    public String updateUser(String openId,JSONObject data){
+        String college=data.getString("college");
+        String personID=data.getString("personID");
+        String realName=data.getString("realName");
+        String nickName=data.getString("nickName");
+        JSONObject result=new JSONObject();
+        try{
+            user.updateUserCollege(openId,college);
+            user.updateUserNickName(openId,nickName);
+            user.updateUserPersonNumber(openId,personID);
+            user.updateUserRealName(openId,realName);
+            result.put("success",true);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            result.put("success",false);
+        }
+        return result.toString();
+    }
 }

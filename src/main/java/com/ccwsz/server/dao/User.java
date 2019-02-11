@@ -2,6 +2,7 @@ package com.ccwsz.server.dao;
 
 import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.UserEntity;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +15,20 @@ public interface User extends CrudRepository<UserEntity,Integer> {
 
     @Query("select u from UserEntity u where u.openid=:id")
     UserEntity getStudentIdByOpenId(@Param("id") String openId);
+
+    @Modifying
+    @Query("update UserEntity u set u.college=:ai where u.openid=:id")
+    public void updateUserPersonNumber(@Param("id")String id, @Param("ai")String personID);
+
+    @Modifying
+    @Query("update UserEntity u set u.college=:ai where u.openid=:id")
+    public void updateUserCollege(@Param("id")String id, @Param("ai")String college);
+
+    @Modifying
+    @Query("update UserEntity u set u.college=:ai where u.openid=:id")
+    public void updateUserRealName(@Param("id")String id, @Param("ai")String realName);
+
+    @Modifying
+    @Query("update UserEntity u set u.college=:ai where u.openid=:id")
+    public void updateUserNickName(@Param("id")String id, @Param("ai")String nickName);
 }
