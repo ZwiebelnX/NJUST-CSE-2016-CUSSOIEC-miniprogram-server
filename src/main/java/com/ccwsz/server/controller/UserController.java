@@ -10,11 +10,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.logging.Logger;
 
 //用户相关控制器，分发绑定用户、查找用户信息等请求
 @RestController
 public class UserController {
     private final UserService userService;
+    private final Logger logger = Logger.getLogger("UserController");
 
     @Autowired
     public UserController(UserService userService) {
@@ -39,14 +41,14 @@ public class UserController {
 //    }
 
     //获取周次信息
-    @RequestMapping(value = "/global/week_info", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/global/week_info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getWeekMessage(@RequestBody String jsonString) {
-        JSONObject jsonObject = new JSONObject(jsonString);
-        String data = jsonObject.getString("data");
-        String college = jsonObject.getString("college");
-        String personID = jsonObject.getString("personID");
-        return userService.getWeekMessage(data, college, personID);
+    public String getWeekMessage(HttpServletRequest request) {
+        String date = request.getParameter("date");
+        String college = request.getParameter("college");
+        String personID = request.getParameter("personID");
+        logger.info("request received:" + "date:" + date + " ,college:" + college + " ,personID:" + personID);
+        return userService.getWeekMessage(date, college, personID);
     }
 
     //绑定学号/.教工号

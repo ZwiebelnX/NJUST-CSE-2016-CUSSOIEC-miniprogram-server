@@ -67,7 +67,7 @@ public class UserService {
         try{
             //获取开学时间以字符串的形式
             CollegeEntity currentCollege = collegeRepository.findByName(collegeName);
-            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(personId, collegeName);
+            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personId);
             //空查询处理
             if (currentUser == null) {
                 JSONObject tempJson = new JSONObject();
@@ -102,6 +102,7 @@ public class UserService {
             long diffEnd = currentDate.getTime() - openingDate.getTime();
             int currentWeek = (int) (diffEnd / (24 * 60 * 60 * 1000) / 7);
             Array[] range = new Array[2];
+            //TODO 更新期末日期计算周数
             result.put("success",true);
             JSONObject resultTmp=new JSONObject();
             resultTmp.put("numOfWeek",currentWeek+1);
@@ -117,6 +118,7 @@ public class UserService {
 
     //绑定学号/.教工号
     public String updateUser(String openId,JSONObject data){
+        //TODO Spring报错说需要事务
         String college=data.getString("college");
         String personID=data.getString("personID");
         String realName=data.getString("realName");
