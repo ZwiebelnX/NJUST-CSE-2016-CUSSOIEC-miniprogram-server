@@ -62,4 +62,11 @@ public class UserController {
             return result.toString();
         }
     }
+    //获取用户信息
+    @RequestMapping(value="/user/info",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getUserMessage(MultipartHttpServletRequest request){
+        String openid=request.getParameter("openid");
+        return userService.getUserMessage(openid);
+    }
 }

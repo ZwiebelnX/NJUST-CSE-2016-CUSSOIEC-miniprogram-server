@@ -25,7 +25,7 @@ public class UserService {
     public String getStudentId(String openId){
         JSONObject jsonObject=new JSONObject();
         try{
-            UserEntity student=user.getStudentIdByOpenId(openId);
+            UserEntity student=user.getUserByOpenId(openId);
             if(student!=null) {
                 String studentId = student.getPersonNumber();
                 String collegeName=student.getCollege();
@@ -98,7 +98,35 @@ public class UserService {
             user.updateUserNickName(openId,nickName);
             user.updateUserPersonNumber(openId,personID);
             user.updateUserRealName(openId,realName);
+            Timestamp nowTimestamp = new Timestamp(new Date().getTime());
+            user.updateUserGetModified(openId,nowTimestamp);
+            user.updateUserGmtCreate(openId,nowTimestamp);
             result.put("success",true);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            result.put("success",false);
+        }
+        return result.toString();
+    }
+    //获取用户信息
+    public String getUserMessage(String openId){
+        JSONObject result=new JSONObject();
+        try {
+            UserEntity currentUser = user.getUserByOpenId(openId);
+            result.put("success",true);
+            JSONObject resultTmp=new JSONObject();
+            resultTmp.put("userType",currentUser.getUserType());
+            resultTmp.put("college",currentUser.getCollege());
+            resultTmp.put("personID",currentUser.getPersonNumber());
+            resultTmp.put("realName",currentUser.getRealName());
+            resultTmp.put("nickName",currentUser.getNickName());
+            resultTmp.put("gender",currentUser.getGender());
+            resultTmp.put("grade",currentUser.getGrade());
+            resultTmp.put("academy",currentUser.getAcademy());
+            resultTmp.put("major",currentUser.getMajor());
+            resultTmp.put("phone",currentUser.getPhone());
+            resultTmp.put("email",currentUser.getEmail());
         }
         catch (Exception e){
             e.printStackTrace();
