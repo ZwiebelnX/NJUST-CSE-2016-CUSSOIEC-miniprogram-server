@@ -24,9 +24,9 @@ public class UserController {
     }
 
     //获取学号
-    @RequestMapping(value = "/global/person_id", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/global/person_id", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getStudentId(MultipartHttpServletRequest request) {
+    public String getStudentId(HttpServletRequest request) {
         String openId = request.getParameter("openid");
         System.out.print(openId);
         return userService.getStudentId(openId);
