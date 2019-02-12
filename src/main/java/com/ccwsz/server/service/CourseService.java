@@ -7,10 +7,11 @@ import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.CourseEntity;
 import com.ccwsz.server.dao.dock.CourseChooseRepository;
 import com.ccwsz.server.dao.entity.UserEntity;
-import org.json.JSONArray;
+import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +34,14 @@ public class CourseService {
 
     public String getCourseByCollegeAndPersonNumber(String collegeName, String personId) {
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personId);
-        //空查询处理
         if (currentUser == null) {
-            JSONObject tempJson = new JSONObject();
-            tempJson.put("success", false);
-            return tempJson.toString();
+            return JsonManage.buildFailureMessage("user not found!");
         }
-        //获取了该学生的课程列表
+        //获取该学生课程列表
         List<CourseChooseEntity> courseChooseEntitiesList = courseChooseRepository.findByStudentId(currentUser.getId());
+        if(courseChooseEntitiesList == null){
+            return JsonManage.buildFailureMessage("user did not choose any course!");
+        }
         try {
             //为最后传出的json
             JSONObject tmp = new JSONObject();
@@ -62,16 +63,16 @@ public class CourseService {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("courseID", course.getId());
                 jsonObject.put("active", active);
-                List<JSONObject> positionTmp=new ArrayList<>();
+                List<JSONObject> positionTmp = new ArrayList<>();
                 String courseTime = course.getClassTime();
                 String[] classTime = courseTime.split(";");
                 for (String time : classTime) {
-                    JSONObject positionTtmp=new JSONObject();
+                    JSONObject positionTtmp = new JSONObject();
                     int timeLen = time.length();
                     int flagTmp = 0;
                     Integer sumTmp = 0;
                     Integer dayOfWeek = 0;
-                    List indexOfDay=new ArrayList();
+                    List indexOfDay = new ArrayList();
                     for (int i = 0; i < timeLen; i++) {
                         int chr = time.charAt(i);
                         if (chr < 48 || chr > 57) {
@@ -83,14 +84,14 @@ public class CourseService {
                             }
                             System.out.println(sumTmp);
                             sumTmp = 0;
-                        } else sumTmp = sumTmp*10+ (chr - 48);
+                        } else sumTmp = sumTmp * 10 + (chr - 48);
                     }
                     indexOfDay.add(sumTmp);
                     positionTtmp.put("dayOfWeek", dayOfWeek);
                     positionTtmp.put("indexOfDay", indexOfDay);
                     positionTmp.add(positionTtmp);
                 }
-                jsonObject.put("position",positionTmp);
+                jsonObject.put("position", positionTmp);
                 JSONObject info = new JSONObject();
                 info.put("name", course.getCourseName());
                 info.put("teacher", course.getTeacherName());

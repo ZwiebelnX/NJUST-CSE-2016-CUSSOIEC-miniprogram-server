@@ -4,6 +4,12 @@ import com.ccwsz.server.dao.dock.CollegeRepository;
 import com.ccwsz.server.dao.dock.UserRepository;
 import com.ccwsz.server.dao.entity.CollegeEntity;
 import com.ccwsz.server.dao.entity.UserEntity;
+import com.ccwsz.server.service.util.GlobalData;
+import com.ccwsz.server.service.util.JsonManage;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,40 +51,67 @@ public class UserService {
         return  jsonObject.toString();
     }
     //获取openid
-//    public String getOpenId(String code){
-//        JSONObject result=new JSONObject();
-//        try {
-//            String wechatAppId = "";
-//            String wechatSecretKey = "";
-//            String grantType = "authorization_code";
-//            String params = "appid=" + wechatAppId + "&secret=" + wechatSecretKey + "&js_code=" + code + "&grant_type=" + grantType;
-//            String sr = HttpRequest.sendGet("https://api.weixin.qq.com/sns/jscode2session", params);
-//            JSONObject json = new JSONObject(sr);
-//            String openId = json.get("openid").toString();
-//            result.put("success",true);
-//            result.put("result",openId);
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//            result.put("success",false);
-//        }
-//        return result.toString();
-//    }
+    public String getOpenId(String code){
+        JSONObject resultJson = new JSONObject();
+        try {
+            String url = "https://api.weixin.qq.com/sns/jscode2session"; //微信服务器API端口
+            //构造请求参数
+            String params = "appid=" + GlobalData.APP_ID
+                    + "&secret=" + GlobalData.APP_SECRET
+                    + "&grant_type=" + GlobalData.GRANT_TYPE
+                    + "&js_code=" + code;
+            url = url + "?" +params;
+            //向微信服务器发送请求
+            OkHttpClient httpClient = new OkHttpClient();
+            final Request request = new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
+            final Call call = httpClient.newCall(request);
+            Response response = call.execute();
+            if(response.isSuccessful()){
+                if(response.body() != null){
+                    JSONObject tempJson = new JSONObject(response.body().string());
+                    if(tempJson.getInt("errcode") == 0){
+                        resultJson.put("openid", tempJson.getString("openid"));
+                    }
+                    else{
+                        switch (tempJson.getInt("errcode")){
+                            case -1:
+                                return JsonManage.buildFailureMessage("微信服务器忙，稍后重试");
+                            case 40029:
+                                return JsonManage.buildFailureMessage("code无效");
+                            case 45011:
+                                return JsonManage.buildFailureMessage("请求次数过多，请过多几分钟重试");
+                            default:
+                                return JsonManage.buildFailureMessage("请求无效，请重试");
+                        }
+                    }
+                }
+            }
+            else{
+                return JsonManage.buildFailureMessage("微信服务器连接失败！请稍后再试");
+            }
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return JsonManage.buildFailureMessage("Internal error!");
+        }
+        return resultJson.toString();
+    }
     //获取周次信息
     public String getWeekMessage(String data,String collegeName,String personId) {
         JSONObject result=new JSONObject();
         try{
             //获取开学时间以字符串的形式
             CollegeEntity currentCollege = collegeRepository.findByName(collegeName);
-            System.out.print(personId+" "+collegeName);
-            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName,personId);
+            //System.out.print(personId+" "+collegeName);
+            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personId);
             //空查询处理
-            System.out.println(currentUser.getNickName()+" "+currentCollege.getOpeningDate1());
+            //System.out.println(currentUser.getNickName()+" "+currentCollege.getOpeningDate1());
             if (currentUser == null) {
-                System.out.print("null");
-                JSONObject tempJson = new JSONObject();
-                tempJson.put("success", false);
-                return tempJson.toString();
+                return JsonManage.buildFailureMessage("user not found!");
             }
             String grade = currentUser.getGrade();
             Date openingTime;
