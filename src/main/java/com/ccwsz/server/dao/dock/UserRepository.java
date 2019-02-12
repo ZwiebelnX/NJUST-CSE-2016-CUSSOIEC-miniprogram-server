@@ -13,11 +13,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface UserRepository extends CrudRepository<UserEntity,Integer> {
-    @Query("select u from UserEntity u where u.personNumber=:id and u.college=:collegeName")
-    UserEntity findByCollegeAndPersonNumber(@Param("id") String personId,@Param("collegeName")String collegeName);
-//    @Nullable
-//    UserEntity findByCollegeAndPersonNumber(String college, String personNumber);
-
+//    @Query("select u from UserEntity u where u.personNumber=:id and u.college=:collegeName")
+//    UserEntity findByCollegeAndPersonNumber(@Param("id") String personId,@Param("collegeName")String collegeName);
+    @Nullable
+    UserEntity findByCollegeAndPersonNumber(String college, String personNumber);
 //    @Query("select u from UserEntity u where u.openid=:id")
 //    UserEntity findByOpenid(@Param("id") String openId);
     @Nullable

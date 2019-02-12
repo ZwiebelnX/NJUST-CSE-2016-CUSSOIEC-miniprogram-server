@@ -4,6 +4,7 @@ import com.ccwsz.server.dao.dock.CollegeRepository;
 import com.ccwsz.server.dao.dock.UserRepository;
 import com.ccwsz.server.dao.entity.CollegeEntity;
 import com.ccwsz.server.dao.entity.UserEntity;
+import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,14 +70,12 @@ public class UserService {
         try{
             //获取开学时间以字符串的形式
             CollegeEntity currentCollege = collegeRepository.findByName(collegeName);
-            System.out.print(personId+" "+collegeName);
-            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(personId,collegeName);
+            //System.out.print(personId+" "+collegeName);
+            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personId);
             //空查询处理
-            System.out.println(currentUser.getNickName()+" "+currentCollege.getOpeningDate1());
+            //System.out.println(currentUser.getNickName()+" "+currentCollege.getOpeningDate1());
             if (currentUser == null) {
-                JSONObject tempJson = new JSONObject();
-                tempJson.put("success", false);
-                return tempJson.toString();
+                return JsonManage.buildFailureMessage("user not found!");
             }
             String grade = currentUser.getGrade();
             Date openingTime;
