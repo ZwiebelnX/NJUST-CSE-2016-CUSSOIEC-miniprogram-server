@@ -4,11 +4,8 @@ import com.ccwsz.server.service.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.logging.Logger;
 
@@ -33,12 +30,12 @@ public class UserController {
     }
 
     //获取openid
-//    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
-//    @ResponseBody
-//    public String getOpenid(MultipartHttpServletRequest request){
-//        String code=request.getParameter("code");
-//        return userService.getOpenId(code);
-//    }
+    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getOpenid(HttpServletRequest request){
+        String code=request.getParameter("code");
+        return userService.getOpenId(code);
+    }
 
     //获取周次信息
     @RequestMapping(value = "/global/week_info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
