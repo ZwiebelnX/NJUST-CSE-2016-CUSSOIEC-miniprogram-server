@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ public class UserService {
     private CollegeRepository collegeRepository;
     @Autowired
     public UserService(UserRepository userRepository, CollegeRepository collegeRepository){this.userRepository = userRepository;this.collegeRepository = collegeRepository;}
+
     //获取学号
     public String getStudentId(String openId){
         JSONObject jsonObject=new JSONObject();
@@ -50,6 +50,7 @@ public class UserService {
         }
         return  jsonObject.toString();
     }
+
     //获取openid
     public String getOpenId(String code){
         JSONObject resultJson = new JSONObject();
@@ -72,7 +73,8 @@ public class UserService {
             if(response.isSuccessful()){
                 if(response.body() != null){
                     JSONObject tempJson = new JSONObject(response.body().string());
-                    if(tempJson.getInt("errcode") == 0){
+                    System.out.println(tempJson.toString());
+                    if(tempJson.getInt("errcode") == 0 || !tempJson.has("errcode")){
                         resultJson.put("openid", tempJson.getString("openid"));
                     }
                     else{
@@ -100,6 +102,7 @@ public class UserService {
         }
         return resultJson.toString();
     }
+
     //获取周次信息
     public String getWeekMessage(String data,String collegeName,String personId) {
         JSONObject result=new JSONObject();
@@ -161,23 +164,38 @@ public class UserService {
 
     //绑定学号/.教工号
     @Transactional
-    public String updateUser(String openId,String college,String personID,String realName,String nickName){
+    public String bindingUser(String openId, String college, String personNumber, String realName, String nickName){
         JSONObject result=new JSONObject();
+        UserEntity newUser = new UserEntity();
+        newUser.setOpenid(openId);
+        newUser.setCollege(college);
+        newUser.setPersonNumber(personNumber);
+        newUser.setRealName(realName);
+        newUser.setNickName(nickName);
+        newUser.setUserType("student");
+        newUser.setGender("male");
+        newUser.setGrade("1");
+        Timestamp nowTime = new Timestamp(new Date().getTime());
+        newUser.setGmtCreate(nowTime);
+        newUser.setGetModified(nowTime);
         try{
-            userRepository.updateUserCollege(openId,college);
-            userRepository.updateUserNickName(openId,nickName);
-            userRepository.updateUserPersonNumber(openId,personID);
-            userRepository.updateUserRealName(openId,realName);
-            Timestamp nowTimestamp = new Timestamp(new Date().getTime());
-            userRepository.updateUserGetModified(openId,nowTimestamp);
-            result.put("success",true);
+            userRepository.save(newUser);
+//            userRepository.updateUserCollege(openId,college);
+//            userRepository.updateUserNickName(openId,nickName);
+//            userRepository.updateUserPersonNumber(openId,personID);
+//            userRepository.updateUserRealName(openId,realName);
+//            Timestamp nowTimestamp = new Timestamp(new Date().getTime());
+//            userRepository.updateUserGetModified(openId,nowTimestamp);
+//            result.put("success",true);
         }
         catch (Exception e){
             e.printStackTrace();
-            result.put("success",false);
+            return JsonManage.buildFailureMessage("数据存储失败！");
         }
+        result.put("success", true);
         return result.toString();
     }
+
     //获取用户信息
     public String getUserMessage(String openId){
         JSONObject result=new JSONObject();
@@ -200,5 +218,25 @@ public class UserService {
         result.put("phone",currentUser.getPhone());
         result.put("email",currentUser.getEmail());
         return result.toString();
+    }
+
+    //修改用户信息
+    public String changeUserInfo(String college, String personNumber, JSONObject data){
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(college, personNumber);
+        if(currentUser == null){
+            return JsonManage.buildFailureMessage("用户不存在！");
+        }
+        currentUser.setNickName(data.getString("nickName"));
+        currentUser.setPhone(data.getString("phone"));
+        currentUser.setEmail(data.getString("email"));
+        try{
+            userRepository.save(currentUser);
+        } catch (Exception e){
+            e.printStackTrace();
+            return JsonManage.buildFailureMessage("数据存储失败！请检查数据格式");
+        }
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("success", true);
+        return resultJson.toString();
     }
 }

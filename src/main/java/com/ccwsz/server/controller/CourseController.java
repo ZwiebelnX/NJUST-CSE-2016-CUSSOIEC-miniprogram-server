@@ -3,11 +3,9 @@ package com.ccwsz.server.controller;
 import com.ccwsz.server.service.CourseService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.logging.Logger;
 
 //课程相关控制器，负责分发课程表、课程内容等请求
@@ -23,14 +21,11 @@ public class CourseController {
     }
 
     //课表的控制器,获取课程信息
-    @RequestMapping(value = "/course/courses", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/course/courses", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getCourseName(@RequestBody String jsonString) {
-        JSONObject jsonObject = new JSONObject(jsonString);
-        String personId = jsonObject.getString("personID");
-        //System.out.print("hahahahahah"+personId);
-        logger.info("json received:" + jsonString);
-        String college = jsonObject.getString("college");
+    public String getCourseName(HttpServletRequest request) {
+        String personId = request.getParameter("personID");
+        String college = request.getParameter("college");
         return courseService.getCourseByCollegeAndPersonNumber(college, personId);
     }
 

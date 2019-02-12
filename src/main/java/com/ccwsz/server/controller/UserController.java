@@ -30,7 +30,7 @@ public class UserController {
     }
 
     //获取openid
-    @RequestMapping(value="/global/openid",produces = "application/json;charset=UTF-8")
+    @RequestMapping(value="/global/openid", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getOpenid(HttpServletRequest request){
         String code=request.getParameter("code");
@@ -51,7 +51,7 @@ public class UserController {
     //绑定学号/教工号
     @RequestMapping(value = "/user/binding", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateUser(@RequestBody String jsonString) {
+    public String bindingUser(@RequestBody String jsonString) {
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             String openid = jsonObject.getString("openid");
@@ -60,7 +60,7 @@ public class UserController {
             String personID=data.getString("personID");
             String realName=data.getString("realName");
             String nickName=data.getString("nickName");
-            return userService.updateUser(openid,college,personID,realName,nickName);
+            return userService.bindingUser(openid,college,personID,realName,nickName);
         } catch (JSONException e) {
             e.printStackTrace();
             JSONObject result = new JSONObject();
@@ -75,5 +75,16 @@ public class UserController {
     public String getUserMessage(HttpServletRequest request) {
         String openid = request.getParameter("openid");
         return userService.getUserMessage(openid);
+    }
+
+    //修改用户信息
+    @RequestMapping(value = "/user/info", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String changeUserInfo(@RequestBody String jsonString){
+        JSONObject json = new JSONObject(jsonString);
+        String collegeName = json.getString("college");
+        String personNumber = json.getString("personID");
+        JSONObject data = json.getJSONObject("data");
+        return userService.changeUserInfo(collegeName, personNumber, data);
     }
 }
