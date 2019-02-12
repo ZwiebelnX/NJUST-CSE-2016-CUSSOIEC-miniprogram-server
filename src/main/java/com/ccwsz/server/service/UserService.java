@@ -70,17 +70,18 @@ public class UserService {
             //获取开学时间以字符串的形式
             CollegeEntity currentCollege = collegeRepository.findByName(collegeName);
             System.out.print(personId+" "+collegeName);
-            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(personId,collegeName);
+            UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName,personId);
             //空查询处理
             System.out.println(currentUser.getNickName()+" "+currentCollege.getOpeningDate1());
             if (currentUser == null) {
+                System.out.print("null");
                 JSONObject tempJson = new JSONObject();
                 tempJson.put("success", false);
                 return tempJson.toString();
             }
             String grade = currentUser.getGrade();
             Date openingTime;
-            Timestamp endTime;
+            Date endWeek=currentCollege.getEndingDate();
             switch(grade){
                 case "本科一年级":
                     openingTime = currentCollege.getOpeningDate1();
@@ -101,14 +102,16 @@ public class UserService {
             }
             //将时间戳转换为Date
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            Date openingDate = format.parse(openingTime.toString());
+            //Date openingDate = format.parse(openingTime.toString());
             Date currentDate = format.parse(data);
-            long diffEnd = currentDate.getTime() - openingDate.getTime();
+//            Date endDate=format.parse(endTime.toString());
+            long diffEnd = currentDate.getTime() - openingTime.getTime();
+            long countEnd = endWeek.getTime()-openingTime.getTime();
             int currentWeek = (int) (diffEnd / (24 * 60 * 60 * 1000) / 7);
+            int countWeek=(int)(countEnd/(24*60*60*1000)/7);
             List<Integer> range = new ArrayList<>();
             range.add(1);
-            //TODO 更新期末日期计算周数
-
+            range.add(countWeek+1);
             result.put("success",true);
             JSONObject resultTmp=new JSONObject();
             resultTmp.put("numOfWeek",currentWeek+1);
