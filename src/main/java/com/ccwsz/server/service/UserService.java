@@ -74,7 +74,7 @@ public class UserService {
                 if(response.body() != null){
                     JSONObject tempJson = new JSONObject(response.body().string());
                     System.out.println(tempJson.toString());
-                    if(tempJson.getInt("errcode") == 0 || !tempJson.has("errcode")){
+                    if(!tempJson.has("errcode") || tempJson.getInt("errcode") == 0){
                         resultJson.put("openid", tempJson.getString("openid"));
                     }
                     else{
