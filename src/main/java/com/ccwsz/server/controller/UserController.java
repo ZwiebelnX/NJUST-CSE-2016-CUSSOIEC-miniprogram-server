@@ -51,7 +51,7 @@ public class UserController {
         return userService.getWeekMessage(date, college, personID);
     }
 
-    //绑定学号/.教工号
+    //绑定学号/教工号
     @RequestMapping(value = "/user/binding", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String updateUser(@RequestBody String jsonString) {
@@ -59,7 +59,11 @@ public class UserController {
             JSONObject jsonObject = new JSONObject(jsonString);
             String openid = jsonObject.getString("openid");
             JSONObject data = jsonObject.getJSONObject("data");
-            return userService.updateUser(openid, data);
+            String college=data.getString("college");
+            String personID=data.getString("personID");
+            String realName=data.getString("realName");
+            String nickName=data.getString("nickName");
+            return userService.updateUser(openid,college,personID,realName,nickName);
         } catch (JSONException e) {
             e.printStackTrace();
             JSONObject result = new JSONObject();

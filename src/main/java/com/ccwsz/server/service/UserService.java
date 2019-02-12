@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -126,12 +127,8 @@ public class UserService {
     }
 
     //绑定学号/.教工号
-    public String updateUser(String openId,JSONObject data){
-        //TODO Spring报错说需要事务
-        String college=data.getString("college");
-        String personID=data.getString("personID");
-        String realName=data.getString("realName");
-        String nickName=data.getString("nickName");
+    @Transactional
+    public String updateUser(String openId,String college,String personID,String realName,String nickName){
         JSONObject result=new JSONObject();
         try{
             userRepository.updateUserCollege(openId,college);
@@ -140,7 +137,6 @@ public class UserService {
             userRepository.updateUserRealName(openId,realName);
             Timestamp nowTimestamp = new Timestamp(new Date().getTime());
             userRepository.updateUserGetModified(openId,nowTimestamp);
-//            userRepository.updateUserGmtCreate(openId,nowTimestamp);
             result.put("success",true);
         }
         catch (Exception e){
