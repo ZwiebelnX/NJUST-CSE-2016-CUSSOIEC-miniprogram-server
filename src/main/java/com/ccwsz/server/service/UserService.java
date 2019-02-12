@@ -76,6 +76,7 @@ public class UserService {
                     System.out.println(tempJson.toString());
                     if(!tempJson.has("errcode") || tempJson.getInt("errcode") == 0){
                         resultJson.put("result", tempJson.getString("openid"));
+                        resultJson.put("success", true);
                     }
                     else{
                         switch (tempJson.getInt("errcode")){
