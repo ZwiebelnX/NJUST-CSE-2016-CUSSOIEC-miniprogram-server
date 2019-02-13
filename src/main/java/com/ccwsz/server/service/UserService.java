@@ -73,6 +73,11 @@ public class UserService {
                 if(response.body() != null){
                     JSONObject tempJson = new JSONObject(response.body().string());
                     if(tempJson.getInt("errcode") == 0){
+                        UserEntity newUser=new UserEntity();
+                        Timestamp nowTimestamp = new Timestamp(new Date().getTime());
+                        newUser.setOpenid(tempJson.getString("openid"));
+                        newUser.setGmtCreate(nowTimestamp);
+                        userRepository.save(newUser);
                         resultJson.put("openid", tempJson.getString("openid"));
                     }
                     else{
@@ -164,13 +169,20 @@ public class UserService {
     public String updateUser(String openId,String college,String personID,String realName,String nickName){
         JSONObject result=new JSONObject();
         try{
-            userRepository.updateUserCollege(openId,college);
-            userRepository.updateUserNickName(openId,nickName);
-            userRepository.updateUserPersonNumber(openId,personID);
-            userRepository.updateUserRealName(openId,realName);
+            UserEntity currentUser=userRepository.findByOpenid(openId);
             Timestamp nowTimestamp = new Timestamp(new Date().getTime());
-            userRepository.updateUserGetModified(openId,nowTimestamp);
-            result.put("success",true);
+            if(currentUser==null){
+                result.put("success",false);
+            }
+            else {
+                currentUser.setGetModified(nowTimestamp);
+                currentUser.setPersonNumber(personID);
+                currentUser.setRealName(realName);
+                currentUser.setNickName(nickName);
+                currentUser.setCollege(college);
+                userRepository.save(currentUser);
+                result.put("success", true);
+            }
         }
         catch (Exception e){
             e.printStackTrace();

@@ -67,7 +67,7 @@ public class CourseService {
                 String courseTime = course.getClassTime();
                 String[] classTime = courseTime.split(";");
                 for (String time : classTime) {
-                    JSONObject positionTtmp = new JSONObject();
+                    JSONObject positionTmpJSON = new JSONObject();
                     int timeLen = time.length();
                     int flagTmp = 0;
                     Integer sumTmp = 0;
@@ -87,9 +87,9 @@ public class CourseService {
                         } else sumTmp = sumTmp * 10 + (chr - 48);
                     }
                     indexOfDay.add(sumTmp);
-                    positionTtmp.put("dayOfWeek", dayOfWeek);
-                    positionTtmp.put("indexOfDay", indexOfDay);
-                    positionTmp.add(positionTtmp);
+                    positionTmpJSON.put("dayOfWeek", dayOfWeek);
+                    positionTmpJSON.put("indexOfDay", indexOfDay);
+                    positionTmp.add(positionTmpJSON);
                 }
                 jsonObject.put("position", positionTmp);
                 JSONObject info = new JSONObject();
