@@ -1,11 +1,16 @@
 package com.ccwsz.server.dao.entity;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "college", schema = "online_cussoiec", catalog = "")
 @IdClass(CollegeEntityPK.class)
 public class CollegeEntity {
@@ -33,6 +38,7 @@ public class CollegeEntity {
     }
 
     @Basic
+    @CreatedDate
     @Column(name = "gmt_create", nullable = false)
     public Timestamp getGmtCreate() {
         return gmtCreate;
@@ -43,6 +49,7 @@ public class CollegeEntity {
     }
 
     @Basic
+    @LastModifiedDate
     @Column(name = "gmt_modified", nullable = false)
     public Timestamp getGmtModified() {
         return gmtModified;

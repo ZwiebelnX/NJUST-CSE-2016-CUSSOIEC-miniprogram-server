@@ -79,9 +79,7 @@ public class UserService {
                     System.out.println(tempJson.toString());
                     if(!tempJson.has("errcode") || tempJson.getInt("errcode") == 0){
                         UserEntity newUser=new UserEntity();
-                        Timestamp nowTimestamp = new Timestamp(new Date().getTime());
                         newUser.setOpenid(tempJson.getString("openid"));
-                        newUser.setGmtCreate(nowTimestamp);
                         userRepository.save(newUser);
                         resultJson.put("result", tempJson.getString("openid"));
                         resultJson.put("success", true);
@@ -177,12 +175,10 @@ public class UserService {
         JSONObject result=new JSONObject();
         try{
             UserEntity currentUser=userRepository.findByOpenid(openId);
-            Timestamp nowTimestamp = new Timestamp(new Date().getTime());
             if(currentUser==null){
                 result.put("success",false);
             }
             else {
-                currentUser.setGmtModified(nowTimestamp);
                 currentUser.setPersonNumber(personNumber);
                 currentUser.setRealName(realName);
                 currentUser.setNickName(nickName);
@@ -210,7 +206,7 @@ public class UserService {
         responseJson.put("success",true);
         JSONObject result = new JSONObject();
         result.put("userType",currentUser.getUserType());
-        result.put("CollegeRepository",currentUser.getCollege());
+        result.put("college",currentUser.getCollege());
         result.put("personID",currentUser.getPersonNumber());
         result.put("realName",currentUser.getRealName());
         result.put("nickName",currentUser.getNickName());

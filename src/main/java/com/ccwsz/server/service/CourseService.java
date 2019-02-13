@@ -22,7 +22,6 @@ public class CourseService {
     private CollegeRepository collegeRepository;
     private CourseRepository courseRepository;
 
-    //通过学生id找到所有课程名字
     @Autowired
     public CourseService(CourseChooseRepository courseChooseRepository, UserRepository userRepository,
                          CollegeRepository collegeRepository, CourseRepository courseRepository) {
@@ -32,19 +31,21 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
+    //通过学生id找到所有课程名字
     public String getCourseByCollegeAndPersonNumber(String collegeName, String personId) {
+        JSONObject responseJson = new JSONObject(); //为最后传出的json
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personId);
         if (currentUser == null) {
-            return JsonManage.buildFailureMessage("user not found!");
+            return JsonManage.buildFailureMessage("未找到用户！");
         }
         //获取该学生课程列表
         List<CourseChooseEntity> courseChooseEntitiesList = courseChooseRepository.findByStudentId(currentUser.getId());
         if(courseChooseEntitiesList == null){
-            return JsonManage.buildFailureMessage("user did not choose any course!");
+            responseJson.put("success", true);
+            responseJson.put("result", new JSONObject());
+            return responseJson.toString();
         }
         try {
-            //为最后传出的json
-            JSONObject tmp = new JSONObject();
             //名字和说明分别对应前段的
             List<JSONObject> result = new ArrayList<>();
             for (CourseChooseEntity courseChoose : courseChooseEntitiesList) {
@@ -72,7 +73,7 @@ public class CourseService {
                     int flagTmp = 0;
                     Integer sumTmp = 0;
                     Integer dayOfWeek = 0;
-                    List indexOfDay = new ArrayList();
+                    List<Integer> indexOfDay = new ArrayList<>();
                     for (int i = 0; i < timeLen; i++) {
                         int chr = time.charAt(i);
                         if (chr < 48 || chr > 57) {
@@ -99,9 +100,9 @@ public class CourseService {
                 jsonObject.put("info", info);
                 result.add(jsonObject);
             }
-            tmp.put("success", true);
-            tmp.put("result", result);
-            return tmp.toString();
+            responseJson.put("success", true);
+            responseJson.put("result", result);
+            return responseJson.toString();
         } catch (Exception ex) {
             ex.printStackTrace();
             JSONObject jsonObject = new JSONObject();
