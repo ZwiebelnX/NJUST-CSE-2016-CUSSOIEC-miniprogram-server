@@ -23,10 +23,10 @@ public class UserController {
     //获取学号
     @RequestMapping(value = "/global/person_id", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getStudentId(HttpServletRequest request) {
+    public String getStudentNumber(HttpServletRequest request) {
         String openId = request.getParameter("openid");
         System.out.print(openId);
-        return userService.getStudentId(openId);
+        return userService.getStudentNumber(openId);
     }
 
     //获取openid
@@ -72,9 +72,9 @@ public class UserController {
     //获取用户信息
     @RequestMapping(value = "/user/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getUserMessage(HttpServletRequest request) {
+    public String getUserInfo(HttpServletRequest request) {
         String openid = request.getParameter("openid");
-        return userService.getUserMessage(openid);
+        return userService.getUserInfo(openid);
     }
 
     //修改用户信息

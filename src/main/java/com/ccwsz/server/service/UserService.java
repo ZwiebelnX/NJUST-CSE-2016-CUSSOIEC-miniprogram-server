@@ -29,7 +29,7 @@ public class UserService {
     public UserService(UserRepository userRepository, CollegeRepository collegeRepository){this.userRepository = userRepository;this.collegeRepository = collegeRepository;}
 
     //获取学号
-    public String getStudentId(String openId){
+    public String getStudentNumber(String openId){
         JSONObject jsonObject=new JSONObject();
         try{
             UserEntity student= userRepository.findByOpenid(openId);
@@ -38,7 +38,7 @@ public class UserService {
                 String collegeName=student.getCollege();
                 jsonObject.put("success", true);
                 JSONObject result=new JSONObject();
-                result.put("CollegeRepository",collegeName);
+                result.put("college",collegeName);
                 result.put("personID",studentId);
                 jsonObject.put("result", result);
             }
@@ -200,15 +200,15 @@ public class UserService {
     }
 
     //获取用户信息
-    public String getUserMessage(String openId){
-        JSONObject result=new JSONObject();
+    public String getUserInfo(String openId){
+        JSONObject responseJson=new JSONObject();
         UserEntity currentUser = userRepository.findByOpenid(openId);
         if(currentUser == null){
             //TODO 空查询处理
-            result.put("success", false);
-            return result.toString();
+            return JsonManage.buildFailureMessage("用户不存在");
         }
-        result.put("success",true);
+        responseJson.put("success",true);
+        JSONObject result = new JSONObject();
         result.put("userType",currentUser.getUserType());
         result.put("CollegeRepository",currentUser.getCollege());
         result.put("personID",currentUser.getPersonNumber());
@@ -220,7 +220,8 @@ public class UserService {
         result.put("major",currentUser.getMajor());
         result.put("phone",currentUser.getPhone());
         result.put("email",currentUser.getEmail());
-        return result.toString();
+        responseJson.put("result", result);
+        return responseJson.toString();
     }
 
     //修改用户信息
