@@ -6,23 +6,22 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user", schema = "online_cussoiec", catalog = "")
-@IdClass(UserEntityPK.class)
 public class UserEntity {
     private long id;
     private Timestamp gmtCreate;
-    private Timestamp getModified;
+    private Timestamp gmtModified;
     private String openid;
     private String userType;
     private String personNumber;
     private String realName;
     private String nickName;
     private String gender;
-    private String college;
     private String grade;
     private String academy;
     private String major;
     private String phone;
     private String email;
+    private String college;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -45,16 +44,16 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "get_modified", nullable = false)
-    public Timestamp getGetModified() {
-        return getModified;
+    @Column(name = "gmt_modified", nullable = false)
+    public Timestamp getGmtModified() {
+        return gmtModified;
     }
 
-    public void setGetModified(Timestamp getModified) {
-        this.getModified = getModified;
+    public void setGmtModified(Timestamp gmtModified) {
+        this.gmtModified = gmtModified;
     }
 
-    @Id
+    @Basic
     @Column(name = "openid", nullable = false, length = 50)
     public String getOpenid() {
         return openid;
@@ -74,8 +73,8 @@ public class UserEntity {
         this.userType = userType;
     }
 
-    @Id
-    @Column(name = "person_number", nullable = false, length = 20)
+    @Basic
+    @Column(name = "person_number", nullable = true, length = 20)
     public String getPersonNumber() {
         return personNumber;
     }
@@ -85,7 +84,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "real_name", nullable = false, length = 15)
+    @Column(name = "real_name", nullable = true, length = 15)
     public String getRealName() {
         return realName;
     }
@@ -105,7 +104,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "gender", nullable = false, length = 5)
+    @Column(name = "gender", nullable = true, length = 6)
     public String getGender() {
         return gender;
     }
@@ -114,18 +113,8 @@ public class UserEntity {
         this.gender = gender;
     }
 
-    @Id
-    @Column(name = "college", nullable = false, length = 30)
-    public String getCollege() {
-        return college;
-    }
-
-    public void setCollege(String college) {
-        this.college = college;
-    }
-
     @Basic
-    @Column(name = "grade", nullable = false, length = 5)
+    @Column(name = "grade", nullable = true, length = 5)
     public String getGrade() {
         return grade;
     }
@@ -135,7 +124,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "academy", nullable = false, length = 20)
+    @Column(name = "academy", nullable = true, length = 20)
     public String getAcademy() {
         return academy;
     }
@@ -145,7 +134,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "major", nullable = false, length = 20)
+    @Column(name = "major", nullable = true, length = 20)
     public String getMajor() {
         return major;
     }
@@ -181,14 +170,13 @@ public class UserEntity {
         UserEntity that = (UserEntity) o;
         return id == that.id &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
-                Objects.equals(getModified, that.getModified) &&
+                Objects.equals(gmtModified, that.gmtModified) &&
                 Objects.equals(openid, that.openid) &&
                 Objects.equals(userType, that.userType) &&
                 Objects.equals(personNumber, that.personNumber) &&
                 Objects.equals(realName, that.realName) &&
                 Objects.equals(nickName, that.nickName) &&
                 Objects.equals(gender, that.gender) &&
-                Objects.equals(college, that.college) &&
                 Objects.equals(grade, that.grade) &&
                 Objects.equals(academy, that.academy) &&
                 Objects.equals(major, that.major) &&
@@ -198,6 +186,16 @@ public class UserEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, getModified, openid, userType, personNumber, realName, nickName, gender, college, grade, academy, major, phone, email);
+        return Objects.hash(id, gmtCreate, gmtModified, openid, userType, personNumber, realName, nickName, gender, grade, academy, major, phone, email);
+    }
+
+    @Basic
+    @Column(name = "college", nullable = true, length = 30)
+    public String getCollege() {
+        return college;
+    }
+
+    public void setCollege(String college) {
+        this.college = college;
     }
 }

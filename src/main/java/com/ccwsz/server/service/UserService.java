@@ -51,7 +51,10 @@ public class UserService {
         return  jsonObject.toString();
     }
 
-    //获取openid
+    /*
+    获取openid
+    同时定义用户登录状态
+     */
     public String getOpenId(String code){
         JSONObject resultJson = new JSONObject();
         try {
@@ -178,7 +181,7 @@ public class UserService {
         newUser.setGrade("1");
         Timestamp nowTime = new Timestamp(new Date().getTime());
         newUser.setGmtCreate(nowTime);
-        newUser.setGetModified(nowTime);
+        newUser.setGmtModified(nowTime);
         try{
             userRepository.save(newUser);
 //            userRepository.updateUserCollege(openId,college);
