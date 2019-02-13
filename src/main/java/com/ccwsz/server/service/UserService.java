@@ -78,6 +78,11 @@ public class UserService {
                     JSONObject tempJson = new JSONObject(response.body().string());
                     System.out.println(tempJson.toString());
                     if(!tempJson.has("errcode") || tempJson.getInt("errcode") == 0){
+                        UserEntity newUser=new UserEntity();
+                        Timestamp nowTimestamp = new Timestamp(new Date().getTime());
+                        newUser.setOpenid(tempJson.getString("openid"));
+                        newUser.setGmtCreate(nowTimestamp);
+                        userRepository.save(newUser);
                         resultJson.put("result", tempJson.getString("openid"));
                         resultJson.put("success", true);
                     }
@@ -170,27 +175,21 @@ public class UserService {
     @Transactional
     public String bindingUser(String openId, String college, String personNumber, String realName, String nickName){
         JSONObject result=new JSONObject();
-        UserEntity newUser = new UserEntity();
-        newUser.setOpenid(openId);
-        newUser.setCollege(college);
-        newUser.setPersonNumber(personNumber);
-        newUser.setRealName(realName);
-        newUser.setNickName(nickName);
-        newUser.setUserType("student");
-        newUser.setGender("male");
-        newUser.setGrade("1");
-        Timestamp nowTime = new Timestamp(new Date().getTime());
-        newUser.setGmtCreate(nowTime);
-        newUser.setGmtModified(nowTime);
         try{
-            userRepository.save(newUser);
-//            userRepository.updateUserCollege(openId,college);
-//            userRepository.updateUserNickName(openId,nickName);
-//            userRepository.updateUserPersonNumber(openId,personID);
-//            userRepository.updateUserRealName(openId,realName);
-//            Timestamp nowTimestamp = new Timestamp(new Date().getTime());
-//            userRepository.updateUserGetModified(openId,nowTimestamp);
-//            result.put("success",true);
+            UserEntity currentUser=userRepository.findByOpenid(openId);
+            Timestamp nowTimestamp = new Timestamp(new Date().getTime());
+            if(currentUser==null){
+                result.put("success",false);
+            }
+            else {
+                currentUser.setGmtModified(nowTimestamp);
+                currentUser.setPersonNumber(personNumber);
+                currentUser.setRealName(realName);
+                currentUser.setNickName(nickName);
+                currentUser.setCollege(college);
+                userRepository.save(currentUser);
+                result.put("success", true);
+            }
         }
         catch (Exception e){
             e.printStackTrace();
