@@ -37,8 +37,8 @@ public interface UserRepository extends CrudRepository<UserEntity,Integer> {
     void updateUserNickName(@Param("id")String id, @Param("ai")String nickName);
 
     @Modifying
-    @Query("update UserEntity u set u.getModified=:ai where u.openid=:id")
-    void  updateUserGetModified(@Param("id")String id, @Param("ai")Timestamp nowTimestamp);
+    @Query("update UserEntity u set u.gmtModified=:ai where u.openid=:id")
+    void  updateUserGmtModified(@Param("id")String id, @Param("ai")Timestamp nowTimestamp);
 
     @Modifying
     @Query("update UserEntity u set u.gmtCreate=:ai where u.openid=:id")
