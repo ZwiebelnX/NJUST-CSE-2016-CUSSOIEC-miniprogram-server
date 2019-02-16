@@ -144,37 +144,38 @@ public class CourseService {
         List<CourseVideoEntity> videoList = courseVideoRepository.findByCourseId(courseId);
         List<VideoWatchEntity> watchList = videoWatchRepository.findByUserIdAndCourseId(userId, courseId);
         //根据日期分类视频，同时打上是否观看的标签
-        JSONArray result = new JSONArray();
-        LocalDate videoDate;
-        JSONArray videos;
-        //每次以链表第一个视频日期为准分类，分类完的视频从链表中移除，直至链表为空
+        JSONArray result = new JSONArray(); //result字段
+        LocalDate videoDate; //用于视频分类
+        JSONArray videos; //以日期为分类的视频列表
+        //分类循环
         for (int index = 0; !videoList.isEmpty(); index++) {
-            videoDate = videoList.get(0).getGmtModified().toLocalDateTime().toLocalDate();
+            videoDate = videoList.get(0).getGmtModified().toLocalDateTime().toLocalDate(); //每次以链表中第一个视频的日期为分类
             videos = new JSONArray();
-            if(videoList.get(index).getGmtModified().toLocalDateTime().toLocalDate() == videoDate){
+            //按日期分类视频
+            if (videoList.get(index).getGmtModified().toLocalDateTime().toLocalDate() == videoDate) {
                 JSONObject video = new JSONObject();
                 video.put("videoID", videoList.get(index).getId());
                 video.put("name", videoList.get(index).getVideoName());
                 video.put("url", videoList.get(index).getVideoUrl());
-                for(VideoWatchEntity watch :watchList){
-                    if(watch.getVideoId() == videoList.get(index).getId()){
+                //定制针对于不同用户的观看信息
+                for (VideoWatchEntity watch : watchList) {
+                    if (watch.getVideoId() == videoList.get(index).getId()) {
                         video.put("isWatch", true);
                         break;
-                    }
-                    else{
+                    } else {
                         video.put("isWatch", false);
                     }
                 }
                 videos.put(video);
-                videoList.remove(index);
+                videoList.remove(index); //加入json后 从链表中移除视频
             }
             //当一次循环完成时
-            if (index == videoList.size() - 1){
+            if (index == videoList.size() - 1) {
                 index = 0;
-                JSONObject dateObject = new JSONObject();
+                JSONObject dateObject = new JSONObject(); //一次循环完成后，用于压入数组的临时object
                 dateObject.put("date", videoDate.toString());
                 dateObject.put("videos", videos);
-                result.put(dateObject);
+                result.put(dateObject); //加入result字段
             }
         }
         responseJson.put("success", true);
