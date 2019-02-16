@@ -12,7 +12,6 @@ import java.util.Objects;
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "college", schema = "online_cussoiec", catalog = "")
-@IdClass(CollegeEntityPK.class)
 public class CollegeEntity {
     private long id;
     private Timestamp gmtCreate;
@@ -59,7 +58,7 @@ public class CollegeEntity {
         this.gmtModified = gmtModified;
     }
 
-    @Id
+    @Basic
     @Column(name = "name", nullable = false, length = 30)
     public String getName() {
         return name;

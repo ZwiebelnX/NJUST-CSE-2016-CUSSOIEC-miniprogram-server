@@ -10,14 +10,15 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "course_choose", schema = "online_cussoiec", catalog = "")
-public class CourseChooseEntity {
+@Table(name = "course_checking_in", schema = "online_cussoiec", catalog = "")
+public class CourseCheckingInEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private String checkingTime;
+    private String checkingStatus;
     private long courseId;
-    private long studentId;
-    private long teacherId;
+    private long userId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -51,7 +52,44 @@ public class CourseChooseEntity {
         this.gmtModified = gmtModified;
     }
 
-    @Id
+    @Basic
+    @Column(name = "checking_time", nullable = false, length = 10)
+    public String getCheckingTime() {
+        return checkingTime;
+    }
+
+    public void setCheckingTime(String checkingTime) {
+        this.checkingTime = checkingTime;
+    }
+
+    @Basic
+    @Column(name = "checking_status", nullable = false, length = 10)
+    public String getCheckingStatus() {
+        return checkingStatus;
+    }
+
+    public void setCheckingStatus(String checkingStatus) {
+        this.checkingStatus = checkingStatus;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseCheckingInEntity that = (CourseCheckingInEntity) o;
+        return id == that.id &&
+                Objects.equals(gmtCreate, that.gmtCreate) &&
+                Objects.equals(gmtModified, that.gmtModified) &&
+                Objects.equals(checkingTime, that.checkingTime) &&
+                Objects.equals(checkingStatus, that.checkingStatus);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, gmtCreate, gmtModified, checkingTime, checkingStatus);
+    }
+
+    @Basic
     @Column(name = "course_id", nullable = false)
     public long getCourseId() {
         return courseId;
@@ -62,40 +100,12 @@ public class CourseChooseEntity {
     }
 
     @Basic
-    @Column(name = "student_id", nullable = false)
-    public long getStudentId() {
-        return studentId;
+    @Column(name = "user_id", nullable = false)
+    public long getUserId() {
+        return userId;
     }
 
-    public void setStudentId(long studentId) {
-        this.studentId = studentId;
-    }
-
-    @Id
-    @Column(name = "teacher_id", nullable = false)
-    public long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(long teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CourseChooseEntity that = (CourseChooseEntity) o;
-        return id == that.id &&
-                courseId == that.courseId &&
-                studentId == that.studentId &&
-                teacherId == that.teacherId &&
-                Objects.equals(gmtCreate, that.gmtCreate) &&
-                Objects.equals(gmtModified, that.gmtModified);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, courseId, studentId, teacherId);
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

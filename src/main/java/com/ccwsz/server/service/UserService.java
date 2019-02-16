@@ -240,11 +240,4 @@ public class UserService {
         resultJson.put("success", true);
         return resultJson.toString();
     }
-
-    public void test(){
-        UserEntity userEntity = new UserEntity();
-        userEntity.setOpenid("000");
-        userEntity.setUserType("student");
-        userRepository.save(userEntity);
-    }
 }

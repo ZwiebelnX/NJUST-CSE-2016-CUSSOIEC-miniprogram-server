@@ -25,7 +25,7 @@ public class UserController {
     @ResponseBody
     public String getStudentNumber(HttpServletRequest request) {
         String openId = request.getParameter("openid");
-        System.out.print(openId);
+        //System.out.print(openId);
         return userService.getStudentNumber(openId);
     }
 
@@ -86,10 +86,5 @@ public class UserController {
         String personNumber = json.getString("personID");
         JSONObject data = json.getJSONObject("data");
         return userService.changeUserInfo(collegeName, personNumber, data);
-    }
-
-    @RequestMapping(value = "test")
-    public void test(){
-        userService.test();
     }
 }

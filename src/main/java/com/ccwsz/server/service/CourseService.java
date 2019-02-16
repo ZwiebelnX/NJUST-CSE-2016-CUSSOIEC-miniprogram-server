@@ -1,18 +1,16 @@
 package com.ccwsz.server.service;
 
-import com.ccwsz.server.dao.dock.CourseRepository;
-import com.ccwsz.server.dao.dock.UserRepository;
-import com.ccwsz.server.dao.dock.CollegeRepository;
-import com.ccwsz.server.dao.entity.CourseChooseEntity;
-import com.ccwsz.server.dao.entity.CourseEntity;
-import com.ccwsz.server.dao.dock.CourseChooseRepository;
-import com.ccwsz.server.dao.entity.UserEntity;
+import com.ccwsz.server.dao.dock.*;
+import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.JsonManage;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,14 +19,19 @@ public class CourseService {
     private UserRepository userRepository;
     private CollegeRepository collegeRepository;
     private CourseRepository courseRepository;
+    private CourseVideoRepository courseVideoRepository;
+    private VideoWatchRepository videoWatchRepository;
 
     @Autowired
     public CourseService(CourseChooseRepository courseChooseRepository, UserRepository userRepository,
-                         CollegeRepository collegeRepository, CourseRepository courseRepository) {
+                         CollegeRepository collegeRepository, CourseRepository courseRepository,
+                         CourseVideoRepository courseVideoRepository, VideoWatchRepository videoWatchRepository) {
         this.courseChooseRepository = courseChooseRepository;
         this.userRepository = userRepository;
         this.collegeRepository = collegeRepository;
         this.courseRepository = courseRepository;
+        this.courseVideoRepository = courseVideoRepository;
+        this.videoWatchRepository = videoWatchRepository;
     }
 
     //通过学生id找到所有课程名字
@@ -40,7 +43,7 @@ public class CourseService {
         }
         //获取该学生课程列表
         List<CourseChooseEntity> courseChooseEntitiesList = courseChooseRepository.findByStudentId(currentUser.getId());
-        if(courseChooseEntitiesList == null){
+        if (courseChooseEntitiesList == null) {
             responseJson.put("success", true);
             responseJson.put("result", new JSONObject());
             return responseJson.toString();
@@ -109,5 +112,73 @@ public class CourseService {
             jsonObject.put("success", false);
             return jsonObject.toString();
         }
+    }
+
+    //返回课程直播信息
+    public String getCourseLiveInfo(long courseId) {
+        JSONObject responseJson = new JSONObject();
+        CourseEntity course = courseRepository.findById(courseId);
+        if (course == null) {
+            return JsonManage.buildFailureMessage("找不到指定课程！");
+        }
+        JSONObject result = new JSONObject();
+        if (course.getIsLive() == 1) {
+            result.put("isLive", true);
+        } else {
+            responseJson.put("isLive", false);
+        }
+        result.put("url", course.getLiveUrl());
+        responseJson.put("result", result);
+        responseJson.put("success", true);
+        return responseJson.toString();
+    }
+
+    //根据个人返回视频信息
+    public String getCourseVideoInfo(String openid, long courseId) {
+        JSONObject responseJson = new JSONObject();
+        UserEntity user = userRepository.findByOpenid(openid);
+        if (user == null) {
+            return JsonManage.buildFailureMessage("没有找到对应用户！");
+        }
+        long userId = user.getId();
+        List<CourseVideoEntity> videoList = courseVideoRepository.findByCourseId(courseId);
+        List<VideoWatchEntity> watchList = videoWatchRepository.findByUserIdAndCourseId(userId, courseId);
+        //根据日期分类视频，同时打上是否观看的标签
+        JSONArray result = new JSONArray();
+        LocalDate videoDate;
+        JSONArray videos;
+        //每次以链表第一个视频日期为准分类，分类完的视频从链表中移除，直至链表为空
+        for (int index = 0; !videoList.isEmpty(); index++) {
+            videoDate = videoList.get(0).getGmtModified().toLocalDateTime().toLocalDate();
+            videos = new JSONArray();
+            if(videoList.get(index).getGmtModified().toLocalDateTime().toLocalDate() == videoDate){
+                JSONObject video = new JSONObject();
+                video.put("videoID", videoList.get(index).getId());
+                video.put("name", videoList.get(index).getVideoName());
+                video.put("url", videoList.get(index).getVideoUrl());
+                for(VideoWatchEntity watch :watchList){
+                    if(watch.getVideoId() == videoList.get(index).getId()){
+                        video.put("isWatch", true);
+                        break;
+                    }
+                    else{
+                        video.put("isWatch", false);
+                    }
+                }
+                videos.put(video);
+                videoList.remove(index);
+            }
+            //当一次循环完成时
+            if (index == videoList.size() - 1){
+                index = 0;
+                JSONObject dateObject = new JSONObject();
+                dateObject.put("date", videoDate.toString());
+                dateObject.put("videos", videos);
+                result.put(dateObject);
+            }
+        }
+        responseJson.put("success", true);
+        responseJson.put("result", result);
+        return responseJson.toString();
     }
 }

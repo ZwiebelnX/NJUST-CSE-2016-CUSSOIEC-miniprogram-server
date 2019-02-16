@@ -11,7 +11,6 @@ import java.util.Objects;
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "course", schema = "online_cussoiec", catalog = "")
-@IdClass(CourseEntityPK.class)
 public class CourseEntity {
     private long id;
     private Timestamp gmtCreate;
@@ -24,6 +23,8 @@ public class CourseEntity {
     private String classTime;
     private String description;
     private String classWeek;
+    private String liveUrl;
+    private Byte isLive;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -77,7 +78,7 @@ public class CourseEntity {
         this.courseName = courseName;
     }
 
-    @Id
+    @Basic
     @Column(name = "teacher_id", nullable = false)
     public long getTeacherId() {
         return teacherId;
@@ -98,7 +99,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "classroom_location", nullable = false, length = 20)
+    @Column(name = "classroom_location", nullable = true, length = 20)
     public String getClassroomLocation() {
         return classroomLocation;
     }
@@ -108,7 +109,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "class_time", nullable = false, length = 30)
+    @Column(name = "class_time", nullable = true, length = 30)
     public String getClassTime() {
         return classTime;
     }
@@ -128,7 +129,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "class_week", nullable = false, length = 10)
+    @Column(name = "class_week", nullable = true, length = 10)
     public String getClassWeek() {
         return classWeek;
     }
@@ -158,5 +159,25 @@ public class CourseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, gmtCreate, gmtModified, courseNumber, courseName, teacherId, teacherName, classroomLocation, classTime, description, classWeek);
+    }
+
+    @Basic
+    @Column(name = "live_url", nullable = true, length = 255)
+    public String getLiveUrl() {
+        return liveUrl;
+    }
+
+    public void setLiveUrl(String liveUrl) {
+        this.liveUrl = liveUrl;
+    }
+
+    @Basic
+    @Column(name = "is_live", nullable = true)
+    public Byte getIsLive() {
+        return isLive;
+    }
+
+    public void setIsLive(Byte isLive) {
+        this.isLive = isLive;
     }
 }
