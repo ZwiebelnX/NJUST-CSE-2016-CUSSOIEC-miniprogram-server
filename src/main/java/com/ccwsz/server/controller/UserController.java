@@ -87,4 +87,9 @@ public class UserController {
         JSONObject data = json.getJSONObject("data");
         return userService.changeUserInfo(collegeName, personNumber, data);
     }
+
+    @RequestMapping(value = "test")
+    public void test(){
+        userService.test();
+    }
 }

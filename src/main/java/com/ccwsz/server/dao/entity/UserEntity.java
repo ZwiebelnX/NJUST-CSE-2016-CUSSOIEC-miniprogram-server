@@ -71,7 +71,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "user_type", nullable = false, length = 7)
+    @Column(name = "user_type", columnDefinition = "student", nullable = false, length = 7)
     public String getUserType() {
         return userType;
     }
@@ -81,7 +81,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "person_number", nullable = true, length = 20)
+    @Column(name = "person_number", columnDefinition = "", nullable = true, length = 20)
     public String getPersonNumber() {
         return personNumber;
     }
@@ -91,7 +91,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "real_name", nullable = true, length = 15)
+    @Column(name = "real_name", nullable = true, columnDefinition = "", length = 15)
     public String getRealName() {
         return realName;
     }
@@ -101,7 +101,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "nick_name", nullable = true, length = 20)
+    @Column(name = "nick_name", nullable = true, columnDefinition = "", length = 20)
     public String getNickName() {
         return nickName;
     }
@@ -131,7 +131,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "academy", nullable = true, length = 20)
+    @Column(name = "academy", nullable = true, columnDefinition = "", length = 20)
     public String getAcademy() {
         return academy;
     }
@@ -141,7 +141,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "major", nullable = true, length = 20)
+    @Column(name = "major", nullable = true, columnDefinition = "", length = 20)
     public String getMajor() {
         return major;
     }
@@ -151,7 +151,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "phone", nullable = true, length = 11)
+    @Column(name = "phone", nullable = true, columnDefinition = "", length = 11)
     public String getPhone() {
         return phone;
     }
@@ -161,7 +161,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "email", nullable = true, length = 30)
+    @Column(name = "email", nullable = true, columnDefinition = "", length = 30)
     public String getEmail() {
         return email;
     }

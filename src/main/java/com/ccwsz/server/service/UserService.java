@@ -80,6 +80,7 @@ public class UserService {
                     if(!tempJson.has("errcode") || tempJson.getInt("errcode") == 0){
                         UserEntity newUser=new UserEntity();
                         newUser.setOpenid(tempJson.getString("openid"));
+                        newUser.setUserType("student");
                         userRepository.save(newUser);
                         resultJson.put("result", tempJson.getString("openid"));
                         resultJson.put("success", true);
@@ -238,5 +239,12 @@ public class UserService {
         JSONObject resultJson = new JSONObject();
         resultJson.put("success", true);
         return resultJson.toString();
+    }
+
+    public void test(){
+        UserEntity userEntity = new UserEntity();
+        userEntity.setOpenid("000");
+        userEntity.setUserType("student");
+        userRepository.save(userEntity);
     }
 }
