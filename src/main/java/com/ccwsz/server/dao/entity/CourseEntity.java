@@ -25,6 +25,7 @@ public class CourseEntity {
     private String classWeek;
     private String liveUrl;
     private Byte isLive;
+    private Byte isCheckingIn;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -179,5 +180,15 @@ public class CourseEntity {
 
     public void setIsLive(Byte isLive) {
         this.isLive = isLive;
+    }
+
+    @Basic
+    @Column(name = "is_checking_in", nullable = true)
+    public Byte getIsCheckingIn() {
+        return isCheckingIn;
+    }
+
+    public void setIsCheckingIn(Byte isCheckingIn) {
+        this.isCheckingIn = isCheckingIn;
     }
 }

@@ -51,7 +51,7 @@ public class CourseChooseEntity {
         this.gmtModified = gmtModified;
     }
 
-    @Id
+    @Basic
     @Column(name = "course_id", nullable = false)
     public long getCourseId() {
         return courseId;
@@ -71,7 +71,7 @@ public class CourseChooseEntity {
         this.studentId = studentId;
     }
 
-    @Id
+    @Basic
     @Column(name = "teacher_id", nullable = false)
     public long getTeacherId() {
         return teacherId;

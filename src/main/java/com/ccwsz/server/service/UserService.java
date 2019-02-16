@@ -218,6 +218,7 @@ public class UserService {
         result.put("phone",currentUser.getPhone());
         result.put("email",currentUser.getEmail());
         responseJson.put("result", result);
+        JsonManage.filterNull(responseJson);
         return responseJson.toString();
     }
 

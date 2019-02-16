@@ -1,6 +1,7 @@
 package com.ccwsz.server.controller;
 
 import com.ccwsz.server.service.UserService;
+import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,5 +87,14 @@ public class UserController {
         String personNumber = json.getString("personID");
         JSONObject data = json.getJSONObject("data");
         return userService.changeUserInfo(collegeName, personNumber, data);
+    }
+
+    @RequestMapping(value = "test", produces = "application/json;charset=UTF-8")
+    public void jsonNullTest(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("notNull", "good");
+        jsonObject.put("null", JSONObject.NULL);
+        JsonManage.filterNull(jsonObject);
+        System.out.println(jsonObject);
     }
 }
