@@ -242,7 +242,7 @@ public class UserService {
     }
     //尝试签到
     @Transactional
-    public String tryCheckingin(String collegeName,String personNumber,String courseNumber){
+    public String tryCheckingin(String collegeName,String personNumber,String courseNumber,String numOfWeek,String dayOfWeek,String indexOfDay){
         UserEntity currentUser=userRepository.findByCollegeAndPersonNumber(collegeName,personNumber);
         JSONObject jsonObject=new JSONObject();
         if(currentUser==null){

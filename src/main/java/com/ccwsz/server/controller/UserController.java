@@ -94,9 +94,12 @@ public class UserController {
     @ResponseBody
     public String tryCheckingin(@RequestBody String jsonString){
         JSONObject jsonObject =new JSONObject(jsonString);
+        String numOfWeek=jsonObject.getString("numOfWeek");
+        String dayOfWeek=jsonObject.getString("dayOfWeek");
+        String indexOfDay=jsonObject.getString("indexOfDay");
         String college=jsonObject.getString("college");
         String personID=jsonObject.getString("personID");
         String courseID=jsonObject.getString("courseID");
-        return userService.tryCheckingin(college,personID,courseID);
+        return userService.tryCheckingin(college,personID,courseID,numOfWeek,dayOfWeek,indexOfDay);
     }
 }
