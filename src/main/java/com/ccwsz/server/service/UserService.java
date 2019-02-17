@@ -291,7 +291,44 @@ public class UserService {
     //考勤状态
     public String getCheckingInState(String collegeName,String personNumber,String courseNumber){
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
-
-        return "1";
+        JSONObject resultJSON=new JSONObject();
+        if(currentUser==null){
+            resultJSON.put("success",false);
+            resultJSON.put("reason","此用户不存在！");
+            return resultJSON.toString();
+        }
+        CourseEntity currentCourse=courseRepository.findByCourseNumber(courseNumber);
+        if(currentCourse==null){
+            resultJSON.put("success",false);
+            resultJSON.put("reason","此课程不存在！");
+            return resultJSON.toString();
+        }
+        Long personId=currentUser.getId();
+        Long courseId=currentCourse.getId();
+        CourseCheckingInEntity courseCheckingInEntity=courseCheckingInRepository.findByUserIdAndCourseId(personId,courseId);
+        if(courseCheckingInEntity==null){
+            resultJSON.put("success",false);
+            resultJSON.put("reason","该课您还未有考勤情况！");
+            return resultJSON.toString();
+        }
+        Byte isCheckingin=currentCourse.getIsCheckingIn();
+        String isChecking=Byte.toString(isCheckingin);
+        JSONObject result=new JSONObject();
+        if(isChecking.equals("0")){
+            result.put("isOpen",false);
+        }
+        else{
+            result.put("isOpen",true);
+        }
+        String hasChecked=courseCheckingInEntity.getCheckingStatus();
+        if(hasChecked.equals("未签到")) {
+            result.put("hasChecked",false);
+        }
+        else{
+            result.put("hasChecked",true);
+        }
+        resultJSON.put("success",true);
+        resultJSON.put("result",result);
+        return resultJSON.toString();
     }
 }
