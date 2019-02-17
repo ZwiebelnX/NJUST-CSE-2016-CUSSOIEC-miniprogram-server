@@ -19,6 +19,9 @@ public class CourseCheckingInEntity {
     private String checkingStatus;
     private long courseId;
     private long userId;
+    private int weekNum;
+    private int dayNum;
+    private int indexNum;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -50,16 +53,6 @@ public class CourseCheckingInEntity {
 
     public void setGmtModified(Timestamp gmtModified) {
         this.gmtModified = gmtModified;
-    }
-
-    @Basic
-    @Column(name = "checking_time", nullable = false, length = 10)
-    public String getCheckingTime() {
-        return checkingTime;
-    }
-
-    public void setCheckingTime(String checkingTime) {
-        this.checkingTime = checkingTime;
     }
 
     @Basic
@@ -107,5 +100,35 @@ public class CourseCheckingInEntity {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    @Basic
+    @Column(name = "week_num", nullable = false)
+    public int getWeekNum() {
+        return weekNum;
+    }
+
+    public void setWeekNum(int weekNum) {
+        this.weekNum = weekNum;
+    }
+
+    @Basic
+    @Column(name = "day_num", nullable = false)
+    public int getDayNum() {
+        return dayNum;
+    }
+
+    public void setDayNum(int dayNum) {
+        this.dayNum = dayNum;
+    }
+
+    @Basic
+    @Column(name = "index_num", nullable = false)
+    public int getIndexNum() {
+        return indexNum;
+    }
+
+    public void setIndexNum(int indexNum) {
+        this.indexNum = indexNum;
     }
 }
