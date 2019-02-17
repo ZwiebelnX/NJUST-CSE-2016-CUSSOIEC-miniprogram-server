@@ -165,6 +165,9 @@ public class CourseEntity {
     @Basic
     @Column(name = "live_url", nullable = true, length = 255)
     public String getLiveUrl() {
+        if(liveUrl == null){
+            return "";
+        }
         return liveUrl;
     }
 
@@ -175,6 +178,9 @@ public class CourseEntity {
     @Basic
     @Column(name = "is_live", nullable = true)
     public Byte getIsLive() {
+        if(isLive == null){
+            return 0;
+        }
         return isLive;
     }
 

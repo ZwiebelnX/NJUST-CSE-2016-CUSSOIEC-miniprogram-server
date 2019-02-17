@@ -122,10 +122,10 @@ public class CourseService {
             return JsonManage.buildFailureMessage("找不到指定课程！");
         }
         JSONObject result = new JSONObject();
-        if (course.getIsLive() == 1) {
-            result.put("isLive", true);
+        if (course.getIsLive() == null || course.getIsLive() == 0 ) {
+            result.put("isLive", false);
         } else {
-            responseJson.put("isLive", false);
+            responseJson.put("isLive", true);
         }
         result.put("url", course.getLiveUrl());
         responseJson.put("result", result);
@@ -144,15 +144,14 @@ public class CourseService {
         List<CourseVideoEntity> videoList = courseVideoRepository.findByCourseId(courseId);
         List<VideoWatchEntity> watchList = videoWatchRepository.findByUserIdAndCourseId(userId, courseId);
         //根据日期分类视频，同时打上是否观看的标签
+        //初始化第一次循环
         JSONArray result = new JSONArray(); //result字段
-        LocalDate videoDate; //用于视频分类
-        JSONArray videos; //以日期为分类的视频列表
+        LocalDate videoDate = videoList.get(0).getGmtModified().toLocalDateTime().toLocalDate(); //用于视频分类
+        JSONArray videos = new JSONArray(); //以日期为分类的视频列表
         //分类循环
-        for (int index = 0; !videoList.isEmpty(); index++) {
-            videoDate = videoList.get(0).getGmtModified().toLocalDateTime().toLocalDate(); //每次以链表中第一个视频的日期为分类
-            videos = new JSONArray();
+        for (int index = 0;;) {
             //按日期分类视频
-            if (videoList.get(index).getGmtModified().toLocalDateTime().toLocalDate() == videoDate) {
+            if (videoList.get(index).getGmtModified().toLocalDateTime().toLocalDate().isEqual(videoDate)) {
                 JSONObject video = new JSONObject();
                 video.put("videoID", videoList.get(index).getId());
                 video.put("name", videoList.get(index).getVideoName());
@@ -168,14 +167,24 @@ public class CourseService {
                 }
                 videos.put(video);
                 videoList.remove(index); //加入json后 从链表中移除视频
+                //由于删除了第一个节点 不移动index即可指向下一个节点
+            }
+            else{
+                index++; //如果不匹配 寻找下一个节点
             }
             //当一次循环完成时
-            if (index == videoList.size() - 1) {
+            if (index >= videoList.size()) {
                 index = 0;
                 JSONObject dateObject = new JSONObject(); //一次循环完成后，用于压入数组的临时object
                 dateObject.put("date", videoDate.toString());
                 dateObject.put("videos", videos);
                 result.put(dateObject); //加入result字段
+                //视频分类完毕 退出循环
+                if(videoList.isEmpty()){
+                    break;
+                }
+                videoDate = videoList.get(0).getGmtModified().toLocalDateTime().toLocalDate();
+                videos = new JSONArray();
             }
         }
         responseJson.put("success", true);
