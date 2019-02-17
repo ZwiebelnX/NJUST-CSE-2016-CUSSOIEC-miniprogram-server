@@ -32,11 +32,11 @@ public class CourseController {
     //返回课程的直播信息
     @RequestMapping(value = "/course/live_info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getCourseLiveInfo(HttpServletRequest request){
+    public String getCourseLiveInfo(HttpServletRequest request) {
         long courseId;
-        try{
+        try {
             courseId = Integer.parseInt(request.getParameter("courseID"));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！");
         }
@@ -46,12 +46,12 @@ public class CourseController {
     //针对个人，返回课程的视频
     @RequestMapping(value = "/course/videos", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getCourseVideoInfo(HttpServletRequest request){
+    public String getCourseVideoInfo(HttpServletRequest request) {
         String openid = request.getParameter("openid");
         long courseId;
-        try{
+        try {
             courseId = Integer.parseInt(request.getParameter("courseID"));
-        } catch (Exception e){
+        } catch (Exception e) {
             return JsonManage.buildFailureMessage("数据格式错误！");
         }
         return courseService.getCourseVideoInfo(openid, courseId);

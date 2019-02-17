@@ -25,37 +25,39 @@ import java.util.List;
 public class UserService {
     private UserRepository userRepository;
     private CollegeRepository collegeRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository, CollegeRepository collegeRepository){this.userRepository = userRepository;this.collegeRepository = collegeRepository;}
+    public UserService(UserRepository userRepository, CollegeRepository collegeRepository) {
+        this.userRepository = userRepository;
+        this.collegeRepository = collegeRepository;
+    }
 
     //获取学号
-    public String getStudentNumber(String openId){
-        JSONObject jsonObject=new JSONObject();
-        try{
-            UserEntity student= userRepository.findByOpenid(openId);
-            if(student!=null) {
+    public String getStudentNumber(String openId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            UserEntity student = userRepository.findByOpenid(openId);
+            if (student != null) {
                 String studentId = student.getPersonNumber();
-                String collegeName=student.getCollege();
+                String collegeName = student.getCollege();
                 jsonObject.put("success", true);
-                JSONObject result=new JSONObject();
-                result.put("college",collegeName);
-                result.put("personID",studentId);
+                JSONObject result = new JSONObject();
+                result.put("college", collegeName);
+                result.put("personID", studentId);
                 jsonObject.put("result", result);
-            }
-            else jsonObject.put("success",false);
-        }
-        catch (Exception e){
+            } else jsonObject.put("success", false);
+        } catch (Exception e) {
             e.printStackTrace();
-            jsonObject.put("success",false);
+            jsonObject.put("success", false);
         }
-        return  jsonObject.toString();
+        return jsonObject.toString();
     }
 
     /*
     获取openid
     同时定义用户登录状态
      */
-    public String getOpenId(String code){
+    public String getOpenId(String code) {
         JSONObject resultJson = new JSONObject();
         try {
             String url = "https://api.weixin.qq.com/sns/jscode2session"; //微信服务器API端口
@@ -64,7 +66,7 @@ public class UserService {
                     + "&secret=" + GlobalData.APP_SECRET
                     + "&grant_type=" + GlobalData.GRANT_TYPE
                     + "&js_code=" + code;
-            url = url + "?" +params;
+            url = url + "?" + params;
             //向微信服务器发送请求
             OkHttpClient httpClient = new OkHttpClient();
             final Request request = new Request.Builder()
@@ -73,20 +75,19 @@ public class UserService {
                     .build();
             final Call call = httpClient.newCall(request);
             Response response = call.execute();
-            if(response.isSuccessful()){
-                if(response.body() != null){
+            if (response.isSuccessful()) {
+                if (response.body() != null) {
                     JSONObject tempJson = new JSONObject(response.body().string());
                     System.out.println(tempJson.toString());
-                    if(!tempJson.has("errcode") || tempJson.getInt("errcode") == 0){
-                        UserEntity newUser=new UserEntity();
+                    if (!tempJson.has("errcode") || tempJson.getInt("errcode") == 0) {
+                        UserEntity newUser = new UserEntity();
                         newUser.setOpenid(tempJson.getString("openid"));
                         newUser.setUserType("student");
                         userRepository.save(newUser);
                         resultJson.put("result", tempJson.getString("openid"));
                         resultJson.put("success", true);
-                    }
-                    else{
-                        switch (tempJson.getInt("errcode")){
+                    } else {
+                        switch (tempJson.getInt("errcode")) {
                             case -1:
                                 return JsonManage.buildFailureMessage("微信服务器忙，稍后重试");
                             case 40029:
@@ -98,13 +99,11 @@ public class UserService {
                         }
                     }
                 }
-            }
-            else{
+            } else {
                 return JsonManage.buildFailureMessage("微信服务器连接失败！请稍后再试");
             }
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return JsonManage.buildFailureMessage("Internal error!");
         }
@@ -112,9 +111,9 @@ public class UserService {
     }
 
     //获取周次信息
-    public String getWeekMessage(String data,String collegeName,String personId) {
-        JSONObject result=new JSONObject();
-        try{
+    public String getWeekMessage(String data, String collegeName, String personId) {
+        JSONObject result = new JSONObject();
+        try {
             //获取开学时间以字符串的形式
             CollegeEntity currentCollege = collegeRepository.findByName(collegeName);
             //System.out.print(personId+" "+collegeName);
@@ -126,8 +125,8 @@ public class UserService {
             }
             String grade = currentUser.getGrade();
             Date openingTime;
-            Date endWeek=currentCollege.getEndingDate();
-            switch(grade){
+            Date endWeek = currentCollege.getEndingDate();
+            switch (grade) {
                 case "本科一年级":
                     openingTime = currentCollege.getOpeningDate1();
                     break;
@@ -151,35 +150,33 @@ public class UserService {
             Date currentDate = format.parse(data);
 //            Date endDate=format.parse(endTime.toString());
             long diffEnd = currentDate.getTime() - openingTime.getTime();
-            long countEnd = endWeek.getTime()-openingTime.getTime();
+            long countEnd = endWeek.getTime() - openingTime.getTime();
             int currentWeek = (int) (diffEnd / (24 * 60 * 60 * 1000) / 7);
-            int countWeek=(int)(countEnd/(24*60*60*1000)/7);
+            int countWeek = (int) (countEnd / (24 * 60 * 60 * 1000) / 7);
             List<Integer> range = new ArrayList<>();
             range.add(1);
-            range.add(countWeek+1);
-            result.put("success",true);
-            JSONObject resultTmp=new JSONObject();
-            resultTmp.put("numOfWeek",currentWeek+1);
-            resultTmp.put("range",range);
-            result.put("result",resultTmp);
-        }
-        catch (Exception e){
+            range.add(countWeek + 1);
+            result.put("success", true);
+            JSONObject resultTmp = new JSONObject();
+            resultTmp.put("numOfWeek", currentWeek + 1);
+            resultTmp.put("range", range);
+            result.put("result", resultTmp);
+        } catch (Exception e) {
             e.printStackTrace();
-            result.put("success",false);
+            result.put("success", false);
         }
         return result.toString();
     }
 
     //绑定学号/.教工号
     @Transactional
-    public String bindingUser(String openId, String college, String personNumber, String realName, String nickName){
-        JSONObject result=new JSONObject();
-        try{
-            UserEntity currentUser=userRepository.findByOpenid(openId);
-            if(currentUser==null){
-                result.put("success",false);
-            }
-            else {
+    public String bindingUser(String openId, String college, String personNumber, String realName, String nickName) {
+        JSONObject result = new JSONObject();
+        try {
+            UserEntity currentUser = userRepository.findByOpenid(openId);
+            if (currentUser == null) {
+                result.put("success", false);
+            } else {
                 currentUser.setPersonNumber(personNumber);
                 currentUser.setRealName(realName);
                 currentUser.setNickName(nickName);
@@ -187,8 +184,7 @@ public class UserService {
                 userRepository.save(currentUser);
                 result.put("success", true);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据存储失败！");
         }
@@ -197,43 +193,42 @@ public class UserService {
     }
 
     //获取用户信息
-    public String getUserInfo(String openId){
-        JSONObject responseJson=new JSONObject();
+    public String getUserInfo(String openId) {
+        JSONObject responseJson = new JSONObject();
         UserEntity currentUser = userRepository.findByOpenid(openId);
-        if(currentUser == null){
+        if (currentUser == null) {
             //TODO 空查询处理
             return JsonManage.buildFailureMessage("用户不存在");
         }
-        responseJson.put("success",true);
+        responseJson.put("success", true);
         JSONObject result = new JSONObject();
-        result.put("userType",currentUser.getUserType());
-        result.put("college",currentUser.getCollege());
-        result.put("personID",currentUser.getPersonNumber());
-        result.put("realName",currentUser.getRealName());
-        result.put("nickName",currentUser.getNickName());
-        result.put("gender",currentUser.getGender());
-        result.put("grade",currentUser.getGrade());
-        result.put("academy",currentUser.getAcademy());
-        result.put("major",currentUser.getMajor());
-        result.put("phone",currentUser.getPhone());
-        result.put("email",currentUser.getEmail());
+        result.put("userType", currentUser.getUserType());
+        result.put("college", currentUser.getCollege());
+        result.put("personID", currentUser.getPersonNumber());
+        result.put("realName", currentUser.getRealName());
+        result.put("nickName", currentUser.getNickName());
+        result.put("gender", currentUser.getGender());
+        result.put("grade", currentUser.getGrade());
+        result.put("academy", currentUser.getAcademy());
+        result.put("major", currentUser.getMajor());
+        result.put("phone", currentUser.getPhone());
+        result.put("email", currentUser.getEmail());
         responseJson.put("result", result);
-        JsonManage.filterNull(responseJson);
         return responseJson.toString();
     }
 
     //修改用户信息
-    public String changeUserInfo(String college, String personNumber, JSONObject data){
+    public String changeUserInfo(String college, String personNumber, JSONObject data) {
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(college, personNumber);
-        if(currentUser == null){
+        if (currentUser == null) {
             return JsonManage.buildFailureMessage("用户不存在！");
         }
         currentUser.setNickName(data.getString("nickName"));
         currentUser.setPhone(data.getString("phone"));
         currentUser.setEmail(data.getString("email"));
-        try{
+        try {
             userRepository.save(currentUser);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据存储失败！请检查数据格式");
         }

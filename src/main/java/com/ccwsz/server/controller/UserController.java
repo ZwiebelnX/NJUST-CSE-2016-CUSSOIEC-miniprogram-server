@@ -31,10 +31,10 @@ public class UserController {
     }
 
     //获取openid
-    @RequestMapping(value="/global/openid", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/global/openid", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getOpenid(HttpServletRequest request){
-        String code=request.getParameter("code");
+    public String getOpenid(HttpServletRequest request) {
+        String code = request.getParameter("code");
         return userService.getOpenId(code);
     }
 
@@ -57,11 +57,11 @@ public class UserController {
             JSONObject jsonObject = new JSONObject(jsonString);
             String openid = jsonObject.getString("openid");
             JSONObject data = jsonObject.getJSONObject("data");
-            String college=data.getString("college");
-            String personID=data.getString("personID");
-            String realName=data.getString("realName");
-            String nickName=data.getString("nickName");
-            return userService.bindingUser(openid,college,personID,realName,nickName);
+            String college = data.getString("college");
+            String personID = data.getString("personID");
+            String realName = data.getString("realName");
+            String nickName = data.getString("nickName");
+            return userService.bindingUser(openid, college, personID, realName, nickName);
         } catch (JSONException e) {
             e.printStackTrace();
             JSONObject result = new JSONObject();
@@ -81,7 +81,7 @@ public class UserController {
     //修改用户信息
     @RequestMapping(value = "/user/info", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String changeUserInfo(@RequestBody String jsonString){
+    public String changeUserInfo(@RequestBody String jsonString) {
         JSONObject json = new JSONObject(jsonString);
         String collegeName = json.getString("college");
         String personNumber = json.getString("personID");
@@ -89,12 +89,4 @@ public class UserController {
         return userService.changeUserInfo(collegeName, personNumber, data);
     }
 
-    @RequestMapping(value = "test", produces = "application/json;charset=UTF-8")
-    public void jsonNullTest(){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("notNull", "good");
-        jsonObject.put("null", JSONObject.NULL);
-        JsonManage.filterNull(jsonObject);
-        System.out.println(jsonObject);
-    }
 }

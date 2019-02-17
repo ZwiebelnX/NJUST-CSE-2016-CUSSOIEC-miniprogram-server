@@ -73,6 +73,9 @@ public class UserEntity {
     @Basic
     @Column(name = "user_type", columnDefinition = "student", nullable = false, length = 7)
     public String getUserType() {
+        if(userType == null){
+            return "";
+        }
         return userType;
     }
 
@@ -83,6 +86,9 @@ public class UserEntity {
     @Basic
     @Column(name = "person_number", columnDefinition = "", nullable = true, length = 20)
     public String getPersonNumber() {
+        if(personNumber == null){
+            return "";
+        }
         return personNumber;
     }
 
@@ -93,6 +99,9 @@ public class UserEntity {
     @Basic
     @Column(name = "real_name", nullable = true, columnDefinition = "", length = 15)
     public String getRealName() {
+        if(realName == null){
+            return "";
+        }
         return realName;
     }
 
@@ -103,16 +112,23 @@ public class UserEntity {
     @Basic
     @Column(name = "nick_name", nullable = true, columnDefinition = "", length = 20)
     public String getNickName() {
+        if(nickName == null){
+            return "";
+        }
         return nickName;
     }
 
     public void setNickName(String nickName) {
+
         this.nickName = nickName;
     }
 
     @Basic
     @Column(name = "gender", nullable = true, columnDefinition = "male", length = 6)
     public String getGender() {
+        if(gender == null){
+            return "";
+        }
         return gender;
     }
 
@@ -123,6 +139,9 @@ public class UserEntity {
     @Basic
     @Column(name = "grade", nullable = true, columnDefinition = "1" ,length = 5)
     public String getGrade() {
+        if(grade == null){
+            return "";
+        }
         return grade;
     }
 
@@ -133,6 +152,9 @@ public class UserEntity {
     @Basic
     @Column(name = "academy", nullable = true, columnDefinition = "", length = 20)
     public String getAcademy() {
+        if(academy == null){
+            return "";
+        }
         return academy;
     }
 
@@ -143,6 +165,9 @@ public class UserEntity {
     @Basic
     @Column(name = "major", nullable = true, columnDefinition = "", length = 20)
     public String getMajor() {
+        if(major == null){
+            return "";
+        }
         return major;
     }
 
@@ -153,6 +178,9 @@ public class UserEntity {
     @Basic
     @Column(name = "phone", nullable = true, columnDefinition = "", length = 11)
     public String getPhone() {
+        if(phone == null){
+            return "";
+        }
         return phone;
     }
 
@@ -163,6 +191,9 @@ public class UserEntity {
     @Basic
     @Column(name = "email", nullable = true, columnDefinition = "", length = 30)
     public String getEmail() {
+        if(email == null){
+            return "";
+        }
         return email;
     }
 
