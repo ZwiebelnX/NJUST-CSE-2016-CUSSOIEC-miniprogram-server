@@ -240,39 +240,37 @@ public class UserService {
         resultJson.put("success", true);
         return resultJson.toString();
     }
+
     //尝试签到
     @Transactional
-    public String tryCheckingin(String collegeName,String personNumber,String courseNumber,Integer numOfWeek,Integer dayOfWeek,Integer indexOfDay){
-        UserEntity currentUser=userRepository.findByCollegeAndPersonNumber(collegeName,personNumber);
+    public String tryCheckingIn(String collegeName, String personNumber, String courseNumber, Integer numOfWeek, Integer dayOfWeek, Integer indexOfDay){
+        UserEntity currentUser=userRepository.findByCollegeAndPersonNumber(collegeName,personNumber); //当前用户
         JSONObject jsonObject=new JSONObject();
         if(currentUser==null){
-            jsonObject.put("success",false);
-            jsonObject.put("reason","用户不存在");
-            return jsonObject.toString();
+            return JsonManage.buildFailureMessage("用户不存在！");
         }
         CourseEntity currentCourse=courseRepository.findByCourseNumber(courseNumber);
         if(currentCourse==null){
-            jsonObject.put("success",false);
-            jsonObject.put("reason","不存在这门课程，不能签到！");
-            return jsonObject.toString();
+            return JsonManage.buildFailureMessage("不存在该门课程！");
         }
-        Byte isCheckingin=currentCourse.getIsCheckingIn();
-        String isChecking=Byte.toString(isCheckingin);
+        String isChecking=Byte.toString(currentCourse.getIsCheckingIn());
         if(isChecking.equals("0")){
-            jsonObject.put("success",false);
-            jsonObject.put("reason","该门课未开启签到！");
-            return jsonObject.toString();
+            return JsonManage.buildFailureMessage("课程还未开始签到！");
         }
+        //获取选课列表避免错误签到
+
+        //改成查询签到表内是否存在该学生即可
         Long userId=currentUser.getId();
         Long courseId=currentCourse.getId();
-        CourseChooseEntity currentCourseChoose=courseChooseRepository.findByStudentIdAndCourseId(userId,courseId);
-        if(currentCourseChoose==null){
-            jsonObject.put("success",false);
-            jsonObject.put("reason","您未选该门课，不能签到！");
-            return jsonObject.toString();
-        }
+//        CourseChooseEntity currentCourseChoose=courseChooseRepository.findByStudentIdAndCourseId(userId,courseId);
+//        if(currentCourseChoose==null){
+//            JsonManage.buildFailureMessage("您未选该门课，不能签到！");
+//        }
         try {
             CourseCheckingInEntity courseCheckingInEntity = courseCheckingInRepository.findByUserIdAndCourseId(userId,courseId);
+            if(courseCheckingInEntity==null){
+                return JsonManage.buildFailureMessage("您未选该门课，不能签到！");
+            }
             courseCheckingInEntity.setCheckingStatus("按时签到");
             courseCheckingInEntity.setWeekNum(numOfWeek);
             courseCheckingInEntity.setDayNum(dayOfWeek);
@@ -283,36 +281,28 @@ public class UserService {
         }
         catch (Exception e){
             e.printStackTrace();
-            jsonObject.put("success",false);
-            jsonObject.put("reason","数据存储失败！请检查数据格式");
-            return jsonObject.toString();
+            return JsonManage.buildFailureMessage("数据存储失败！请检查数据格式");
         }
     }
+
     //考勤状态
     public String getCheckingInState(String collegeName,String personNumber,String courseNumber){
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
         JSONObject resultJSON=new JSONObject();
         if(currentUser==null){
-            resultJSON.put("success",false);
-            resultJSON.put("reason","此用户不存在！");
-            return resultJSON.toString();
+            return JsonManage.buildFailureMessage("此用户不存在！");
         }
         CourseEntity currentCourse=courseRepository.findByCourseNumber(courseNumber);
         if(currentCourse==null){
-            resultJSON.put("success",false);
-            resultJSON.put("reason","此课程不存在！");
-            return resultJSON.toString();
+            return JsonManage.buildFailureMessage("此课程不存在！");
         }
         Long personId=currentUser.getId();
         Long courseId=currentCourse.getId();
         CourseCheckingInEntity courseCheckingInEntity=courseCheckingInRepository.findByUserIdAndCourseId(personId,courseId);
         if(courseCheckingInEntity==null){
-            resultJSON.put("success",false);
-            resultJSON.put("reason","该课您还未有考勤情况！");
-            return resultJSON.toString();
+            return JsonManage.buildFailureMessage("该课您还未有考勤情况！");
         }
-        Byte isCheckingin=currentCourse.getIsCheckingIn();
-        String isChecking=Byte.toString(isCheckingin);
+        String isChecking=Byte.toString(currentCourse.getIsCheckingIn()); //为啥要转成String再比较？
         JSONObject result=new JSONObject();
         if(isChecking.equals("0")){
             result.put("isOpen",false);

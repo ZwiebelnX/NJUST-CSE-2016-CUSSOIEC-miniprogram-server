@@ -1,7 +1,6 @@
 package com.ccwsz.server.controller;
 
 import com.ccwsz.server.service.UserService;
-import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +97,7 @@ public class UserController {
         String courseID=jsonObject.getString("courseID");
         return userService.getCheckingInState(college,personID,courseID);
     }
+
     //尝试考勤
     @RequestMapping(value="/course/check_in", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -109,6 +109,6 @@ public class UserController {
         String college=jsonObject.getString("college");
         String personID=jsonObject.getString("personID");
         String courseID=jsonObject.getString("courseID");
-        return userService.tryCheckingin(college,personID,courseID,numOfWeek,dayOfWeek,indexOfDay);
+        return userService.tryCheckingIn(college,personID,courseID,numOfWeek,dayOfWeek,indexOfDay);
     }
 }
