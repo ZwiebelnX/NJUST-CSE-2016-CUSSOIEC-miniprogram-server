@@ -49,6 +49,7 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
             jsonObject.put("success", false);
+            return JsonManage.buildFailureMessage("获取学号失败！");
         }
         return jsonObject.toString();
     }
@@ -146,9 +147,7 @@ public class UserService {
             }
             //将时间戳转换为Date
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            //Date openingDate = format.parse(openingTime.toString());
             Date currentDate = format.parse(data);
-//            Date endDate=format.parse(endTime.toString());
             long diffEnd = currentDate.getTime() - openingTime.getTime();
             long countEnd = endWeek.getTime() - openingTime.getTime();
             int currentWeek = (int) (diffEnd / (24 * 60 * 60 * 1000) / 7);
@@ -164,6 +163,7 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
+            return JsonManage.buildFailureMessage("获取周次信息失败!");
         }
         return result.toString();
     }
