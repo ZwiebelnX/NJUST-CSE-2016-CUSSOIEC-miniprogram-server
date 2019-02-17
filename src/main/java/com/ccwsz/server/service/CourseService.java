@@ -110,7 +110,8 @@ public class CourseService {
             ex.printStackTrace();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("success", false);
-            return JsonManage.buildFailureMessage("获取课表失败!");
+            jsonObject.put("reason","获取课表失败!");
+            return  jsonObject.toString();
         }
     }
 

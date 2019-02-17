@@ -1,9 +1,7 @@
 package com.ccwsz.server.service;
 
-import com.ccwsz.server.dao.dock.CollegeRepository;
-import com.ccwsz.server.dao.dock.UserRepository;
-import com.ccwsz.server.dao.entity.CollegeEntity;
-import com.ccwsz.server.dao.entity.UserEntity;
+import com.ccwsz.server.dao.dock.*;
+import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.GlobalData;
 import com.ccwsz.server.service.util.JsonManage;
 import okhttp3.Call;
@@ -25,11 +23,17 @@ import java.util.List;
 public class UserService {
     private UserRepository userRepository;
     private CollegeRepository collegeRepository;
-
+    private CourseRepository courseRepository;
+    private CourseChooseRepository courseChooseRepository;
+    private CourseCheckingInRepository courseCheckingInRepository;
     @Autowired
-    public UserService(UserRepository userRepository, CollegeRepository collegeRepository) {
+    public UserService(UserRepository userRepository, CollegeRepository collegeRepository,CourseRepository courseRepository
+                        ,CourseChooseRepository courseChooseRepository,CourseCheckingInRepository courseCheckingInRepository) {
         this.userRepository = userRepository;
         this.collegeRepository = collegeRepository;
+        this.courseRepository = courseRepository;
+        this.courseChooseRepository=courseChooseRepository;
+        this.courseCheckingInRepository=courseCheckingInRepository;
     }
 
     //获取学号
@@ -48,8 +52,8 @@ public class UserService {
             } else jsonObject.put("success", false);
         } catch (Exception e) {
             e.printStackTrace();
+            jsonObject.put("reason","未能获取学号");
             jsonObject.put("success", false);
-            return JsonManage.buildFailureMessage("获取学号失败！");
         }
         return jsonObject.toString();
     }
@@ -163,7 +167,7 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            return JsonManage.buildFailureMessage("获取周次信息失败!");
+            result.put("reason","获取周次信息失败!");
         }
         return result.toString();
     }
@@ -235,5 +239,50 @@ public class UserService {
         JSONObject resultJson = new JSONObject();
         resultJson.put("success", true);
         return resultJson.toString();
+    }
+    //尝试签到
+    @Transactional
+    public String tryCheckingin(String collegeName,String personNumber,String courseNumber){
+        UserEntity currentUser=userRepository.findByCollegeAndPersonNumber(collegeName,personNumber);
+        JSONObject jsonObject=new JSONObject();
+        if(currentUser==null){
+            jsonObject.put("success",false);
+            jsonObject.put("reason","用户不存在");
+            return jsonObject.toString();
+        }
+        CourseEntity currentCourse=courseRepository.findByCourseNumber(courseNumber);
+        if(currentCourse==null){
+            jsonObject.put("success",false);
+            jsonObject.put("reason","不存在这门课程，不能签到！");
+            return jsonObject.toString();
+        }
+        Byte isCheckingin=currentCourse.getIsCheckingIn();
+        String isChecking=Byte.toString(isCheckingin);
+        if(isChecking.equals("0")){
+            jsonObject.put("success",false);
+            jsonObject.put("reason","该门课未开启签到！");
+            return jsonObject.toString();
+        }
+        Long userId=currentUser.getId();
+        Long courseId=currentCourse.getId();
+        CourseChooseEntity currentCourseChoose=courseChooseRepository.findByStudentIdAndCourseId(userId,courseId);
+        if(currentCourseChoose==null){
+            jsonObject.put("success",false);
+            jsonObject.put("reason","您未选该门课，不能签到！");
+            return jsonObject.toString();
+        }
+        try {
+            CourseCheckingInEntity courseCheckingInEntity = courseCheckingInRepository.findByUserIdAndCourseId(userId,courseId);
+            courseCheckingInEntity.setCheckingStatus("按时签到");
+            courseCheckingInRepository.save(courseCheckingInEntity);
+            jsonObject.put("success", true);
+            return jsonObject.toString();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            jsonObject.put("success",false);
+            jsonObject.put("reason","数据存储失败！请检查数据格式");
+            return jsonObject.toString();
+        }
     }
 }

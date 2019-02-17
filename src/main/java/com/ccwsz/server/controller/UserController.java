@@ -26,7 +26,6 @@ public class UserController {
     @ResponseBody
     public String getStudentNumber(HttpServletRequest request) {
         String openId = request.getParameter("openid");
-        //System.out.print(openId);
         return userService.getStudentNumber(openId);
     }
 
@@ -89,4 +88,15 @@ public class UserController {
         return userService.changeUserInfo(collegeName, personNumber, data);
     }
 
+    //考勤状态
+    //尝试考勤
+    @RequestMapping(value="/course/check_in", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String tryCheckingin(@RequestBody String jsonString){
+        JSONObject jsonObject =new JSONObject(jsonString);
+        String college=jsonObject.getString("college");
+        String personID=jsonObject.getString("personID");
+        String courseID=jsonObject.getString("courseID");
+        return userService.tryCheckingin(college,personID,courseID);
+    }
 }

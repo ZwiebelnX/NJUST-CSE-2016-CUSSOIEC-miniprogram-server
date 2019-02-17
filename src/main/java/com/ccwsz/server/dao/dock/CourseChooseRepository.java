@@ -11,4 +11,6 @@ public interface CourseChooseRepository extends CrudRepository<CourseChooseEntit
     @Nullable
     List<CourseChooseEntity> findByStudentId(long studentId);
 
+    @Nullable
+    CourseChooseEntity findByStudentIdAndCourseId(long studentId,long courseId);
 }
