@@ -242,7 +242,7 @@ public class UserService {
     }
     //尝试签到
     @Transactional
-    public String tryCheckingin(String collegeName,String personNumber,String courseNumber,String numOfWeek,String dayOfWeek,String indexOfDay){
+    public String tryCheckingin(String collegeName,String personNumber,String courseNumber,Integer numOfWeek,Integer dayOfWeek,Integer indexOfDay){
         UserEntity currentUser=userRepository.findByCollegeAndPersonNumber(collegeName,personNumber);
         JSONObject jsonObject=new JSONObject();
         if(currentUser==null){
@@ -274,6 +274,9 @@ public class UserService {
         try {
             CourseCheckingInEntity courseCheckingInEntity = courseCheckingInRepository.findByUserIdAndCourseId(userId,courseId);
             courseCheckingInEntity.setCheckingStatus("按时签到");
+            courseCheckingInEntity.setWeekNum(numOfWeek);
+            courseCheckingInEntity.setDayNum(dayOfWeek);
+            courseCheckingInEntity.setIndexNum(indexOfDay);
             courseCheckingInRepository.save(courseCheckingInEntity);
             jsonObject.put("success", true);
             return jsonObject.toString();
@@ -284,5 +287,11 @@ public class UserService {
             jsonObject.put("reason","数据存储失败！请检查数据格式");
             return jsonObject.toString();
         }
+    }
+    //考勤状态
+    public String getCheckingInState(String collegeName,String personNumber,String courseNumber){
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
+
+        return "1";
     }
 }

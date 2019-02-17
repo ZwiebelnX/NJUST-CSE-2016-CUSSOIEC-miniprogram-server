@@ -89,14 +89,23 @@ public class UserController {
     }
 
     //考勤状态
+//    @RequestMapping(value="/course/check_in", produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//    public String getCheckingInState(@RequestBody String jsonString){
+//        JSONObject jsonObject =new JSONObject(jsonString);
+//        String college=jsonObject.getString("college");
+//        String personID=jsonObject.getString("personID");
+//        String courseID=jsonObject.getString("courseID");
+//        return userService.getCheckingInState(college,personID,courseID);
+//    }
     //尝试考勤
     @RequestMapping(value="/course/check_in", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String tryCheckingin(@RequestBody String jsonString){
         JSONObject jsonObject =new JSONObject(jsonString);
-        String numOfWeek=jsonObject.getString("numOfWeek");
-        String dayOfWeek=jsonObject.getString("dayOfWeek");
-        String indexOfDay=jsonObject.getString("indexOfDay");
+        Integer numOfWeek=jsonObject.getInt("numOfWeek");
+        Integer dayOfWeek=jsonObject.getInt("dayOfWeek");
+        Integer indexOfDay=jsonObject.getInt("indexOfDay");
         String college=jsonObject.getString("college");
         String personID=jsonObject.getString("personID");
         String courseID=jsonObject.getString("courseID");
