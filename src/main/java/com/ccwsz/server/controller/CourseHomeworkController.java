@@ -29,8 +29,23 @@ public class CourseHomeworkController {
             courseId = Integer.parseInt(request.getParameter("courseID"));
         } catch (Exception e){
             e.printStackTrace();
-            return JsonManage.buildFailureMessage("数据格式错误！请检查前端代码");
+            return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
         }
         return courseHomeworkService.getCourseHomeworkList(openid, courseId);
+    }
+
+    //获取作业列表
+    @RequestMapping(value = "/course/homework", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getCourseSpecificHomework(HttpServletRequest request){
+        long homeworkId;
+        String openid = request.getParameter("openid");
+        try{
+            homeworkId = Integer.parseInt(request.getParameter("homeworkID"));
+        } catch (Exception e){
+            e.printStackTrace();
+            return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
+        }
+        return courseHomeworkService.getCourseSpecificHomework(homeworkId, openid);
     }
 }

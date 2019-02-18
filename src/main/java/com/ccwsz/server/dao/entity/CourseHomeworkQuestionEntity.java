@@ -5,13 +5,15 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "course_homework_detail", schema = "online_cussoiec", catalog = "")
-public class CourseHomeworkDetailEntity {
+@Table(name = "course_homework_question", schema = "online_cussoiec", catalog = "")
+public class CourseHomeworkQuestionEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private long homeworkId;
+    private byte questionType;
     private String questionText;
+    private String imageUrls;
     private String chooseText;
     private byte correctAnswer;
 
@@ -56,6 +58,16 @@ public class CourseHomeworkDetailEntity {
     }
 
     @Basic
+    @Column(name = "question_type", nullable = false)
+    public byte getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(byte questionType) {
+        this.questionType = questionType;
+    }
+
+    @Basic
     @Column(name = "question_text", nullable = false, length = 250)
     public String getQuestionText() {
         return questionText;
@@ -63,6 +75,16 @@ public class CourseHomeworkDetailEntity {
 
     public void setQuestionText(String questionText) {
         this.questionText = questionText;
+    }
+
+    @Basic
+    @Column(name = "image_urls", nullable = true, length = 1000)
+    public String getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(String imageUrls) {
+        this.imageUrls = imageUrls;
     }
 
     @Basic
@@ -89,18 +111,20 @@ public class CourseHomeworkDetailEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CourseHomeworkDetailEntity that = (CourseHomeworkDetailEntity) o;
+        CourseHomeworkQuestionEntity that = (CourseHomeworkQuestionEntity) o;
         return id == that.id &&
                 homeworkId == that.homeworkId &&
+                questionType == that.questionType &&
                 correctAnswer == that.correctAnswer &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
                 Objects.equals(questionText, that.questionText) &&
+                Objects.equals(imageUrls, that.imageUrls) &&
                 Objects.equals(chooseText, that.chooseText);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, homeworkId, questionText, chooseText, correctAnswer);
+        return Objects.hash(id, gmtCreate, gmtModified, homeworkId, questionType, questionText, imageUrls, chooseText, correctAnswer);
     }
 }
