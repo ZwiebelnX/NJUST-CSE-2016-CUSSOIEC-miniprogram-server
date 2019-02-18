@@ -12,7 +12,6 @@ public class CourseHomeworkInfoEntity {
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private long courseId;
-    private Date deadLine;
     private String name;
 
     @Id
@@ -56,16 +55,6 @@ public class CourseHomeworkInfoEntity {
     }
 
     @Basic
-    @Column(name = "dead\u001Fline", nullable = true)
-    public Date getDeadLine() {
-        return deadLine;
-    }
-
-    public void setDeadLine(Date deadLine) {
-        this.deadLine = deadLine;
-    }
-
-    @Basic
     @Column(name = "name", nullable = true, length = 255)
     public String getName() {
         return name;
@@ -84,12 +73,11 @@ public class CourseHomeworkInfoEntity {
                 courseId == that.courseId &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(deadLine, that.deadLine) &&
                 Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, courseId, deadLine, name);
+        return Objects.hash(id, gmtCreate, gmtModified, courseId, name);
     }
 }

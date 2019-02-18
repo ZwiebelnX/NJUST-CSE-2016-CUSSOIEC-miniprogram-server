@@ -10,9 +10,9 @@ public class UserHomeworkAnswerEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
-    private long userId;
     private long homeworkId;
     private String userAnswer;
+    private long userId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -45,16 +45,6 @@ public class UserHomeworkAnswerEntity {
     }
 
     @Basic
-    @Column(name = "user_id", nullable = false)
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    @Basic
     @Column(name = "homework_id", nullable = false)
     public long getHomeworkId() {
         return homeworkId;
@@ -80,7 +70,6 @@ public class UserHomeworkAnswerEntity {
         if (o == null || getClass() != o.getClass()) return false;
         UserHomeworkAnswerEntity that = (UserHomeworkAnswerEntity) o;
         return id == that.id &&
-                userId == that.userId &&
                 homeworkId == that.homeworkId &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
@@ -89,6 +78,16 @@ public class UserHomeworkAnswerEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, userId, homeworkId, userAnswer);
+        return Objects.hash(id, gmtCreate, gmtModified, homeworkId, userAnswer);
+    }
+
+    @Basic
+    @Column(name = "user_id", nullable = false)
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

@@ -20,13 +20,13 @@ public class CourseHomeworkController {
     }
 
     //获取作业列表
-    @RequestMapping(value = "/course/homework_list", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/course/homework_list", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getCourseHomeworkList(HttpServletRequest request){
         String openid = request.getParameter("openid");
         long courseId;
         try{
-            courseId = Integer.parseInt(request.getParameter("courseId"));
+            courseId = Integer.parseInt(request.getParameter("courseID"));
         } catch (Exception e){
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！请检查前端代码");

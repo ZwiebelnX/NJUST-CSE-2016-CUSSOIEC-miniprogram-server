@@ -10,10 +10,10 @@ public class CourseHomeworkDetailEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private long homeworkId;
     private String questionText;
     private String chooseText;
     private byte correctAnswer;
-    private long homeworkId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -43,6 +43,16 @@ public class CourseHomeworkDetailEntity {
 
     public void setGmtModified(Timestamp gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    @Basic
+    @Column(name = "homework_id", nullable = false)
+    public long getHomeworkId() {
+        return homeworkId;
+    }
+
+    public void setHomeworkId(long homeworkId) {
+        this.homeworkId = homeworkId;
     }
 
     @Basic
@@ -81,6 +91,7 @@ public class CourseHomeworkDetailEntity {
         if (o == null || getClass() != o.getClass()) return false;
         CourseHomeworkDetailEntity that = (CourseHomeworkDetailEntity) o;
         return id == that.id &&
+                homeworkId == that.homeworkId &&
                 correctAnswer == that.correctAnswer &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
@@ -90,16 +101,6 @@ public class CourseHomeworkDetailEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, questionText, chooseText, correctAnswer);
-    }
-
-    @Basic
-    @Column(name = "homework_id", nullable = false)
-    public long getHomeworkId() {
-        return homeworkId;
-    }
-
-    public void setHomeworkId(long homeworkId) {
-        this.homeworkId = homeworkId;
+        return Objects.hash(id, gmtCreate, gmtModified, homeworkId, questionText, chooseText, correctAnswer);
     }
 }
