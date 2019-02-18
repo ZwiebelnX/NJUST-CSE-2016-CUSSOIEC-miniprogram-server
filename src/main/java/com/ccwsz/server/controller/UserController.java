@@ -90,18 +90,17 @@ public class UserController {
     //考勤状态
     @RequestMapping(value="/course/check_in",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getCheckingInState(@RequestBody String jsonString){
-        JSONObject jsonObject =new JSONObject(jsonString);
-        String college=jsonObject.getString("college");
-        String personID=jsonObject.getString("personID");
-        String courseID=jsonObject.getString("courseID");
-        return userService.getCheckingInState(college,personID,courseID);
+    public String getCheckingInState(HttpServletRequest request){
+        String college=request.getParameter("college");
+        String personNumber=request.getParameter("personID");
+        String courseID=request.getParameter("courseID");
+        return userService.getCheckingInState(college,personNumber,courseID);
     }
 
     //尝试考勤
     @RequestMapping(value="/course/check_in", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String tryCheckingin(@RequestBody String jsonString){
+    public String tryCheckingIn(@RequestBody String jsonString){
         JSONObject jsonObject =new JSONObject(jsonString);
         Integer numOfWeek=jsonObject.getInt("numOfWeek");
         Integer dayOfWeek=jsonObject.getInt("dayOfWeek");
