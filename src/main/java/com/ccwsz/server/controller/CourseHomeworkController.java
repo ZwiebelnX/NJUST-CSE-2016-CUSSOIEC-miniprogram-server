@@ -23,7 +23,8 @@ public class CourseHomeworkController {
     @RequestMapping(value = "/course/homework_list", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getCourseHomeworkList(HttpServletRequest request){
-        String openid = request.getParameter("openid");
+        String college = request.getParameter("college");
+        String personNumber = request.getParameter("personID");
         long courseId;
         try{
             courseId = Integer.parseInt(request.getParameter("courseID"));
@@ -31,7 +32,7 @@ public class CourseHomeworkController {
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
         }
-        return courseHomeworkService.getCourseHomeworkList(openid, courseId);
+        return courseHomeworkService.getCourseHomeworkList(college, personNumber, courseId);
     }
 
     //获取作业列表
@@ -39,13 +40,14 @@ public class CourseHomeworkController {
     @ResponseBody
     public String getCourseSpecificHomework(HttpServletRequest request){
         long homeworkId;
-        String openid = request.getParameter("openid");
+        String college = request.getParameter("college");
+        String personNumber = request.getParameter("personID");
         try{
             homeworkId = Integer.parseInt(request.getParameter("homeworkID"));
         } catch (Exception e){
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
         }
-        return courseHomeworkService.getCourseSpecificHomework(homeworkId, openid);
+        return courseHomeworkService.getCourseSpecificHomework(college, personNumber, homeworkId);
     }
 }

@@ -35,12 +35,12 @@ public class CourseHomeworkService {
     }
 
     //获取作业列表
-    public String getCourseHomeworkList(String openid, long courseId) {
+    public String getCourseHomeworkList(String college, String personNumber, long courseId) {
         JSONObject responseJson = new JSONObject();
         JSONObject result = new JSONObject();
         JSONArray homeworkList = new JSONArray();
 
-        UserEntity currentUser = userRepository.findByOpenid(openid); //当前用户
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(college, personNumber); //当前用户
         if (currentUser == null) {
             return JsonManage.buildFailureMessage("找不到对应用户！");
         }
@@ -74,10 +74,10 @@ public class CourseHomeworkService {
         return responseJson.toString();
     }
 
-    public String getCourseSpecificHomework(long homeworkId, String openid) {
+    public String getCourseSpecificHomework(String college, String personNumber, long homeworkId) {
         JSONObject responseJson = new JSONObject();
         JSONArray result = new JSONArray();
-        UserEntity currentUser = userRepository.findByOpenid(openid);
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(college, personNumber);
         if (currentUser == null) {
             return JsonManage.buildFailureMessage("找不到用户！");
         }
