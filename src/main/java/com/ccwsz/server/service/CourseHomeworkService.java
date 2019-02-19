@@ -46,25 +46,16 @@ public class CourseHomeworkService {
         }
         List<CourseHomeworkInfoEntity> courseHomeworkList =
                 courseHomeworkInfoRepository.findByCourseId(courseId); //所选课程的作业列表
-        List<UserHomeworkAnswerEntity> userAnsweredList =
-                userHomeworkAnswerRepository.findByUserId(currentUser.getId()); //当前用户在当前课程下的答题情况
         for (CourseHomeworkInfoEntity homeworkInfo : courseHomeworkList) {
             JSONObject homeworkInfoJson = new JSONObject();
             homeworkInfoJson.put("name", homeworkInfo.getName());
             homeworkInfoJson.put("homeworkID", homeworkInfo.getId());
             //设置当前用户是否已经作答本作业
-            if (userAnsweredList.isEmpty()) {
+            if(userHomeworkAnswerRepository.existsByHomeworkId(homeworkInfo.getId())){
+                homeworkInfoJson.put("isFinished", true);
+            }
+            else{
                 homeworkInfoJson.put("isFinished", false);
-            } else {
-                for (UserHomeworkAnswerEntity userAnswer : userAnsweredList) {
-                    if (userAnswer.getHomeworkId() == homeworkInfo.getId()) {
-                        homeworkInfoJson.put("isFinished", true);
-                        userAnsweredList.remove(userAnswer);
-                        break;
-                    } else {
-                        homeworkInfoJson.put("isFinished", false);
-                    }
-                }
             }
             homeworkList.put(homeworkInfoJson);
         }
@@ -83,44 +74,44 @@ public class CourseHomeworkService {
         }
         List<CourseHomeworkQuestionEntity> questionList = courseHomeworkQuestionRepository.
                 findByHomeworkId(homeworkId);
-        UserHomeworkAnswerEntity userAnswerEntity = userHomeworkAnswerRepository.
+        List<UserHomeworkAnswerEntity> userAnswers = userHomeworkAnswerRepository.
                 findByHomeworkIdAndUserId(homeworkId, currentUser.getId());
-        String[] userAnswers;
-        if (userAnswerEntity == null) {
-            userAnswers = null;
-        } else {
-            userAnswers = userAnswerEntity.getUserAnswer().split(";");
-        }
-
-        for (int index = 0; index <= questionList.size() - 1; index++) {
-            CourseHomeworkQuestionEntity question = questionList.get(index);
+        for (CourseHomeworkQuestionEntity question : questionList) {
             JSONObject questionJson = new JSONObject();
-            String[] imgUrls = question.getImageUrls().split(";");
-            String[] chooseTexts = question.getChooseText().split(";");
-
+            String[] imageUrls = question.getImageUrls().split(";");
+            String[] chooseList = question.getChooseText().split(";");
             questionJson.put("type", question.getQuestionType());
             questionJson.put("question", question.getQuestionText());
-            JSONArray imageURLs = new JSONArray();
-            for (String url : imgUrls) {
-                imageURLs.put(url);
+            JSONArray imageUrlsArray = new JSONArray();
+            for (String url : imageUrls) {
+                imageUrlsArray.put(url);
             }
-            questionJson.put("imageURLs", imageURLs);
-            JSONArray chooseList = new JSONArray();
-            for (String text : chooseTexts) {
-                chooseList.put(text);
+            questionJson.put("imageURLs", imageUrlsArray);
+            JSONArray chooseListArray = new JSONArray();
+            for (String text : chooseList) {
+                chooseListArray.put(text);
             }
+            questionJson.put("choseList", chooseListArray);
             questionJson.put("correctAnswer", question.getCorrectAnswer());
-            if(userAnswers == null){ //空指针保护
+            if (userAnswers.isEmpty()) {
                 questionJson.put("userAnswer", "");
-            }else if (index >= userAnswers.length) { //越界保护
-                questionJson.put("userAnswer", "Internal Error! [index out of bound]");
             } else {
-                questionJson.put("userAnswer", userAnswers[index]);
+                for (UserHomeworkAnswerEntity userAnswer : userAnswers) {
+                    if (userAnswer.getQuestionId() == question.getId()) {
+                        questionJson.put("userAnswer", userAnswer.getUserAnswer());
+                        userAnswers.remove(userAnswer);
+                        break;
+                    } else {
+                        questionJson.put("userAnswer", "");
+                    }
+                }
             }
+            questionJson.put("choseList", chooseList);
+
             result.put(questionJson);
         }
         responseJson.put("result", result);
-        responseJson.put("success", true);
+        responseJson.put("success",true);
         return responseJson.toString();
     }
 }

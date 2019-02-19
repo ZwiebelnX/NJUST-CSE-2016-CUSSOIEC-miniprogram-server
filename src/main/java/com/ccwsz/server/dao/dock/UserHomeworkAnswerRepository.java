@@ -9,6 +9,7 @@ import java.util.List;
 public interface UserHomeworkAnswerRepository extends CrudRepository<UserHomeworkAnswerEntity, Integer> {
     List<UserHomeworkAnswerEntity> findByUserId(long userId);
 
-    @Nullable
-    UserHomeworkAnswerEntity findByHomeworkIdAndUserId(long homeworkId, long userId);
+    List<UserHomeworkAnswerEntity> findByHomeworkIdAndUserId(long homeworkId, long userId);
+
+    boolean existsByHomeworkId(long homeworkId);
 }
