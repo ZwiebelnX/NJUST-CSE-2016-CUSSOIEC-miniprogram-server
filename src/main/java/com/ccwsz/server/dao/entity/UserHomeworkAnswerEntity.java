@@ -13,6 +13,8 @@ public class UserHomeworkAnswerEntity {
     private long homeworkId;
     private String userAnswer;
     private long userId;
+    private long questionId;
+    private byte isCorrect;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -55,7 +57,7 @@ public class UserHomeworkAnswerEntity {
     }
 
     @Basic
-    @Column(name = "user_answer", nullable = false, length = 100)
+    @Column(name = "user_answer", nullable = true, length = 100)
     public String getUserAnswer() {
         return userAnswer;
     }
@@ -89,5 +91,25 @@ public class UserHomeworkAnswerEntity {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    @Basic
+    @Column(name = "question_id", nullable = false)
+    public long getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(long questionId) {
+        this.questionId = questionId;
+    }
+
+    @Basic
+    @Column(name = "is_correct", nullable = false)
+    public byte getIsCorrect() {
+        return isCorrect;
+    }
+
+    public void setIsCorrect(byte isCorrect) {
+        this.isCorrect = isCorrect;
     }
 }
