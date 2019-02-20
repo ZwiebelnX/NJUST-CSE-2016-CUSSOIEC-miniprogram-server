@@ -1,4 +1,4 @@
-package com.ccwsz.server.dao.dock;
+package com.ccwsz.server.dao.dock.user;
 
 import com.ccwsz.server.dao.entity.UserEntity;
 import org.springframework.data.jpa.repository.Modifying;

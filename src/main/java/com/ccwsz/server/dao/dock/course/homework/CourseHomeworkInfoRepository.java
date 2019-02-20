@@ -1,4 +1,4 @@
-package com.ccwsz.server.dao.dock;
+package com.ccwsz.server.dao.dock.course.homework;
 
 import com.ccwsz.server.dao.entity.CourseHomeworkInfoEntity;
 import org.springframework.data.repository.CrudRepository;

@@ -1,13 +1,11 @@
-package com.ccwsz.server.controller;
+package com.ccwsz.server.controller.course;
 
-import com.ccwsz.server.service.CourseService;
+import com.ccwsz.server.service.course.CourseService;
 import com.ccwsz.server.service.util.JsonManage;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.logging.Logger;
 
 //课程相关控制器，负责分发课程表、课程内容等请求
 @RestController
@@ -38,7 +36,7 @@ public class CourseController {
             courseId = Integer.parseInt(request.getParameter("courseID"));
         } catch (Exception e) {
             e.printStackTrace();
-            return JsonManage.buildFailureMessage("数据格式错误！");
+            return JsonManage.buildFailureMessage("数据格式错误");
         }
         return courseService.getCourseLiveInfo(courseId);
     }

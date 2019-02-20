@@ -1,6 +1,11 @@
-package com.ccwsz.server.service;
+package com.ccwsz.server.service.course;
 
-import com.ccwsz.server.dao.dock.*;
+import com.ccwsz.server.dao.dock.college.CollegeRepository;
+import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
+import com.ccwsz.server.dao.dock.course.CourseRepository;
+import com.ccwsz.server.dao.dock.course.video.CourseVideoRepository;
+import com.ccwsz.server.dao.dock.course.video.VideoWatchRepository;
+import com.ccwsz.server.dao.dock.user.UserRepository;
 import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONArray;
@@ -10,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service

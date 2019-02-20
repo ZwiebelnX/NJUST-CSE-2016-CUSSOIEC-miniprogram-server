@@ -1,6 +1,6 @@
-package com.ccwsz.server.controller;
+package com.ccwsz.server.controller.course;
 
-import com.ccwsz.server.service.CourseHomeworkService;
+import com.ccwsz.server.service.course.CourseHomeworkService;
 import com.ccwsz.server.service.util.JsonManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

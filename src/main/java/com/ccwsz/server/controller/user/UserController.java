@@ -1,6 +1,6 @@
-package com.ccwsz.server.controller;
+package com.ccwsz.server.controller.user;
 
-import com.ccwsz.server.service.UserService;
+import com.ccwsz.server.service.homework.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,29 +85,5 @@ public class UserController {
         String personNumber = json.getString("personID");
         JSONObject data = json.getJSONObject("data");
         return userService.changeUserInfo(collegeName, personNumber, data);
-    }
-
-    //考勤状态
-    @RequestMapping(value="/course/check_in",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String getCheckingInState(HttpServletRequest request){
-        String college=request.getParameter("college");
-        String personNumber=request.getParameter("personID");
-        String courseID=request.getParameter("courseID");
-        return userService.getCheckingInState(college,personNumber,courseID);
-    }
-
-    //尝试考勤
-    @RequestMapping(value="/course/check_in", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String tryCheckingIn(@RequestBody String jsonString){
-        JSONObject jsonObject =new JSONObject(jsonString);
-        Integer numOfWeek=jsonObject.getInt("numOfWeek");
-        Integer dayOfWeek=jsonObject.getInt("dayOfWeek");
-        Integer indexOfDay=jsonObject.getInt("indexOfDay");
-        String college=jsonObject.getString("college");
-        String personID=jsonObject.getString("personID");
-        String courseID=jsonObject.getString("courseID");
-        return userService.tryCheckingIn(college,personID,courseID,numOfWeek,dayOfWeek,indexOfDay);
     }
 }

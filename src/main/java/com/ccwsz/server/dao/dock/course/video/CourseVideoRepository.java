@@ -1,4 +1,4 @@
-package com.ccwsz.server.dao.dock;
+package com.ccwsz.server.dao.dock.course.video;
 
 import com.ccwsz.server.dao.entity.CourseVideoEntity;
 import org.springframework.data.repository.CrudRepository;

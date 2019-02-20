@@ -1,6 +1,10 @@
-package com.ccwsz.server.service;
+package com.ccwsz.server.service.homework;
 
-import com.ccwsz.server.dao.dock.*;
+import com.ccwsz.server.dao.dock.college.CollegeRepository;
+import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
+import com.ccwsz.server.dao.dock.course.CourseRepository;
+import com.ccwsz.server.dao.dock.course.checking.UserCourseCheckingInRepository;
+import com.ccwsz.server.dao.dock.user.UserRepository;
 import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.GlobalData;
 import com.ccwsz.server.service.util.JsonManage;
@@ -13,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,17 +26,10 @@ import java.util.List;
 public class UserService {
     private UserRepository userRepository;
     private CollegeRepository collegeRepository;
-    private CourseRepository courseRepository;
-    private CourseChooseRepository courseChooseRepository;
-    private CourseCheckingInRepository courseCheckingInRepository;
     @Autowired
-    public UserService(UserRepository userRepository, CollegeRepository collegeRepository,CourseRepository courseRepository
-                        ,CourseChooseRepository courseChooseRepository,CourseCheckingInRepository courseCheckingInRepository) {
+    public UserService(UserRepository userRepository, CollegeRepository collegeRepository) {
         this.userRepository = userRepository;
         this.collegeRepository = collegeRepository;
-        this.courseRepository = courseRepository;
-        this.courseChooseRepository=courseChooseRepository;
-        this.courseCheckingInRepository=courseCheckingInRepository;
     }
 
     //获取学号
@@ -241,84 +237,4 @@ public class UserService {
         return resultJson.toString();
     }
 
-    //尝试签到
-    @Transactional
-    public String tryCheckingIn(String collegeName, String personNumber, String courseNumber, Integer numOfWeek, Integer dayOfWeek, Integer indexOfDay){
-        UserEntity currentUser=userRepository.findByCollegeAndPersonNumber(collegeName,personNumber); //当前用户
-        JSONObject jsonObject=new JSONObject();
-        if(currentUser==null){
-            return JsonManage.buildFailureMessage("用户不存在！");
-        }
-        CourseEntity currentCourse=courseRepository.findByCourseNumber(courseNumber);
-        if(currentCourse==null){
-            return JsonManage.buildFailureMessage("不存在该门课程！");
-        }
-        String isChecking=Byte.toString(currentCourse.getIsCheckingIn());
-        if(isChecking.equals("0")){
-            return JsonManage.buildFailureMessage("课程还未开始签到！");
-        }
-        //获取选课列表避免错误签到
-
-        //改成查询签到表内是否存在该学生即可
-        Long userId=currentUser.getId();
-        Long courseId=currentCourse.getId();
-//        CourseChooseEntity currentCourseChoose=courseChooseRepository.findByStudentIdAndCourseId(userId,courseId);
-//        if(currentCourseChoose==null){
-//            JsonManage.buildFailureMessage("您未选该门课，不能签到！");
-//        }
-        try {
-            CourseCheckingInEntity courseCheckingInEntity = courseCheckingInRepository.findByUserIdAndCourseId(userId,courseId);
-            if(courseCheckingInEntity==null){
-                return JsonManage.buildFailureMessage("您未选该门课，不能签到！");
-            }
-            courseCheckingInEntity.setCheckingStatus("按时签到");
-            courseCheckingInEntity.setWeekNum(numOfWeek);
-            courseCheckingInEntity.setDayNum(dayOfWeek);
-            courseCheckingInEntity.setIndexNum(indexOfDay);
-            courseCheckingInRepository.save(courseCheckingInEntity);
-            jsonObject.put("success", true);
-            return jsonObject.toString();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return JsonManage.buildFailureMessage("数据存储失败！请检查数据格式");
-        }
-    }
-
-    //考勤状态
-    public String getCheckingInState(String collegeName,String personNumber,String courseNumber){
-        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
-        JSONObject resultJSON=new JSONObject();
-        if(currentUser==null){
-            return JsonManage.buildFailureMessage("此用户不存在！");
-        }
-        CourseEntity currentCourse=courseRepository.findByCourseNumber(courseNumber);
-        if(currentCourse==null){
-            return JsonManage.buildFailureMessage("此课程不存在！");
-        }
-        Long personId=currentUser.getId();
-        Long courseId=currentCourse.getId();
-        CourseCheckingInEntity courseCheckingInEntity=courseCheckingInRepository.findByUserIdAndCourseId(personId,courseId);
-        if(courseCheckingInEntity==null){
-            return JsonManage.buildFailureMessage("该课您还未有考勤情况！");
-        }
-        String isChecking=Byte.toString(currentCourse.getIsCheckingIn()); //为啥要转成String再比较？
-        JSONObject result=new JSONObject();
-        if(isChecking.equals("0")){
-            result.put("isOpen",false);
-        }
-        else{
-            result.put("isOpen",true);
-        }
-        String hasChecked=courseCheckingInEntity.getCheckingStatus();
-        if(hasChecked.equals("未签到")) {
-            result.put("hasChecked",false);
-        }
-        else{
-            result.put("hasChecked",true);
-        }
-        resultJSON.put("success",true);
-        resultJSON.put("result",result);
-        return resultJSON.toString();
-    }
 }
