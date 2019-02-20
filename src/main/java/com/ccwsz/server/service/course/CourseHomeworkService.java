@@ -78,7 +78,6 @@ public class CourseHomeworkService {
         List<UserHomeworkAnswerEntity> userAnswerList = userHomeworkAnswerRepository.
                 findByHomeworkIdAndUserId(homeworkId, currentUser.getId()); //查找用户答案，可以为空
         //构造result
-        JSONArray correctAnswer = new JSONArray(); //正确答案的数组
         for(CourseHomeworkQuestionEntity question : questionList){
             JSONObject questionJson = new JSONObject();
             questionJson.put("type", question.getQuestionType());
@@ -86,36 +85,43 @@ public class CourseHomeworkService {
             questionJson.put("question", question.getQuestionText());
             //构造图片url数组
             JSONArray imageURLs = new JSONArray();
-            String[] imgUrls = question.getImageUrls().split(";");
-            for(String url : imgUrls){
-                JSONObject urlJson = new JSONObject();
-                urlJson.put("url", url);
-                imageURLs.put(urlJson);
+            if(question.getImageUrls() != null){
+                String[] imgUrls = question.getImageUrls().split(";");
+                for(String url : imgUrls){
+                    JSONObject urlJson = new JSONObject();
+                    urlJson.put("url", url);
+                    imageURLs.put(urlJson);
+                }
             }
-            questionJson.put("imageURLs", imgUrls);
+            questionJson.put("imageURLs", imageURLs);
 
             //构造选项数组
             JSONArray choseList = new JSONArray();
             String[] choseText = question.getChooseText().split(";");
-            for(String choose : choseText){
-                JSONObject chooseJson = new JSONObject();
-                String[] chooseIndexAndText = choose.split(":");
-                chooseJson.put("choseID", chooseIndexAndText[0]);
-                chooseJson.put("name", chooseIndexAndText[1]);
-                choseList.put(chooseJson);
+            if(choseText.length != 0){
+                for(String choose : choseText){
+                    JSONObject chooseJson = new JSONObject();
+                    String[] chooseIndexAndText = choose.split(":");
+                    chooseJson.put("choseID", chooseIndexAndText[0]);
+                    chooseJson.put("name", chooseIndexAndText[1]);
+                    choseList.put(chooseJson);
+                }
             }
+            questionJson.put("choseList", choseList);
 
             //构造正确答案数组
-            String[] answers = question.getCorrectAnswer().split(";");
+            JSONArray correctAnswer = new JSONArray(); //正确答案的数组
+            String[] answers = question.getCorrectAnswer().split(",");
             for(String s : answers){
                 correctAnswer.put(s);
             }
+            questionJson.put("correctAnswer", correctAnswer);
 
             //构造用户答案数组
             JSONArray userAnswersArray = new JSONArray();
             for(UserHomeworkAnswerEntity userAnswer : userAnswerList){
                 if(userAnswer.getQuestionId() == question.getId()){
-                    String[] answer = question.getCorrectAnswer().split(";");
+                    String[] answer = question.getCorrectAnswer().split(",");
                     for(String s : answer){
                         userAnswersArray.put(s);
                     }
@@ -126,7 +132,7 @@ public class CourseHomeworkService {
             questionJson.put("userAnswer", userAnswersArray);
 
             //压入result
-            result.put(question);
+            result.put(questionJson);
         }
         responseJson.put("result", result);
         responseJson.put("success", true);
