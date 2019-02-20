@@ -11,7 +11,7 @@ public class UserHomeworkAnswerEntity {
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private long homeworkId;
-    private byte userAnswer;
+    private String userAnswer;
     private long userId;
     private long questionId;
     private byte isCorrect;
@@ -58,11 +58,11 @@ public class UserHomeworkAnswerEntity {
 
     @Basic
     @Column(name = "user_answer", nullable = false, length = 100)
-    public byte getUserAnswer() {
+    public String getUserAnswer() {
         return userAnswer;
     }
 
-    public void setUserAnswer(byte userAnswer) {
+    public void setUserAnswer(String userAnswer) {
         this.userAnswer = userAnswer;
     }
 

@@ -75,50 +75,61 @@ public class CourseHomeworkService {
         }
         List<CourseHomeworkQuestionEntity> questionList = courseHomeworkQuestionRepository.
                 findByHomeworkId(homeworkId); //查找指定作业的所有题目
-        List<UserHomeworkAnswerEntity> userAnswers = userHomeworkAnswerRepository.
+        List<UserHomeworkAnswerEntity> userAnswerList = userHomeworkAnswerRepository.
                 findByHomeworkIdAndUserId(homeworkId, currentUser.getId()); //查找用户答案，可以为空
-        //设置作业信息
-        for (CourseHomeworkQuestionEntity question : questionList) {
+        //构造result
+        JSONArray correctAnswer = new JSONArray(); //正确答案的数组
+        for(CourseHomeworkQuestionEntity question : questionList){
             JSONObject questionJson = new JSONObject();
-            String[] imageUrls = question.getImageUrls().split(";");
-            String[] chooseList = question.getChooseText().split(";");
             questionJson.put("type", question.getQuestionType());
+            questionJson.put("questionID", question.getQuestionIndex());
             questionJson.put("question", question.getQuestionText());
-            //设置图片url
-            JSONArray imageUrlsArray = new JSONArray();
-            for (String url : imageUrls) {
+            //构造图片url数组
+            JSONArray imageURLs = new JSONArray();
+            String[] imgUrls = question.getImageUrls().split(";");
+            for(String url : imgUrls){
                 JSONObject urlJson = new JSONObject();
                 urlJson.put("url", url);
-                imageUrlsArray.put(urlJson);
+                imageURLs.put(urlJson);
             }
-            questionJson.put("imageURLs", imageUrlsArray);
-            //设置选项
-            JSONArray chooseListArray = new JSONArray();
-            for (String text : chooseList) {
-                chooseListArray.put(text);
-            }
-            questionJson.put("choseList", chooseListArray);
+            questionJson.put("imageURLs", imgUrls);
 
-            questionJson.put("correctAnswer", question.getCorrectAnswer());
-            //设置用户答案
-            if (userAnswers.isEmpty()) { //为空则全部填充空字符串
-                questionJson.put("userAnswer", "");
-            } else {
-                for (UserHomeworkAnswerEntity userAnswer : userAnswers) {
-                    if (userAnswer.getQuestionId() == question.getId()) {
-                        questionJson.put("userAnswer", userAnswer.getUserAnswer());
-                        userAnswers.remove(userAnswer);
-                        break;
-                    } else { //userAnswers不全保护
-                        questionJson.put("userAnswer", "");
+            //构造选项数组
+            JSONArray choseList = new JSONArray();
+            String[] choseText = question.getChooseText().split(";");
+            for(String choose : choseText){
+                JSONObject chooseJson = new JSONObject();
+                String[] chooseIndexAndText = choose.split(":");
+                chooseJson.put("choseID", chooseIndexAndText[0]);
+                chooseJson.put("name", chooseIndexAndText[1]);
+                choseList.put(chooseJson);
+            }
+
+            //构造正确答案数组
+            String[] answers = question.getCorrectAnswer().split(";");
+            for(String s : answers){
+                correctAnswer.put(s);
+            }
+
+            //构造用户答案数组
+            JSONArray userAnswersArray = new JSONArray();
+            for(UserHomeworkAnswerEntity userAnswer : userAnswerList){
+                if(userAnswer.getQuestionId() == question.getId()){
+                    String[] answer = question.getCorrectAnswer().split(";");
+                    for(String s : answer){
+                        userAnswersArray.put(s);
                     }
+                    userAnswerList.remove(userAnswer);
+                    break;
                 }
             }
-            questionJson.put("choseList", chooseList);
-            result.put(questionJson);//信息构造完毕 写入result
+            questionJson.put("userAnswer", userAnswersArray);
+
+            //压入result
+            result.put(question);
         }
         responseJson.put("result", result);
-        responseJson.put("success",true);
+        responseJson.put("success", true);
         return responseJson.toString();
     }
 }

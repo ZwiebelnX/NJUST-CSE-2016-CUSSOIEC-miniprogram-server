@@ -15,7 +15,8 @@ public class CourseHomeworkQuestionEntity {
     private String questionText;
     private String imageUrls;
     private String chooseText;
-    private byte correctAnswer;
+    private String correctAnswer;
+    private byte questionIndex;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -99,11 +100,11 @@ public class CourseHomeworkQuestionEntity {
 
     @Basic
     @Column(name = "correct_answer", nullable = false)
-    public byte getCorrectAnswer() {
+    public String getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(byte correctAnswer) {
+    public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 
@@ -126,5 +127,15 @@ public class CourseHomeworkQuestionEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, gmtCreate, gmtModified, homeworkId, questionType, questionText, imageUrls, chooseText, correctAnswer);
+    }
+
+    @Basic
+    @Column(name = "question_index", nullable = false)
+    public byte getQuestionIndex() {
+        return questionIndex;
+    }
+
+    public void setQuestionIndex(byte questionIndex) {
+        this.questionIndex = questionIndex;
     }
 }
