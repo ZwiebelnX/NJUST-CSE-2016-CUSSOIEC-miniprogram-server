@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -34,8 +35,35 @@ public class CourseCheckingService {
     }
 
     //尝试签到
-    public String tryCheckingIn(String collegeName, String personNumber, String courseNumber, Integer numOfWeek, Integer dayOfWeek, Integer indexOfDay) {
-        return null;
+    public String tryCheckingIn(String collegeName, String personNumber, long courseId, Timestamp time) {
+        JSONObject responseJson = new JSONObject();
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
+        if(currentUser == null){
+            return JsonManage.buildFailureMessage("找不到用户！");
+        }
+        CourseEntity currentCourse = courseRepository.findById(courseId);
+        if(currentCourse == null){
+            return JsonManage.buildFailureMessage("找不到课程！");
+        }
+        CourseCheckingInInfoEntity checkingInfo = courseCheckingInInfoRepository.findByBeginningTime(time);
+        if(checkingInfo == null){
+            return JsonManage.buildFailureMessage("指定签到还未有记录，请稍候再试");
+        }
+        UserCourseCheckingInEntity userCheckingIn = userCourseCheckingInRepository
+                .findByCheckingInfoIdAndUserId(checkingInfo.getId(), currentUser.getId());
+        if(userCheckingIn == null){
+            return JsonManage.buildFailureMessage("当前用户在当前签到中没有记录！");
+        }
+        if(currentCourse.getIsCheckingIn() == 1){
+            userCheckingIn.setCheckingStatus((byte)0);
+            userCourseCheckingInRepository.save(userCheckingIn);
+            responseJson.put("success", true);
+            return responseJson.toString();
+        }
+        else{
+            return JsonManage.buildFailureMessage("当前课程还未开始签到！");
+        }
+
     }
 
     //考勤状态
