@@ -12,7 +12,6 @@ public class UserCourseCheckingInEntity {
     private Timestamp gmtModified;
     private long userId;
     private byte checkingStatus;
-    private Timestamp checkingOpenTime;
     private long checkingInfoId;
 
     @Id
@@ -65,15 +64,6 @@ public class UserCourseCheckingInEntity {
         this.checkingStatus = checkingStatus;
     }
 
-    @Basic
-    @Column(name = "checking_open_time", nullable = false)
-    public Timestamp getCheckingOpenTime() {
-        return checkingOpenTime;
-    }
-
-    public void setCheckingOpenTime(Timestamp checkingOpenTime) {
-        this.checkingOpenTime = checkingOpenTime;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -85,13 +75,12 @@ public class UserCourseCheckingInEntity {
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
                 Objects.equals(checkingStatus, that.checkingStatus) &&
-                Objects.equals(checkingInfoId, that.checkingInfoId) &&
-                Objects.equals(checkingOpenTime, that.checkingOpenTime);
+                Objects.equals(checkingInfoId, that.checkingInfoId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, userId, checkingStatus, checkingInfoId, checkingOpenTime);
+        return Objects.hash(id, gmtCreate, gmtModified, userId, checkingStatus, checkingInfoId);
     }
 
     @Basic

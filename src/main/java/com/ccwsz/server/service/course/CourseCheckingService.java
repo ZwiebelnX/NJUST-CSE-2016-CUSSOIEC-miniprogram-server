@@ -50,21 +50,24 @@ public class CourseCheckingService {
         if(currentCourse == null){
             return JsonManage.buildFailureMessage("找不到课程！");
         }
+        //课程是否正在签到
         if(currentCourse.getIsCheckingIn() == 1){
             result.put("isOpen", true);
         }
         else{
             result.put("isOpen", false);
-        }
-        List<CourseCheckingInInfoEntity> checkingInList =
-                courseCheckingInInfoRepository.findByCourseIdOrderByBeginningTimeDesc(courseId);
-        if(checkingInList == null){ //本门课没有签到记录
-            result.put("hasChecked", false);
             result.put("time", "");
         }
+        List<CourseCheckingInInfoEntity> checkingInList =
+                courseCheckingInInfoRepository.findByCourseIdOrderByBeginningTimeDesc(courseId); //签到表，按时间降序排序
+        if(checkingInList == null){ //本门课没有签到记录
+            result.put("hasChecked", false);
+        }
         else{
-            result.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").
-                    format(checkingInList.get(0).getBeginningTime()));
+            if(currentCourse.getIsCheckingIn() == 1){
+                result.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").
+                        format(checkingInList.get(0).getBeginningTime()));
+            }
             UserCourseCheckingInEntity userCheckingIn =
                     userCourseCheckingInRepository.findByCheckingInfoIdAndUserId(checkingInList.get(0).getId(),
                             currentUser.getId());
@@ -82,7 +85,7 @@ public class CourseCheckingService {
         }
         responseJson.put("result", result);
         responseJson.put("success", true);
-        return null;
+        return responseJson.toString();
     }
 
     //获取签到历史
