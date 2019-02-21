@@ -10,4 +10,5 @@ public interface UserCourseCheckingInRepository extends CrudRepository<UserCours
     @Nullable
     UserCourseCheckingInEntity findByCheckingInfoIdAndUserId(long checkingInfoId, long userId);
 
+    int countByCheckingInfoId(long checkingInfoId);
 }

@@ -9,6 +9,7 @@ import com.ccwsz.server.dao.entity.CourseEntity;
 import com.ccwsz.server.dao.entity.UserCourseCheckingInEntity;
 import com.ccwsz.server.dao.entity.UserEntity;
 import com.ccwsz.server.service.util.JsonManage;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -118,6 +119,20 @@ public class CourseCheckingService {
 
     //获取签到历史
     public String getCheckingHistory(long courseId) {
-        return null;
+        JSONObject responseJson = new JSONObject();
+        JSONArray result = new JSONArray();
+        List<CourseCheckingInInfoEntity> courseCheckingInInfoList =
+                courseCheckingInInfoRepository.findByCourseIdOrderByBeginningTimeDesc(courseId);
+        for(CourseCheckingInInfoEntity checkingInInfo : courseCheckingInInfoList){
+            JSONObject checkingInfoJson = new JSONObject();
+            checkingInfoJson.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            .format(checkingInInfo.getBeginningTime()));
+            checkingInfoJson.put("count",
+                    userCourseCheckingInRepository.countByCheckingInfoId(checkingInInfo.getId()));
+            result.put(checkingInfoJson);
+        }
+        responseJson.put("result",result);
+        responseJson.put("success", true);
+        return responseJson.toString();
     }
 }

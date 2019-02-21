@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface CourseCheckingInInfoRepository extends CrudRepository<CourseCheckingInInfoEntity, Integer> {
-    @Nullable
     List<CourseCheckingInInfoEntity> findByCourseIdOrderByBeginningTimeDesc(long courseId);
 
     @Nullable
