@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CourseHomeworkInfoRepository extends CrudRepository<CourseHomeworkInfoEntity, Integer> {
     List<CourseHomeworkInfoEntity> findByCourseId(long courseId);
+
+    boolean existsById(long homeworkId);
 }

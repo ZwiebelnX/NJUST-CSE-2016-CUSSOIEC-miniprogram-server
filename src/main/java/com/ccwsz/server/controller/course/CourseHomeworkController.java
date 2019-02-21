@@ -2,11 +2,9 @@ package com.ccwsz.server.controller.course;
 
 import com.ccwsz.server.service.course.CourseHomeworkService;
 import com.ccwsz.server.service.util.JsonManage;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,7 +18,8 @@ public class CourseHomeworkController {
     }
 
     //获取作业列表
-    @RequestMapping(value = "/course/homework_list", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/course/homework_list", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getCourseHomeworkList(HttpServletRequest request){
         String college = request.getParameter("college");
@@ -36,7 +35,8 @@ public class CourseHomeworkController {
     }
 
     //获取作业列表
-    @RequestMapping(value = "/course/homework", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/course/homework", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String getCourseSpecificHomework(HttpServletRequest request){
         long homeworkId;
@@ -49,5 +49,24 @@ public class CourseHomeworkController {
             return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
         }
         return courseHomeworkService.getCourseSpecificHomework(college, personNumber, homeworkId);
+    }
+
+    //学生提交作答情况
+    @RequestMapping(value = "/course/homework_answer", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String submitHomeworkAnswer(@RequestBody String jsonString){
+        try{
+            JSONObject json = new JSONObject(jsonString);
+            String personNumber = json.getString("personID");
+            String collegeName = json.getString("college");
+            long homeworkId = json.getInt("homeworkID");
+            long courseId = json.getInt("courseID");
+            return courseHomeworkService.submitHomeworkAnswer(collegeName, personNumber, courseId, homeworkId,
+                    json.getJSONObject("data").getJSONArray("answer"));
+        } catch (Exception e){
+            e.printStackTrace();
+            return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
+        }
     }
 }

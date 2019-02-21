@@ -1,10 +1,15 @@
 package com.ccwsz.server.dao.entity;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "course_homework_question", schema = "online_cussoiec", catalog = "")
 public class CourseHomeworkQuestionEntity {
     private long id;
@@ -29,6 +34,7 @@ public class CourseHomeworkQuestionEntity {
     }
 
     @Basic
+    @CreatedDate
     @Column(name = "gmt_create", nullable = false)
     public Timestamp getGmtCreate() {
         return gmtCreate;
@@ -39,6 +45,7 @@ public class CourseHomeworkQuestionEntity {
     }
 
     @Basic
+    @LastModifiedDate
     @Column(name = "gmt_modified", nullable = false)
     public Timestamp getGmtModified() {
         return gmtModified;
@@ -116,7 +123,7 @@ public class CourseHomeworkQuestionEntity {
         return id == that.id &&
                 homeworkId == that.homeworkId &&
                 questionType == that.questionType &&
-                correctAnswer == that.correctAnswer &&
+                Objects.equals(correctAnswer, that.correctAnswer) &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
                 Objects.equals(questionText, that.questionText) &&

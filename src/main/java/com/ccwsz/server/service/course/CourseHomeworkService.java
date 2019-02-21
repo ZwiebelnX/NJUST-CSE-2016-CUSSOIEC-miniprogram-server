@@ -1,19 +1,18 @@
 package com.ccwsz.server.service.course;
 
+import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
 import com.ccwsz.server.dao.dock.course.homework.CourseHomeworkInfoRepository;
 import com.ccwsz.server.dao.dock.course.homework.CourseHomeworkQuestionRepository;
 import com.ccwsz.server.dao.dock.course.homework.UserHomeworkAnswerRepository;
 import com.ccwsz.server.dao.dock.user.UserRepository;
-import com.ccwsz.server.dao.entity.CourseHomeworkInfoEntity;
-import com.ccwsz.server.dao.entity.CourseHomeworkQuestionEntity;
-import com.ccwsz.server.dao.entity.UserEntity;
-import com.ccwsz.server.dao.entity.UserHomeworkAnswerEntity;
+import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -22,16 +21,19 @@ public class CourseHomeworkService {
     private final UserRepository userRepository;
     private final UserHomeworkAnswerRepository userHomeworkAnswerRepository;
     private final CourseHomeworkQuestionRepository courseHomeworkQuestionRepository;
+    private final CourseChooseRepository courseChooseRepository;
 
     @Autowired
     public CourseHomeworkService(CourseHomeworkInfoRepository courseHomeworkInfoRepository,
                                  UserRepository userRepository,
                                  UserHomeworkAnswerRepository userHomeworkAnswerRepository,
-                                 CourseHomeworkQuestionRepository courseHomeworkQuestionRepository) {
+                                 CourseHomeworkQuestionRepository courseHomeworkQuestionRepository,
+                                 CourseChooseRepository courseRepository) {
         this.courseHomeworkInfoRepository = courseHomeworkInfoRepository;
         this.userRepository = userRepository;
         this.userHomeworkAnswerRepository = userHomeworkAnswerRepository;
         this.courseHomeworkQuestionRepository = courseHomeworkQuestionRepository;
+        this.courseChooseRepository = courseRepository;
     }
 
     //获取作业列表
@@ -137,5 +139,61 @@ public class CourseHomeworkService {
         responseJson.put("result", result);
         responseJson.put("success", true);
         return responseJson.toString();
+    }
+
+    //学生提交作业
+    public String submitHomeworkAnswer(String collegeName, String personNumber, long courseId, long homeworkId,
+                                       JSONArray userAnswerArray){
+        JSONObject responseJson = new JSONObject(); //回应体
+        JSONArray result = new JSONArray();
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
+        if (currentUser == null) {
+            return JsonManage.buildFailureMessage("找不到用户！");
+        }
+        //前置判断：学生选课 && 作业存在
+        if(courseChooseRepository.existsByCourseIdAndStudentId(courseId, currentUser.getId()) &&
+         courseHomeworkInfoRepository.existsById(homeworkId)){
+            List<CourseHomeworkQuestionEntity> questionList =
+                    courseHomeworkQuestionRepository.findByHomeworkId(homeworkId);
+            if(questionList.isEmpty()){
+                return JsonManage.buildFailureMessage("所选作业题库为空！请检查数据库");
+            }
+            Iterator userAnswer = userAnswerArray.iterator();
+            for(;userAnswer.hasNext();userAnswer.next()){
+                JSONObject answerJson = (JSONObject)userAnswer;
+                String userAnswerString;
+                boolean userAnswerIsCorrect;
+                byte answerIndex;
+                try{
+                    userAnswerString = answerJson.getString("userAnswer");
+                    userAnswerIsCorrect = answerJson.getBoolean("isCorrect");
+                    answerIndex = (byte)answerJson.getInt("indexNum");
+                } catch (Exception e){
+                    e.printStackTrace();
+                    return JsonManage.buildFailureMessage("json解析错误，请检查表单");
+                }
+                UserHomeworkAnswerEntity answerEntity = new UserHomeworkAnswerEntity();
+                answerEntity.setHomeworkId(homeworkId);
+                answerEntity.setUserAnswer(userAnswerString);
+                if(userAnswerIsCorrect){
+                    answerEntity.setIsCorrect((byte)1);
+                }
+                else{
+                    answerEntity.setIsCorrect((byte)0);
+                }
+                for(CourseHomeworkQuestionEntity question : questionList){
+                    if(question.getQuestionIndex() == answerIndex){
+                        answerEntity.setQuestionId(question.getId());
+                        questionList.remove(question);
+                        break;
+                    }
+                }
+            }
+            return responseJson.put("success",true).toString();
+        }
+        else{
+            return JsonManage.buildFailureMessage("学生未选择此课或作业不存在！");
+        }
+
     }
 }
