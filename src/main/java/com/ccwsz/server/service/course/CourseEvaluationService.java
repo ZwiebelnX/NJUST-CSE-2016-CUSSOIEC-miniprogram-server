@@ -3,6 +3,7 @@ package com.ccwsz.server.service.course;
 import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
 import com.ccwsz.server.dao.dock.course.CourseRepository;
 import com.ccwsz.server.dao.dock.course.evaluation.CourseEvaluationQuestionRepository;
+import com.ccwsz.server.dao.dock.course.evaluation.UserEvaluationAnswerRepository;
 import com.ccwsz.server.dao.dock.user.UserRepository;
 import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.CourseEntity;
@@ -21,13 +22,15 @@ public class CourseEvaluationService {
     private final CourseChooseRepository courseChooseRepository;
     private final CourseEvaluationQuestionRepository courseEvaluationQuestionRepository;
     private final CourseRepository courseRepository;
+    private final UserEvaluationAnswerRepository userEvaluationAnswerRepository;
     @Autowired
     public  CourseEvaluationService(UserRepository userRepository,CourseChooseRepository courseChooseRepository,
-                                    CourseRepository courseRepository,CourseEvaluationQuestionRepository courseEvaluationQuestionRepository){
+                                    CourseRepository courseRepository, UserEvaluationAnswerRepository userEvaluationAnswerRepository,CourseEvaluationQuestionRepository courseEvaluationQuestionRepository){
         this.userRepository=userRepository;
         this.courseChooseRepository=courseChooseRepository;
         this.courseEvaluationQuestionRepository=courseEvaluationQuestionRepository;
         this.courseRepository=courseRepository;
+        this.userEvaluationAnswerRepository=userEvaluationAnswerRepository;
     }
     //获取评教问卷列表
     public String getCourseEvaluationList(String college, String personNumber, long courseId){
@@ -48,7 +51,7 @@ public class CourseEvaluationService {
         CourseEntity currentCourse=courseRepository.findById(courseId);
         result.put("isOpen",currentCourse.getIsEvaluated());
         List<CourseEvaluationQuestionEntity> evaluationQuestionList=courseEvaluationQuestionRepository.findByCourseId(courseId);
-        if(evaluationList.length()==0){
+        if(evaluationQuestionList.size()==0){
             return JsonManage.buildFailureMessage("未有评教问题!");
         }
         for(CourseEvaluationQuestionEntity question:evaluationQuestionList) {
@@ -75,5 +78,23 @@ public class CourseEvaluationService {
         responseJson.put("result", result);
         responseJson.put("success", true);
         return responseJson.toString();
+    }
+    //提交评教作答
+    public String submitEvaluationAnswer(String collegeName, String personNumber, long courseId, JSONArray userAnswerArray){
+        JSONObject responseJson = new JSONObject(); //回应体
+        JSONArray result = new JSONArray();
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
+        if (currentUser == null) {
+            return JsonManage.buildFailureMessage("找不到用户！");
+        }
+        List<CourseEvaluationQuestionEntity> evaluationQuestionList=courseEvaluationQuestionRepository.findByCourseId(courseId);
+        if(evaluationQuestionList.size()==0){
+            return JsonManage.buildFailureMessage("该门科评教没有问题!");
+        }
+        //前置判断：学生选课
+        if(courseChooseRepository.existsByCourseIdAndStudentId(courseId,currentUser.getId())){
+
+        }
+        return"1";
     }
 }
