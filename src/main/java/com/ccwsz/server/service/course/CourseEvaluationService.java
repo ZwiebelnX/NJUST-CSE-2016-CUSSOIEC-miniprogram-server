@@ -5,16 +5,14 @@ import com.ccwsz.server.dao.dock.course.CourseRepository;
 import com.ccwsz.server.dao.dock.course.evaluation.CourseEvaluationQuestionRepository;
 import com.ccwsz.server.dao.dock.course.evaluation.UserEvaluationAnswerRepository;
 import com.ccwsz.server.dao.dock.user.UserRepository;
-import com.ccwsz.server.dao.entity.CourseChooseEntity;
-import com.ccwsz.server.dao.entity.CourseEntity;
-import com.ccwsz.server.dao.entity.CourseEvaluationQuestionEntity;
-import com.ccwsz.server.dao.entity.UserEntity;
+import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
 @Service
 public class CourseEvaluationService {
@@ -89,12 +87,43 @@ public class CourseEvaluationService {
         }
         List<CourseEvaluationQuestionEntity> evaluationQuestionList=courseEvaluationQuestionRepository.findByCourseId(courseId);
         if(evaluationQuestionList.size()==0){
-            return JsonManage.buildFailureMessage("该门科评教没有问题!");
+            return JsonManage.buildFailureMessage("评教问题为空！请检查数据库");
         }
         //前置判断：学生选课
         if(courseChooseRepository.existsByCourseIdAndStudentId(courseId,currentUser.getId())){
-
+            Iterator userAnswer = userAnswerArray.iterator();
+            for(;userAnswer.hasNext();){
+                JSONObject answerJson=(JSONObject)userAnswer.next();
+                String userAnswerString;
+                long answerIndex;
+                try{
+                    userAnswerString=answerJson.getString("userAnswer");
+                    answerIndex = (long) answerJson.getInt("indexNum");
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    return JsonManage.buildFailureMessage("json解析错误，请检查表单");
+                }
+                UserEvaluationAnswerEntity answerEntity = new UserEvaluationAnswerEntity();
+                answerEntity.setUserAnswer(userAnswerString);
+                answerEntity.setCourseId(courseId);
+//                answerEntity.setGmtModified();
+//                answerEntity.setGmtCreate();
+//                answerEntity.setQuestionId(answerIndex);
+                for(CourseEvaluationQuestionEntity question:evaluationQuestionList){
+                    if(question.getId() == answerIndex){
+                        answerEntity.setQuestionId(question.getId());
+                        evaluationQuestionList.remove(question);
+                        break;
+                    }
+                }
+                answerEntity.setQuestionId(answerIndex);
+                userEvaluationAnswerRepository.save(answerEntity);
+            }
+            return responseJson.put("success",true).toString();
         }
-        return"1";
+        else{
+            return JsonManage.buildFailureMessage("学生未选择此课或作业不存在！");
+        }
     }
 }
