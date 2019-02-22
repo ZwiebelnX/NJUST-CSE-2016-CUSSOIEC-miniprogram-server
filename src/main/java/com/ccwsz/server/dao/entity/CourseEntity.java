@@ -1,15 +1,10 @@
 package com.ccwsz.server.dao.entity;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "course", schema = "online_cussoiec", catalog = "")
 public class CourseEntity {
     private long id;
@@ -17,7 +12,6 @@ public class CourseEntity {
     private Timestamp gmtModified;
     private String courseNumber;
     private String courseName;
-    private long teacherId;
     private String teacherName;
     private String classroomLocation;
     private String classTime;
@@ -26,9 +20,10 @@ public class CourseEntity {
     private String liveUrl;
     private Byte isLive;
     private Byte isCheckingIn;
+    private Byte isEvaluated;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -38,8 +33,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @CreatedDate
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -49,8 +43,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @LastModifiedDate
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -60,7 +53,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "course_number", nullable = false, length = 10)
+    @Column(name = "course_number")
     public String getCourseNumber() {
         return courseNumber;
     }
@@ -70,7 +63,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "course_name", nullable = false, length = 60)
+    @Column(name = "course_name")
     public String getCourseName() {
         return courseName;
     }
@@ -80,17 +73,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "teacher_id", nullable = false)
-    public long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(long teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    @Basic
-    @Column(name = "teacher_name", nullable = false, length = 20)
+    @Column(name = "teacher_name")
     public String getTeacherName() {
         return teacherName;
     }
@@ -100,7 +83,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "classroom_location", nullable = true, length = 20)
+    @Column(name = "classroom_location")
     public String getClassroomLocation() {
         return classroomLocation;
     }
@@ -110,7 +93,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "class_time", nullable = true, length = 30)
+    @Column(name = "class_time")
     public String getClassTime() {
         return classTime;
     }
@@ -120,7 +103,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 200)
+    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -130,7 +113,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "class_week", nullable = true, length = 10)
+    @Column(name = "class_week")
     public String getClassWeek() {
         return classWeek;
     }
@@ -139,35 +122,9 @@ public class CourseEntity {
         this.classWeek = classWeek;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CourseEntity that = (CourseEntity) o;
-        return id == that.id &&
-                teacherId == that.teacherId &&
-                Objects.equals(gmtCreate, that.gmtCreate) &&
-                Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(courseNumber, that.courseNumber) &&
-                Objects.equals(courseName, that.courseName) &&
-                Objects.equals(teacherName, that.teacherName) &&
-                Objects.equals(classroomLocation, that.classroomLocation) &&
-                Objects.equals(classTime, that.classTime) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(classWeek, that.classWeek);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, courseNumber, courseName, teacherId, teacherName, classroomLocation, classTime, description, classWeek);
-    }
-
     @Basic
-    @Column(name = "live_url", nullable = true, length = 255)
+    @Column(name = "live_url")
     public String getLiveUrl() {
-        if(liveUrl == null){
-            return "";
-        }
         return liveUrl;
     }
 
@@ -176,11 +133,8 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "is_live", nullable = true)
+    @Column(name = "is_live")
     public Byte getIsLive() {
-        if(isLive == null){
-            return 0;
-        }
         return isLive;
     }
 
@@ -189,12 +143,48 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "is_checking_in", nullable = true)
+    @Column(name = "is_checking_in")
     public Byte getIsCheckingIn() {
         return isCheckingIn;
     }
 
     public void setIsCheckingIn(Byte isCheckingIn) {
         this.isCheckingIn = isCheckingIn;
+    }
+
+    @Basic
+    @Column(name = "is_evaluated")
+    public Byte getIsEvaluated() {
+        return isEvaluated;
+    }
+
+    public void setIsEvaluated(Byte isEvaluated) {
+        this.isEvaluated = isEvaluated;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseEntity that = (CourseEntity) o;
+        return id == that.id &&
+                Objects.equals(gmtCreate, that.gmtCreate) &&
+                Objects.equals(gmtModified, that.gmtModified) &&
+                Objects.equals(courseNumber, that.courseNumber) &&
+                Objects.equals(courseName, that.courseName) &&
+                Objects.equals(teacherName, that.teacherName) &&
+                Objects.equals(classroomLocation, that.classroomLocation) &&
+                Objects.equals(classTime, that.classTime) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(classWeek, that.classWeek) &&
+                Objects.equals(liveUrl, that.liveUrl) &&
+                Objects.equals(isLive, that.isLive) &&
+                Objects.equals(isCheckingIn, that.isCheckingIn) &&
+                Objects.equals(isEvaluated, that.isEvaluated);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, gmtCreate, gmtModified, courseNumber, courseName, teacherName, classroomLocation, classTime, description, classWeek, liveUrl, isLive, isCheckingIn, isEvaluated);
     }
 }
