@@ -159,8 +159,8 @@ public class CourseHomeworkService {
                 return JsonManage.buildFailureMessage("所选作业题库为空！请检查数据库");
             }
             Iterator userAnswer = userAnswerArray.iterator();
-            for(;userAnswer.hasNext();userAnswer.next()){
-                JSONObject answerJson = (JSONObject)userAnswer;
+            for(;userAnswer.hasNext();){
+                JSONObject answerJson = (JSONObject)userAnswer.next();
                 String userAnswerString;
                 boolean userAnswerIsCorrect;
                 byte answerIndex;
@@ -173,6 +173,7 @@ public class CourseHomeworkService {
                     return JsonManage.buildFailureMessage("json解析错误，请检查表单");
                 }
                 UserHomeworkAnswerEntity answerEntity = new UserHomeworkAnswerEntity();
+                answerEntity.setUserId(currentUser.getId());
                 answerEntity.setHomeworkId(homeworkId);
                 answerEntity.setUserAnswer(userAnswerString);
                 if(userAnswerIsCorrect){
@@ -188,6 +189,7 @@ public class CourseHomeworkService {
                         break;
                     }
                 }
+                userHomeworkAnswerRepository.save(answerEntity);
             }
             return responseJson.put("success",true).toString();
         }

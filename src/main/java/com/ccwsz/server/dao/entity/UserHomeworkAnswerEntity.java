@@ -1,5 +1,7 @@
 package com.ccwsz.server.dao.entity;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GeneratorType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,6 +24,7 @@ public class UserHomeworkAnswerEntity {
     private byte isCorrect;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public long getId() {
         return id;
