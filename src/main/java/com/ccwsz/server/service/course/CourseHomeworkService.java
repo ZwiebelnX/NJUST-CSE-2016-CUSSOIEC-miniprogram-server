@@ -161,11 +161,19 @@ public class CourseHomeworkService {
             Iterator userAnswer = userAnswerArray.iterator();
             for(;userAnswer.hasNext();){
                 JSONObject answerJson = (JSONObject)userAnswer.next();
-                String userAnswerString;
+                String userAnswerString="";
                 boolean userAnswerIsCorrect;
                 byte answerIndex;
                 try{
-                    userAnswerString = answerJson.getString("userAnswer");
+                    JSONArray userAnswerJSONArray=answerJson.getJSONArray("userAnswer");
+                    Iterator userAnswerTmp=userAnswerJSONArray.iterator();
+                    for(;userAnswerTmp.hasNext();){
+                        String tmp=(String)userAnswerTmp.next();
+                        userAnswerString+=tmp;
+                        if(userAnswerTmp.hasNext()){
+                            userAnswerString+=",";
+                        }
+                    }
                     userAnswerIsCorrect = answerJson.getBoolean("isCorrect");
                     answerIndex = (byte)answerJson.getInt("indexNum");
                 } catch (Exception e){

@@ -1,6 +1,7 @@
 package com.ccwsz.server.dao.entity;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -20,7 +21,8 @@ public class UserEvaluationAnswerEntity {
     private String userAnswer;
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -41,7 +43,7 @@ public class UserEvaluationAnswerEntity {
     }
 
     @Basic
-    @CreatedDate
+    @LastModifiedDate
     @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;

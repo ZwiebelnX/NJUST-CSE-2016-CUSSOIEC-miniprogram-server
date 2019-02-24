@@ -94,10 +94,18 @@ public class CourseEvaluationService {
             Iterator userAnswer = userAnswerArray.iterator();
             for(;userAnswer.hasNext();){
                 JSONObject answerJson=(JSONObject)userAnswer.next();
-                String userAnswerString;
+                String userAnswerString="";
                 long answerIndex;
                 try{
-                    userAnswerString=answerJson.getString("userAnswer");
+                    JSONArray userAnswerJSONArray=answerJson.getJSONArray("userAnswer");
+                    Iterator userAnswerTmp=userAnswerJSONArray.iterator();
+                    for(;userAnswerTmp.hasNext();){
+                        String tmp=(String)userAnswerTmp.next();
+                        userAnswerString+=tmp;
+                        if(userAnswerTmp.hasNext()){
+                            userAnswerString+=",";
+                        }
+                    }
                     answerIndex = (long) answerJson.getInt("indexNum");
                 }
                 catch(Exception e){
@@ -107,16 +115,7 @@ public class CourseEvaluationService {
                 UserEvaluationAnswerEntity answerEntity = new UserEvaluationAnswerEntity();
                 answerEntity.setUserAnswer(userAnswerString);
                 answerEntity.setCourseId(courseId);
-//                answerEntity.setGmtModified();
-//                answerEntity.setGmtCreate();
-//                answerEntity.setQuestionId(answerIndex);
-                for(CourseEvaluationQuestionEntity question:evaluationQuestionList){
-                    if(question.getId() == answerIndex){
-                        answerEntity.setQuestionId(question.getId());
-                        evaluationQuestionList.remove(question);
-                        break;
-                    }
-                }
+                answerEntity.setUserId(currentUser.getId());
                 answerEntity.setQuestionId(answerIndex);
                 userEvaluationAnswerRepository.save(answerEntity);
             }
