@@ -53,7 +53,7 @@ public class CourseHomeworkService {
             homeworkInfoJson.put("name", homeworkInfo.getName());
             homeworkInfoJson.put("homeworkID", homeworkInfo.getId());
             //设置当前用户是否已经作答本作业
-            if(userHomeworkAnswerRepository.existsByHomeworkId(homeworkInfo.getId())){
+            if(userHomeworkAnswerRepository.existsByUserId(currentUser.getId())){
                 homeworkInfoJson.put("isFinished", true);
             }
             else{

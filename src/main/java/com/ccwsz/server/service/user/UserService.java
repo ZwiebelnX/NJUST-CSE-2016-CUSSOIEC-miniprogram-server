@@ -1,9 +1,6 @@
-package com.ccwsz.server.service.homework;
+package com.ccwsz.server.service.user;
 
 import com.ccwsz.server.dao.dock.college.CollegeRepository;
-import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
-import com.ccwsz.server.dao.dock.course.CourseRepository;
-import com.ccwsz.server.dao.dock.course.checking.UserCourseCheckingInRepository;
 import com.ccwsz.server.dao.dock.user.UserRepository;
 import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.GlobalData;
