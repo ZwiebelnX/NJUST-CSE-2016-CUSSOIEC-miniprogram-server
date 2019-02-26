@@ -1,5 +1,6 @@
 package com.ccwsz.server.service.course;
 
+import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
 import com.ccwsz.server.dao.dock.course.checking.CourseCheckingInInfoRepository;
 import com.ccwsz.server.dao.dock.course.checking.UserCourseCheckingInRepository;
 import com.ccwsz.server.dao.dock.course.CourseRepository;
@@ -24,15 +25,18 @@ public class CourseCheckingService {
     private final CourseRepository courseRepository;
     private final UserCourseCheckingInRepository userCourseCheckingInRepository;
     private final CourseCheckingInInfoRepository courseCheckingInInfoRepository;
+    private final CourseChooseRepository courseChooseRepository;
 
     @Autowired
     public CourseCheckingService(UserRepository userRepository, CourseRepository courseRepository,
-                                 UserCourseCheckingInRepository courseChooseRepository,
-                                 CourseCheckingInInfoRepository courseCheckingInInfoRepository) {
+                                 UserCourseCheckingInRepository userCourseChooseRepository,
+                                 CourseCheckingInInfoRepository courseCheckingInInfoRepository,
+                                 CourseChooseRepository courseChooseRepository) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
-        this.userCourseCheckingInRepository = courseChooseRepository;
+        this.userCourseCheckingInRepository = userCourseChooseRepository;
         this.courseCheckingInInfoRepository = courseCheckingInInfoRepository;
+        this.courseChooseRepository = courseChooseRepository;
     }
 
     //尝试签到
@@ -130,6 +134,7 @@ public class CourseCheckingService {
             checkingInfoJson.put("count",
                     userCourseCheckingInRepository.countByCheckingInfoId(checkingInInfo.getId()));
             result.put(checkingInfoJson);
+            checkingInfoJson.put("expectation", courseChooseRepository.countByCourseId(courseId));
         }
         responseJson.put("result",result);
         responseJson.put("success", true);
