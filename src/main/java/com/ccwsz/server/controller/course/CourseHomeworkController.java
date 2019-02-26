@@ -2,6 +2,9 @@ package com.ccwsz.server.controller.course;
 
 import com.ccwsz.server.service.course.CourseHomeworkService;
 import com.ccwsz.server.service.util.JsonManage;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import org.json.JSONArray;
+import org.json.JSONML;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,5 +71,29 @@ public class CourseHomeworkController {
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
         }
+    }
+
+    //教师发布作业
+    @RequestMapping(value = "/course/homework", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String postHomework(@RequestBody String jsonString){
+        String collegeName;
+        String personNumber;
+        String homeworkName;
+        long courseId;
+        JSONArray data;
+        try{
+            JSONObject json = new JSONObject(jsonString);
+            personNumber = json.getString("personID");
+            collegeName = json.getString("college");
+            homeworkName = json.getString("homeworkName");
+            courseId = Integer.parseInt(json.getString("courseID"));
+            data = json.getJSONArray("data");
+        } catch (Exception e){
+            e.printStackTrace();
+            return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
+        }
+        return courseHomeworkService.postHomework(collegeName, personNumber, courseId, homeworkName, data);
     }
 }

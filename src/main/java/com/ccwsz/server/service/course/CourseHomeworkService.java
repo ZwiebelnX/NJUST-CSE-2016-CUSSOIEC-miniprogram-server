@@ -1,6 +1,7 @@
 package com.ccwsz.server.service.course;
 
 import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
+import com.ccwsz.server.dao.dock.course.CourseRepository;
 import com.ccwsz.server.dao.dock.course.homework.CourseHomeworkInfoRepository;
 import com.ccwsz.server.dao.dock.course.homework.CourseHomeworkQuestionRepository;
 import com.ccwsz.server.dao.dock.course.homework.UserHomeworkAnswerRepository;
@@ -10,6 +11,7 @@ import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
@@ -22,18 +24,21 @@ public class CourseHomeworkService {
     private final UserHomeworkAnswerRepository userHomeworkAnswerRepository;
     private final CourseHomeworkQuestionRepository courseHomeworkQuestionRepository;
     private final CourseChooseRepository courseChooseRepository;
+    private final CourseRepository courseRepository;
 
     @Autowired
     public CourseHomeworkService(CourseHomeworkInfoRepository courseHomeworkInfoRepository,
                                  UserRepository userRepository,
                                  UserHomeworkAnswerRepository userHomeworkAnswerRepository,
                                  CourseHomeworkQuestionRepository courseHomeworkQuestionRepository,
-                                 CourseChooseRepository courseRepository) {
+                                 CourseChooseRepository courseChooseRepository,
+                                 CourseRepository courseRepository) {
         this.courseHomeworkInfoRepository = courseHomeworkInfoRepository;
         this.userRepository = userRepository;
         this.userHomeworkAnswerRepository = userHomeworkAnswerRepository;
         this.courseHomeworkQuestionRepository = courseHomeworkQuestionRepository;
-        this.courseChooseRepository = courseRepository;
+        this.courseChooseRepository = courseChooseRepository;
+        this.courseRepository = courseRepository;
     }
 
     //获取作业列表
@@ -205,5 +210,79 @@ public class CourseHomeworkService {
             return JsonManage.buildFailureMessage("学生未选择此课或作业不存在！");
         }
 
+    }
+
+    //发布作业
+    public String postHomework(String collegeName, String personNumber, long courseId, String homeowrkName, JSONArray data){
+        JSONObject responseJson = new JSONObject(); //回应体
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
+        if (currentUser == null) {
+            return JsonManage.buildFailureMessage("找不到用户！");
+        }
+        CourseEntity currentCourse = courseRepository.findById(courseId);
+        if(currentCourse == null){
+            return JsonManage.buildFailureMessage("找不到课程！");
+        }
+        //前置鉴权
+        if(currentUser.getUserType().equals("teacher") && currentCourse.getTeacherId() == currentUser.getId()){
+            //添加作业基本信息
+            CourseHomeworkInfoEntity homeworkInfoEntity = new CourseHomeworkInfoEntity();
+            homeworkInfoEntity.setName(homeowrkName);
+            homeworkInfoEntity.setCourseId(currentCourse.getId());
+            courseHomeworkInfoRepository.save(homeworkInfoEntity);
+            //添加作业题目
+            long homeworkId = homeworkInfoEntity.getId();
+            Iterator questionIterator = data.iterator();
+            for(;questionIterator.hasNext();){
+                JSONObject questionJson = (JSONObject)questionIterator.next();
+                CourseHomeworkQuestionEntity questionEntity = new CourseHomeworkQuestionEntity();
+                try{
+                    questionEntity.setQuestionType((byte)questionJson.getInt("type"));
+                    questionEntity.setHomeworkId(homeworkId);
+                    questionEntity.setQuestionText(questionJson.getString("question"));
+                    Iterator imageURLsIterator = questionJson.getJSONArray("imageURLs").iterator();
+                    String imageURLsString = "";
+                    for(; imageURLsIterator.hasNext();){
+                        JSONObject url = (JSONObject)imageURLsIterator.next();
+                        imageURLsString = imageURLsString + url.getString("url");
+                        if(imageURLsIterator.hasNext()){
+                            imageURLsString += ";";
+                        }
+                    }
+                    questionEntity.setImageUrls(imageURLsString);
+                    Iterator chooseIterator = questionJson.getJSONArray("imageURLs").iterator();
+                    String chooseString = "";
+                    for(; chooseIterator.hasNext();){
+                        JSONObject choose = (JSONObject)chooseIterator.next();
+                        chooseString += choose.getString("choseID") + ":";
+                        chooseString += choose.getString("name");
+                        if(imageURLsIterator.hasNext()){
+                            imageURLsString += ";";
+                        }
+                    }
+                    questionEntity.setChooseText(chooseString);
+                    String answerString = "";
+                    Iterator answerIterator = questionJson.getJSONArray("correctAnswer").iterator();
+                    for(; answerIterator.hasNext();){
+                        String answer = (String)answerIterator.next();
+                        answerString += answer;
+                        if(answerIterator.hasNext()){
+                            answerString += ",";
+                        }
+                    }
+                    questionEntity.setCorrectAnswer(answerString);
+
+                    courseHomeworkQuestionRepository.save(questionEntity);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    return JsonManage.buildFailureMessage("数据格式错误！请检查格式");
+                }
+            }
+            responseJson.put("success", true);
+            return responseJson.toString();
+        }
+        else{
+            return JsonManage.buildFailureMessage("鉴权错误！请联系管理员");
+        }
     }
 }
