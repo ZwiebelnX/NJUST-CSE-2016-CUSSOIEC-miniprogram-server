@@ -240,6 +240,7 @@ public class CourseHomeworkService {
                     questionEntity.setQuestionType((byte)questionJson.getInt("type"));
                     questionEntity.setHomeworkId(homeworkId);
                     questionEntity.setQuestionText(questionJson.getString("question"));
+                    questionEntity.setQuestionIndex((byte)Integer.parseInt(questionJson.getString("questionIndex")));
                     Iterator imageURLsIterator = questionJson.getJSONArray("imageURLs").iterator();
                     String imageURLsString = "";
                     for(; imageURLsIterator.hasNext();){
@@ -250,14 +251,14 @@ public class CourseHomeworkService {
                         }
                     }
                     questionEntity.setImageUrls(imageURLsString);
-                    Iterator chooseIterator = questionJson.getJSONArray("imageURLs").iterator();
+                    Iterator chooseIterator = questionJson.getJSONArray("choseList").iterator();
                     String chooseString = "";
                     for(; chooseIterator.hasNext();){
                         JSONObject choose = (JSONObject)chooseIterator.next();
-                        chooseString += choose.getString("choseID") + ":";
+                        chooseString += choose.getString("choseIndex") + ":";
                         chooseString += choose.getString("name");
-                        if(imageURLsIterator.hasNext()){
-                            imageURLsString += ";";
+                        if(chooseIterator.hasNext()){
+                            chooseString += ";";
                         }
                     }
                     questionEntity.setChooseText(chooseString);
@@ -271,12 +272,11 @@ public class CourseHomeworkService {
                         }
                     }
                     questionEntity.setCorrectAnswer(answerString);
-
-                    courseHomeworkQuestionRepository.save(questionEntity);
                 } catch (Exception e){
                     e.printStackTrace();
                     return JsonManage.buildFailureMessage("数据格式错误！请检查格式");
                 }
+                courseHomeworkQuestionRepository.save(questionEntity);
             }
             responseJson.put("success", true);
             return responseJson.toString();
