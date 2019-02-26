@@ -56,7 +56,7 @@ public class CourseHomeworkService {
             homeworkInfoJson.put("name", homeworkInfo.getName());
             homeworkInfoJson.put("homeworkID", homeworkInfo.getId());
             //设置当前用户是否已经作答本作业
-            if(userHomeworkAnswerRepository.existsByUserId(currentUser.getId())){
+            if(userHomeworkAnswerRepository.existsByUserIdAndHomeworkId(currentUser.getId())){
                 homeworkInfoJson.put("isFinished", true);
             }
             else{
@@ -226,7 +226,6 @@ public class CourseHomeworkService {
             CourseHomeworkInfoEntity homeworkInfoEntity = new CourseHomeworkInfoEntity();
             homeworkInfoEntity.setName(homeowrkName);
             homeworkInfoEntity.setCourseId(currentCourse.getId());
-            courseHomeworkInfoRepository.save(homeworkInfoEntity);
             //添加作业题目
             long homeworkId = homeworkInfoEntity.getId();
             Iterator questionIterator = data.iterator();
@@ -273,6 +272,8 @@ public class CourseHomeworkService {
                     e.printStackTrace();
                     return JsonManage.buildFailureMessage("数据格式错误！请检查格式");
                 }
+                //数据处理无误后才保存至数据库
+                courseHomeworkInfoRepository.save(homeworkInfoEntity);
                 courseHomeworkQuestionRepository.save(questionEntity);
             }
             responseJson.put("success", true);

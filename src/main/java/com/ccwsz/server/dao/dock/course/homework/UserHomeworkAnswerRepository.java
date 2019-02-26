@@ -11,5 +11,5 @@ public interface UserHomeworkAnswerRepository extends CrudRepository<UserHomewor
 
     List<UserHomeworkAnswerEntity> findByHomeworkIdAndUserId(long homeworkId, long userId);
 
-    boolean existsByUserId(long userId);
+    boolean existsByUserIdAndHomeworkId(long userId);
 }
