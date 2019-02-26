@@ -44,9 +44,7 @@ public class CourseHomeworkService {
     //获取作业列表
     public String getCourseHomeworkList(String college, String personNumber, long courseId) {
         JSONObject responseJson = new JSONObject();
-        JSONObject result = new JSONObject();
-        JSONArray homeworkList = new JSONArray();
-
+        JSONArray result = new JSONArray();
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(college, personNumber); //当前用户
         if (currentUser == null) {
             return JsonManage.buildFailureMessage("找不到对应用户！");
@@ -64,9 +62,8 @@ public class CourseHomeworkService {
             else{
                 homeworkInfoJson.put("isFinished", false);
             }
-            homeworkList.put(homeworkInfoJson);
+            result.put(homeworkInfoJson);
         }
-        result.put("homeworkList", homeworkList);
         responseJson.put("result", result);
         responseJson.put("success", true);
         return responseJson.toString();
@@ -88,7 +85,7 @@ public class CourseHomeworkService {
         for(CourseHomeworkQuestionEntity question : questionList){
             JSONObject questionJson = new JSONObject();
             questionJson.put("type", question.getQuestionType());
-            questionJson.put("questionID", question.getQuestionIndex());
+            questionJson.put("questionIndex", question.getQuestionIndex());
             questionJson.put("question", question.getQuestionText());
             //构造图片url数组
             JSONArray imageURLs = new JSONArray();
@@ -109,7 +106,7 @@ public class CourseHomeworkService {
                 for(String choose : choseText){
                     JSONObject chooseJson = new JSONObject();
                     String[] chooseIndexAndText = choose.split(":");
-                    chooseJson.put("choseID", chooseIndexAndText[0]);
+                    chooseJson.put("choseIndex", chooseIndexAndText[0]);
                     chooseJson.put("name", chooseIndexAndText[1]);
                     choseList.put(chooseJson);
                 }
