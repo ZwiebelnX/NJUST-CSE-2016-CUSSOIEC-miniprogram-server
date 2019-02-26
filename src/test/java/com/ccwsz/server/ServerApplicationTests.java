@@ -14,14 +14,5 @@ public class ServerApplicationTests {
     @Test
     public void contextLoads() {
     }
-
-    @Test
-    public void jsonNullTest(){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("notNull", "good");
-        jsonObject.put("null", JSONObject.NULL);
-        JsonManage.filterNull(jsonObject);
-        System.out.println(jsonObject);
-    }
 }
 

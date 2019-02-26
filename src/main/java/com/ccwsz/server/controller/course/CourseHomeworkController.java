@@ -60,8 +60,8 @@ public class CourseHomeworkController {
             JSONObject json = new JSONObject(jsonString);
             String personNumber = json.getString("personID");
             String collegeName = json.getString("college");
-            long homeworkId = json.getInt("homeworkID");
-            long courseId = json.getInt("courseID");
+            long homeworkId = Integer.parseInt(json.getString("homeworkID"));
+            long courseId = Integer.parseInt(json.getString("courseID"));
             return courseHomeworkService.submitHomeworkAnswer(collegeName, personNumber, courseId, homeworkId,
                     json.getJSONObject("data").getJSONArray("answer"));
         } catch (Exception e){
