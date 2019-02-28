@@ -10,14 +10,15 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "user_course_checking_in", schema = "online_cussoiec", catalog = "")
-public class UserCourseCheckingInEntity {
+@Table(name = "info_stream_score", schema = "online_cussoiec", catalog = "")
+public class InfoStreamScoreEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
-    private long userId;
-    private byte checkingStatus;
-    private long checkingInfoId;
+    private int score;
+    private String gp;
+    private long targetUserId;
+    private long courseId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -53,51 +54,61 @@ public class UserCourseCheckingInEntity {
     }
 
     @Basic
-    @Column(name = "user_id", nullable = false)
-    public long getUserId() {
-        return userId;
+    @Column(name = "score", nullable = false)
+    public int getScore() {
+        return score;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     @Basic
-    @Column(name = "checking_status", nullable = false, length = 10)
-    public byte getCheckingStatus() {
-        return checkingStatus;
+    @Column(name = "gp", nullable = false, length = 10)
+    public String getGp() {
+        return gp;
     }
 
-    public void setCheckingStatus(byte checkingStatus) {
-        this.checkingStatus = checkingStatus;
+    public void setGp(String gp) {
+        this.gp = gp;
     }
 
+    @Basic
+    @Column(name = "target_user_id", nullable = false)
+    public long getTargetUserId() {
+        return targetUserId;
+    }
+
+    public void setTargetUserId(long targetUserId) {
+        this.targetUserId = targetUserId;
+    }
+
+    @Basic
+    @Column(name = "course_id", nullable = false)
+    public long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(long courseId) {
+        this.courseId = courseId;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserCourseCheckingInEntity that = (UserCourseCheckingInEntity) o;
+        InfoStreamScoreEntity that = (InfoStreamScoreEntity) o;
         return id == that.id &&
-                userId == that.userId &&
+                score == that.score &&
+                targetUserId == that.targetUserId &&
+                courseId == that.courseId &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(checkingStatus, that.checkingStatus) &&
-                Objects.equals(checkingInfoId, that.checkingInfoId);
+                Objects.equals(gp, that.gp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, userId, checkingStatus, checkingInfoId);
-    }
-
-    @Basic
-    @Column(name = "checking_info_id", nullable = false)
-    public long getCheckingInfoId() {
-        return checkingInfoId;
-    }
-
-    public void setCheckingInfoId(long checkingInfoId) {
-        this.checkingInfoId = checkingInfoId;
+        return Objects.hash(id, gmtCreate, gmtModified, score, gp, targetUserId, courseId);
     }
 }

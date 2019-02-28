@@ -10,14 +10,15 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "user_course_checking_in", schema = "online_cussoiec", catalog = "")
-public class UserCourseCheckingInEntity {
+@Table(name = "bbs_reply", schema = "online_cussoiec", catalog = "")
+public class BbsReplyEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private long topicId;
     private long userId;
-    private byte checkingStatus;
-    private long checkingInfoId;
+    private String replyText;
+    private int clickingRate;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -53,6 +54,16 @@ public class UserCourseCheckingInEntity {
     }
 
     @Basic
+    @Column(name = "topic_id", nullable = false)
+    public long getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(long topicId) {
+        this.topicId = topicId;
+    }
+
+    @Basic
     @Column(name = "user_id", nullable = false)
     public long getUserId() {
         return userId;
@@ -63,41 +74,41 @@ public class UserCourseCheckingInEntity {
     }
 
     @Basic
-    @Column(name = "checking_status", nullable = false, length = 10)
-    public byte getCheckingStatus() {
-        return checkingStatus;
+    @Column(name = "reply_text", nullable = false, length = 1000)
+    public String getReplyText() {
+        return replyText;
     }
 
-    public void setCheckingStatus(byte checkingStatus) {
-        this.checkingStatus = checkingStatus;
+    public void setReplyText(String replyText) {
+        this.replyText = replyText;
     }
 
+    @Basic
+    @Column(name = "clicking_rate", nullable = false)
+    public int getClickingRate() {
+        return clickingRate;
+    }
+
+    public void setClickingRate(int clickingRate) {
+        this.clickingRate = clickingRate;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserCourseCheckingInEntity that = (UserCourseCheckingInEntity) o;
+        BbsReplyEntity that = (BbsReplyEntity) o;
         return id == that.id &&
+                topicId == that.topicId &&
                 userId == that.userId &&
+                clickingRate == that.clickingRate &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(checkingStatus, that.checkingStatus) &&
-                Objects.equals(checkingInfoId, that.checkingInfoId);
+                Objects.equals(replyText, that.replyText);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, userId, checkingStatus, checkingInfoId);
-    }
-
-    @Basic
-    @Column(name = "checking_info_id", nullable = false)
-    public long getCheckingInfoId() {
-        return checkingInfoId;
-    }
-
-    public void setCheckingInfoId(long checkingInfoId) {
-        this.checkingInfoId = checkingInfoId;
+        return Objects.hash(id, gmtCreate, gmtModified, topicId, userId, replyText, clickingRate);
     }
 }

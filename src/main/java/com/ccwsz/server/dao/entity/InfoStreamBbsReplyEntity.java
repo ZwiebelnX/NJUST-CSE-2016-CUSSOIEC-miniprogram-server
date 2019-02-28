@@ -10,16 +10,16 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "course_video", schema = "online_cussoiec", catalog = "")
-public class CourseVideoEntity {
+@Table(name = "info_stream_bbs_reply", schema = "online_cussoiec", catalog = "")
+public class InfoStreamBbsReplyEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
-    private String videoName;
-    private String videoUrl;
+    private long bbsTopic;
+    private long senderId;
     private String description;
-    private String videoTag;
-    private long courseId;
+    private Long targetId;
+    private byte isRead;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -55,27 +55,27 @@ public class CourseVideoEntity {
     }
 
     @Basic
-    @Column(name = "video_name", nullable = false, length = 30)
-    public String getVideoName() {
-        return videoName;
+    @Column(name = "bbs_topic", nullable = false)
+    public long getBbsTopic() {
+        return bbsTopic;
     }
 
-    public void setVideoName(String videoName) {
-        this.videoName = videoName;
-    }
-
-    @Basic
-    @Column(name = "video_url", nullable = false, length = 255)
-    public String getVideoUrl() {
-        return videoUrl;
-    }
-
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
+    public void setBbsTopic(long bbsTopic) {
+        this.bbsTopic = bbsTopic;
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 120)
+    @Column(name = "sender_id", nullable = false)
+    public long getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(long senderId) {
+        this.senderId = senderId;
+    }
+
+    @Basic
+    @Column(name = "description", nullable = false, length = 100)
     public String getDescription() {
         return description;
     }
@@ -85,41 +85,42 @@ public class CourseVideoEntity {
     }
 
     @Basic
-    @Column(name = "video_tag", nullable = true, length = 50)
-    public String getVideoTag() {
-        return videoTag;
+    @Column(name = "target_id", nullable = true)
+    public Long getTargetId() {
+        return targetId;
     }
 
-    public void setVideoTag(String videoTag) {
-        this.videoTag = videoTag;
+    public void setTargetId(Long targetId) {
+        this.targetId = targetId;
+    }
+
+    @Basic
+    @Column(name = "is_read", nullable = false)
+    public byte getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(byte isRead) {
+        this.isRead = isRead;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CourseVideoEntity that = (CourseVideoEntity) o;
+        InfoStreamBbsReplyEntity that = (InfoStreamBbsReplyEntity) o;
         return id == that.id &&
+                bbsTopic == that.bbsTopic &&
+                senderId == that.senderId &&
+                isRead == that.isRead &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(videoName, that.videoName) &&
-                Objects.equals(videoUrl, that.videoUrl) &&
                 Objects.equals(description, that.description) &&
-                Objects.equals(videoTag, that.videoTag);
+                Objects.equals(targetId, that.targetId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, videoName, videoUrl, description, videoTag);
-    }
-
-    @Basic
-    @Column(name = "course_id", nullable = false)
-    public long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(long courseId) {
-        this.courseId = courseId;
+        return Objects.hash(id, gmtCreate, gmtModified, bbsTopic, senderId, description, targetId, isRead);
     }
 }

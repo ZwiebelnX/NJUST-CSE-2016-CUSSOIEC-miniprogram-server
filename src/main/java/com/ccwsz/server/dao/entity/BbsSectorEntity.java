@@ -10,14 +10,14 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "user_course_checking_in", schema = "online_cussoiec", catalog = "")
-public class UserCourseCheckingInEntity {
+@Table(name = "bbs_sector", schema = "online_cussoiec", catalog = "")
+public class BbsSectorEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
-    private long userId;
-    private byte checkingStatus;
-    private long checkingInfoId;
+    private String sectorName;
+    private long clickingRate;
+    private long topicCount;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -53,51 +53,50 @@ public class UserCourseCheckingInEntity {
     }
 
     @Basic
-    @Column(name = "user_id", nullable = false)
-    public long getUserId() {
-        return userId;
+    @Column(name = "sector_name", nullable = false, length = 45)
+    public String getSectorName() {
+        return sectorName;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setSectorName(String sectorName) {
+        this.sectorName = sectorName;
     }
 
     @Basic
-    @Column(name = "checking_status", nullable = false, length = 10)
-    public byte getCheckingStatus() {
-        return checkingStatus;
+    @Column(name = "clicking_rate", nullable = false)
+    public long getClickingRate() {
+        return clickingRate;
     }
 
-    public void setCheckingStatus(byte checkingStatus) {
-        this.checkingStatus = checkingStatus;
+    public void setClickingRate(long clickingRate) {
+        this.clickingRate = clickingRate;
     }
 
+    @Basic
+    @Column(name = "topic_count", nullable = false)
+    public long getTopicCount() {
+        return topicCount;
+    }
+
+    public void setTopicCount(long topicCount) {
+        this.topicCount = topicCount;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserCourseCheckingInEntity that = (UserCourseCheckingInEntity) o;
+        BbsSectorEntity that = (BbsSectorEntity) o;
         return id == that.id &&
-                userId == that.userId &&
+                clickingRate == that.clickingRate &&
+                topicCount == that.topicCount &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(checkingStatus, that.checkingStatus) &&
-                Objects.equals(checkingInfoId, that.checkingInfoId);
+                Objects.equals(sectorName, that.sectorName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, userId, checkingStatus, checkingInfoId);
-    }
-
-    @Basic
-    @Column(name = "checking_info_id", nullable = false)
-    public long getCheckingInfoId() {
-        return checkingInfoId;
-    }
-
-    public void setCheckingInfoId(long checkingInfoId) {
-        this.checkingInfoId = checkingInfoId;
+        return Objects.hash(id, gmtCreate, gmtModified, sectorName, clickingRate, topicCount);
     }
 }
