@@ -56,7 +56,7 @@ public class CourseHomeworkService {
             homeworkInfoJson.put("name", homeworkInfo.getName());
             homeworkInfoJson.put("homeworkID", homeworkInfo.getId());
             //设置当前用户是否已经作答本作业
-            if(userHomeworkAnswerRepository.existsByUserIdAndHomeworkId(currentUser.getId())){
+            if(userHomeworkAnswerRepository.existsByUserIdAndHomeworkId(currentUser.getId(), homeworkInfo.getId())){
                 homeworkInfoJson.put("isFinished", true);
             }
             else{
@@ -210,7 +210,8 @@ public class CourseHomeworkService {
     }
 
     //发布作业
-    public String postHomework(String collegeName, String personNumber, long courseId, String homeowrkName, JSONArray data){
+    public String postHomework(String collegeName, String personNumber, long courseId,
+                               String homeworkName, long homeworkId,  JSONArray data){
         JSONObject responseJson = new JSONObject(); //回应体
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
         if (currentUser == null) {
@@ -220,21 +221,34 @@ public class CourseHomeworkService {
         if(currentCourse == null){
             return JsonManage.buildFailureMessage("找不到课程！");
         }
+
         //前置鉴权
         if(currentUser.getUserType().equals("teacher") && currentCourse.getTeacherId() == currentUser.getId()){
+            //data == null 时删除
+            if(data == JSONObject.NULL){
+                try{
+                    courseHomeworkQuestionRepository.deleteAllByHomeworkId(homeworkId);
+                    courseHomeworkInfoRepository.deleteAllById(homeworkId);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    return JsonManage.buildFailureMessage("数据库删除失败！请联系管理员");
+                }
+                responseJson.put("success",true);
+                return responseJson.toString();
+            }
             //添加作业基本信息
             CourseHomeworkInfoEntity homeworkInfoEntity = new CourseHomeworkInfoEntity();
-            homeworkInfoEntity.setName(homeowrkName);
+            homeworkInfoEntity.setName(homeworkName);
             homeworkInfoEntity.setCourseId(currentCourse.getId());
             //添加作业题目
-            long homeworkId = homeworkInfoEntity.getId();
+            long newHomeworkId = homeworkInfoEntity.getId();
             Iterator questionIterator = data.iterator();
             for(;questionIterator.hasNext();){
                 JSONObject questionJson = (JSONObject)questionIterator.next();
                 CourseHomeworkQuestionEntity questionEntity = new CourseHomeworkQuestionEntity();
                 try{
                     questionEntity.setQuestionType((byte)questionJson.getInt("type"));
-                    questionEntity.setHomeworkId(homeworkId);
+                    questionEntity.setHomeworkId(newHomeworkId);
                     questionEntity.setQuestionText(questionJson.getString("question"));
                     questionEntity.setQuestionIndex((byte)Integer.parseInt(questionJson.getString("questionIndex")));
                     Iterator imageURLsIterator = questionJson.getJSONArray("imageURLs").iterator();

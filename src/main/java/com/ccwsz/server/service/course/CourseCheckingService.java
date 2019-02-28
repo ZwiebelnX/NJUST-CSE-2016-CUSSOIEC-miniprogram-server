@@ -50,7 +50,7 @@ public class CourseCheckingService {
         if(currentCourse == null){
             return JsonManage.buildFailureMessage("找不到课程！");
         }
-        CourseCheckingInInfoEntity checkingInfo = courseCheckingInInfoRepository.findByBeginningTime(time);
+        CourseCheckingInInfoEntity checkingInfo = courseCheckingInInfoRepository.findByCourseIdAndBeginningTime(courseId, time);
         if(checkingInfo == null){
             return JsonManage.buildFailureMessage("指定签到还未有记录，请稍候再试");
         }
@@ -139,5 +139,16 @@ public class CourseCheckingService {
         responseJson.put("result",result);
         responseJson.put("success", true);
         return responseJson.toString();
+    }
+
+    //发布/关闭/删除签到
+    public String manageChecking(long courseId, Timestamp time, JSONObject data){
+        JSONObject responseJson = new JSONObject();
+        JSONArray result = new JSONArray();
+        CourseEntity currentCourse = courseRepository.findById(courseId);
+        if(currentCourse == null){
+            return JsonManage.buildFailureMessage("找不到该课程！");
+        }
+        return null;
     }
 }

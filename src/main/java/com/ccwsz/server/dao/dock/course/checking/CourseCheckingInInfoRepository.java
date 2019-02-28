@@ -11,5 +11,5 @@ public interface CourseCheckingInInfoRepository extends CrudRepository<CourseChe
     List<CourseCheckingInInfoEntity> findByCourseIdOrderByBeginningTimeDesc(long courseId);
 
     @Nullable
-    CourseCheckingInInfoEntity findByBeginningTime(Timestamp time);
+    CourseCheckingInInfoEntity findByCourseIdAndBeginningTime(long courseId, Timestamp time);
 }

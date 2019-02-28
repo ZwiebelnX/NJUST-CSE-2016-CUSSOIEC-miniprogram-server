@@ -9,4 +9,6 @@ public interface CourseHomeworkInfoRepository extends CrudRepository<CourseHomew
     List<CourseHomeworkInfoEntity> findByCourseId(long courseId);
 
     boolean existsById(long homeworkId);
+
+    boolean deleteAllById(long Id);
 }

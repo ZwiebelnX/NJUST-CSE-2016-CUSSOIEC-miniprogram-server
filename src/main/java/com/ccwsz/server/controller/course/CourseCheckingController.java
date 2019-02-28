@@ -75,20 +75,19 @@ public class CourseCheckingController {
             method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String manageChecking(@RequestBody String jsonString){
-        String courseID;
+        long courseID;
         Timestamp time;
-        boolean isOpen;
+        JSONObject data;
         try{
             JSONObject json = new JSONObject(jsonString);
-            courseID = json.getString("courseID");
+            courseID = json.getInt("courseID");
             time = Timestamp.valueOf(json.getString("time"));
-
-
+            data = json.getJSONObject("data");
         } catch (Exception e){
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误，请检查代码！");
         }
-        return null;
+        return courseCheckingService.manageChecking(courseID, time, data);
     }
 
 

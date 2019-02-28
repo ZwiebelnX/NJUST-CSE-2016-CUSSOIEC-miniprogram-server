@@ -37,7 +37,7 @@ public class CourseHomeworkController {
         return courseHomeworkService.getCourseHomeworkList(college, personNumber, courseId);
     }
 
-    //获取作业列表
+    //获取作业
     @RequestMapping(value = "/course/homework", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -82,6 +82,7 @@ public class CourseHomeworkController {
         String personNumber;
         String homeworkName;
         long courseId;
+        long homeworkId;
         JSONArray data;
         try{
             JSONObject json = new JSONObject(jsonString);
@@ -89,11 +90,12 @@ public class CourseHomeworkController {
             collegeName = json.getString("college");
             homeworkName = json.getString("homeworkName");
             courseId = Integer.parseInt(json.getString("courseID"));
+            homeworkId = Integer.parseInt(json.getString("homeworkID"));
             data = json.getJSONArray("data");
         } catch (Exception e){
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！请检查代码");
         }
-        return courseHomeworkService.postHomework(collegeName, personNumber, courseId, homeworkName, data);
+        return courseHomeworkService.postHomework(collegeName, personNumber, courseId, homeworkName, homeworkId, data);
     }
 }
