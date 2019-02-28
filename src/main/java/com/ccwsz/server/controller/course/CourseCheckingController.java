@@ -81,8 +81,9 @@ public class CourseCheckingController {
         try{
             JSONObject json = new JSONObject(jsonString);
             courseID = json.getInt("courseID");
-            time = Timestamp.valueOf(json.getString("time"));
-            data = json.getJSONObject("data");
+            data = json.isNull("data") ? null : json.getJSONObject("data");
+            time = json.isNull("time") ?
+                    null : Timestamp.valueOf(json.getString("time"));
         } catch (Exception e){
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误，请检查代码！");

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -142,13 +143,49 @@ public class CourseCheckingService {
     }
 
     //发布/关闭/删除签到
+    @Transactional
     public String manageChecking(long courseId, Timestamp time, JSONObject data){
         JSONObject responseJson = new JSONObject();
-        JSONArray result = new JSONArray();
-        CourseEntity currentCourse = courseRepository.findById(courseId);
-        if(currentCourse == null){
-            return JsonManage.buildFailureMessage("找不到该课程！");
+        //data == null 时删除签到
+        if(data == null){
+            try{
+                //TODO 如何判断删除成功？
+                courseCheckingInInfoRepository.deleteByCourseIdAndBeginningTime(courseId, time);
+            } catch (Exception e){
+                e.printStackTrace();
+                return JsonManage.buildFailureMessage("数据删除错误！请联系管理员");
+            }
+            if(!courseCheckingInInfoRepository.existsByCourseIdAndBeginningTime(courseId, time)){
+                responseJson.put("result", JSONObject.NULL);
+            }
+            else{
+                return JsonManage.buildFailureMessage("数据删除错误！请联系管理员");
+            }
         }
-        return null;
+        else{
+            CourseEntity currentCourse = courseRepository.findById(courseId);
+            if(currentCourse == null){
+                return JsonManage.buildFailureMessage("找不到该课程！");
+            }
+            if(data.getBoolean("isOpen")){
+                CourseCheckingInInfoEntity newCheckingIn = new CourseCheckingInInfoEntity();
+                newCheckingIn.setCourseId(currentCourse.getId());
+                Timestamp checkingBeginningTime = new Timestamp(System.currentTimeMillis());
+                newCheckingIn.setBeginningTime(checkingBeginningTime);
+                courseCheckingInInfoRepository.save(newCheckingIn);
+                currentCourse.setIsCheckingIn((byte)1);
+                checkingBeginningTime = courseCheckingInInfoRepository.
+                        findById(newCheckingIn.getId()).getBeginningTime(); //二次查询数据库防止数据不一致
+                responseJson.put("result", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                        .format(checkingBeginningTime));
+            }
+            else{
+                currentCourse.setIsCheckingIn((byte)0);
+                courseRepository.save(currentCourse);
+                responseJson.put("result", JSONObject.NULL);
+            }
+        }
+        responseJson.put("success", true);
+        return responseJson.toString();
     }
 }
