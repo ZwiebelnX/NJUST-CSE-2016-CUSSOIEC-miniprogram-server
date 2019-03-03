@@ -10,13 +10,17 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "course_checking_in_info", schema = "online_cussoiec", catalog = "")
-public class CourseCheckingInInfoEntity {
+@Table(name = "info_stream_exam", schema = "online_cussoiec", catalog = "")
+public class InfoStreamExamEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private String name;
+    private String examTime;
+    private String location;
+    private int setNumber;
     private long courseId;
-    private Timestamp beginningTime;
+    private long targetUserId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -52,6 +56,46 @@ public class CourseCheckingInInfoEntity {
     }
 
     @Basic
+    @Column(name = "name", nullable = false, length = 50)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Basic
+    @Column(name = "exam_time", nullable = false, length = 30)
+    public String getExamTime() {
+        return examTime;
+    }
+
+    public void setExamTime(String examTime) {
+        this.examTime = examTime;
+    }
+
+    @Basic
+    @Column(name = "location", nullable = false, length = 15)
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    @Basic
+    @Column(name = "set_number", nullable = false)
+    public int getSetNumber() {
+        return setNumber;
+    }
+
+    public void setSetNumber(int setNumber) {
+        this.setNumber = setNumber;
+    }
+
+    @Basic
     @Column(name = "course_id", nullable = false)
     public long getCourseId() {
         return courseId;
@@ -62,29 +106,33 @@ public class CourseCheckingInInfoEntity {
     }
 
     @Basic
-    @Column(name = "beginning_time", nullable = false)
-    public Timestamp getBeginningTime() {
-        return beginningTime;
+    @Column(name = "target_user_id", nullable = false)
+    public long getTargetUserId() {
+        return targetUserId;
     }
 
-    public void setBeginningTime(Timestamp beginningTime) {
-        this.beginningTime = beginningTime;
+    public void setTargetUserId(long targetUserId) {
+        this.targetUserId = targetUserId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CourseCheckingInInfoEntity that = (CourseCheckingInInfoEntity) o;
+        InfoStreamExamEntity that = (InfoStreamExamEntity) o;
         return id == that.id &&
+                setNumber == that.setNumber &&
                 courseId == that.courseId &&
+                targetUserId == that.targetUserId &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(beginningTime, that.beginningTime);
+                Objects.equals(name, that.name) &&
+                Objects.equals(examTime, that.examTime) &&
+                Objects.equals(location, that.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, courseId, beginningTime);
+        return Objects.hash(id, gmtCreate, gmtModified, name, examTime, location, setNumber, courseId, targetUserId);
     }
 }

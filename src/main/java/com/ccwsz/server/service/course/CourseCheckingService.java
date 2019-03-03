@@ -1,5 +1,6 @@
 package com.ccwsz.server.service.course;
 
+import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
 import com.ccwsz.server.dao.dock.course.checking.CourseCheckingInInfoRepository;
 import com.ccwsz.server.dao.dock.course.checking.UserCourseCheckingInRepository;
 import com.ccwsz.server.dao.dock.course.CourseRepository;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -24,15 +26,18 @@ public class CourseCheckingService {
     private final CourseRepository courseRepository;
     private final UserCourseCheckingInRepository userCourseCheckingInRepository;
     private final CourseCheckingInInfoRepository courseCheckingInInfoRepository;
+    private final CourseChooseRepository courseChooseRepository;
 
     @Autowired
     public CourseCheckingService(UserRepository userRepository, CourseRepository courseRepository,
-                                 UserCourseCheckingInRepository courseChooseRepository,
-                                 CourseCheckingInInfoRepository courseCheckingInInfoRepository) {
+                                 UserCourseCheckingInRepository userCourseChooseRepository,
+                                 CourseCheckingInInfoRepository courseCheckingInInfoRepository,
+                                 CourseChooseRepository courseChooseRepository) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
-        this.userCourseCheckingInRepository = courseChooseRepository;
+        this.userCourseCheckingInRepository = userCourseChooseRepository;
         this.courseCheckingInInfoRepository = courseCheckingInInfoRepository;
+        this.courseChooseRepository = courseChooseRepository;
     }
 
     //尝试签到
@@ -46,7 +51,7 @@ public class CourseCheckingService {
         if(currentCourse == null){
             return JsonManage.buildFailureMessage("找不到课程！");
         }
-        CourseCheckingInInfoEntity checkingInfo = courseCheckingInInfoRepository.findByBeginningTime(time);
+        CourseCheckingInInfoEntity checkingInfo = courseCheckingInInfoRepository.findByCourseIdAndBeginningTime(courseId, time);
         if(checkingInfo == null){
             return JsonManage.buildFailureMessage("指定签到还未有记录，请稍候再试");
         }
@@ -130,8 +135,56 @@ public class CourseCheckingService {
             checkingInfoJson.put("count",
                     userCourseCheckingInRepository.countByCheckingInfoId(checkingInInfo.getId()));
             result.put(checkingInfoJson);
+            checkingInfoJson.put("expectation", courseChooseRepository.countByCourseId(courseId));
         }
         responseJson.put("result",result);
+        responseJson.put("success", true);
+        return responseJson.toString();
+    }
+
+    //发布/关闭/删除签到
+    @Transactional
+    public String manageChecking(long courseId, Timestamp time, JSONObject data){
+        JSONObject responseJson = new JSONObject();
+        //data == null 时删除签到
+        if(data == null){
+            try{
+                //TODO 如何判断删除成功？
+                courseCheckingInInfoRepository.deleteByCourseIdAndBeginningTime(courseId, time);
+            } catch (Exception e){
+                e.printStackTrace();
+                return JsonManage.buildFailureMessage("数据删除错误！请联系管理员");
+            }
+            if(!courseCheckingInInfoRepository.existsByCourseIdAndBeginningTime(courseId, time)){
+                responseJson.put("result", JSONObject.NULL);
+            }
+            else{
+                return JsonManage.buildFailureMessage("数据删除错误！请联系管理员");
+            }
+        }
+        else{
+            CourseEntity currentCourse = courseRepository.findById(courseId);
+            if(currentCourse == null){
+                return JsonManage.buildFailureMessage("找不到该课程！");
+            }
+            if(data.getBoolean("isOpen")){
+                CourseCheckingInInfoEntity newCheckingIn = new CourseCheckingInInfoEntity();
+                newCheckingIn.setCourseId(currentCourse.getId());
+                Timestamp checkingBeginningTime = new Timestamp(System.currentTimeMillis());
+                newCheckingIn.setBeginningTime(checkingBeginningTime);
+                courseCheckingInInfoRepository.save(newCheckingIn);
+                currentCourse.setIsCheckingIn((byte)1);
+                checkingBeginningTime = courseCheckingInInfoRepository.
+                        findById(newCheckingIn.getId()).getBeginningTime(); //二次查询数据库防止数据不一致
+                responseJson.put("result", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                        .format(checkingBeginningTime));
+            }
+            else{
+                currentCourse.setIsCheckingIn((byte)0);
+                courseRepository.save(currentCourse);
+                responseJson.put("result", JSONObject.NULL);
+            }
+        }
         responseJson.put("success", true);
         return responseJson.toString();
     }

@@ -1,10 +1,15 @@
 package com.ccwsz.server.dao.entity;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "bbs_sector", schema = "online_cussoiec", catalog = "")
 public class BbsSectorEntity {
     private long id;
@@ -13,10 +18,10 @@ public class BbsSectorEntity {
     private String sectorName;
     private long clickingRate;
     private long topicCount;
-    private long courseId;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
@@ -26,7 +31,8 @@ public class BbsSectorEntity {
     }
 
     @Basic
-    @Column(name = "gmt_create")
+    @CreatedDate
+    @Column(name = "gmt_create", nullable = false)
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -36,7 +42,8 @@ public class BbsSectorEntity {
     }
 
     @Basic
-    @Column(name = "gmt_modified")
+    @LastModifiedDate
+    @Column(name = "gmt_modified", nullable = false)
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -46,7 +53,7 @@ public class BbsSectorEntity {
     }
 
     @Basic
-    @Column(name = "sector_name")
+    @Column(name = "sector_name", nullable = false, length = 45)
     public String getSectorName() {
         return sectorName;
     }
@@ -56,7 +63,7 @@ public class BbsSectorEntity {
     }
 
     @Basic
-    @Column(name = "clicking_rate")
+    @Column(name = "clicking_rate", nullable = false)
     public long getClickingRate() {
         return clickingRate;
     }
@@ -66,23 +73,13 @@ public class BbsSectorEntity {
     }
 
     @Basic
-    @Column(name = "topic_count")
+    @Column(name = "topic_count", nullable = false)
     public long getTopicCount() {
         return topicCount;
     }
 
     public void setTopicCount(long topicCount) {
         this.topicCount = topicCount;
-    }
-
-    @Basic
-    @Column(name = "course_id")
-    public long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(long courseId) {
-        this.courseId = courseId;
     }
 
     @Override
@@ -93,7 +90,6 @@ public class BbsSectorEntity {
         return id == that.id &&
                 clickingRate == that.clickingRate &&
                 topicCount == that.topicCount &&
-                courseId == that.courseId &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
                 Objects.equals(sectorName, that.sectorName);
@@ -101,6 +97,6 @@ public class BbsSectorEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, sectorName, clickingRate, topicCount, courseId);
+        return Objects.hash(id, gmtCreate, gmtModified, sectorName, clickingRate, topicCount);
     }
 }

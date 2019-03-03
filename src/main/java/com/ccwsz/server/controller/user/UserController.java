@@ -1,6 +1,6 @@
 package com.ccwsz.server.controller.user;
 
-import com.ccwsz.server.service.homework.UserService;
+import com.ccwsz.server.service.user.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

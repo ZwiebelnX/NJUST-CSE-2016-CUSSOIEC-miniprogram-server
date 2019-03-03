@@ -1,6 +1,7 @@
 package com.ccwsz.server.service.course;
 
 import com.ccwsz.server.dao.dock.course.CourseChooseRepository;
+import com.ccwsz.server.dao.dock.course.CourseRepository;
 import com.ccwsz.server.dao.dock.course.homework.CourseHomeworkInfoRepository;
 import com.ccwsz.server.dao.dock.course.homework.CourseHomeworkQuestionRepository;
 import com.ccwsz.server.dao.dock.course.homework.UserHomeworkAnswerRepository;
@@ -10,6 +11,7 @@ import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
@@ -22,26 +24,27 @@ public class CourseHomeworkService {
     private final UserHomeworkAnswerRepository userHomeworkAnswerRepository;
     private final CourseHomeworkQuestionRepository courseHomeworkQuestionRepository;
     private final CourseChooseRepository courseChooseRepository;
+    private final CourseRepository courseRepository;
 
     @Autowired
     public CourseHomeworkService(CourseHomeworkInfoRepository courseHomeworkInfoRepository,
                                  UserRepository userRepository,
                                  UserHomeworkAnswerRepository userHomeworkAnswerRepository,
                                  CourseHomeworkQuestionRepository courseHomeworkQuestionRepository,
-                                 CourseChooseRepository courseRepository) {
+                                 CourseChooseRepository courseChooseRepository,
+                                 CourseRepository courseRepository) {
         this.courseHomeworkInfoRepository = courseHomeworkInfoRepository;
         this.userRepository = userRepository;
         this.userHomeworkAnswerRepository = userHomeworkAnswerRepository;
         this.courseHomeworkQuestionRepository = courseHomeworkQuestionRepository;
-        this.courseChooseRepository = courseRepository;
+        this.courseChooseRepository = courseChooseRepository;
+        this.courseRepository = courseRepository;
     }
 
     //获取作业列表
     public String getCourseHomeworkList(String college, String personNumber, long courseId) {
         JSONObject responseJson = new JSONObject();
-        JSONObject result = new JSONObject();
-        JSONArray homeworkList = new JSONArray();
-
+        JSONArray result = new JSONArray();
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(college, personNumber); //当前用户
         if (currentUser == null) {
             return JsonManage.buildFailureMessage("找不到对应用户！");
@@ -53,15 +56,14 @@ public class CourseHomeworkService {
             homeworkInfoJson.put("name", homeworkInfo.getName());
             homeworkInfoJson.put("homeworkID", homeworkInfo.getId());
             //设置当前用户是否已经作答本作业
-            if(userHomeworkAnswerRepository.existsByHomeworkId(homeworkInfo.getId())){
+            if(userHomeworkAnswerRepository.existsByUserIdAndHomeworkId(currentUser.getId(), homeworkInfo.getId())){
                 homeworkInfoJson.put("isFinished", true);
             }
             else{
                 homeworkInfoJson.put("isFinished", false);
             }
-            homeworkList.put(homeworkInfoJson);
+            result.put(homeworkInfoJson);
         }
-        result.put("homeworkList", homeworkList);
         responseJson.put("result", result);
         responseJson.put("success", true);
         return responseJson.toString();
@@ -83,7 +85,7 @@ public class CourseHomeworkService {
         for(CourseHomeworkQuestionEntity question : questionList){
             JSONObject questionJson = new JSONObject();
             questionJson.put("type", question.getQuestionType());
-            questionJson.put("questionID", question.getQuestionIndex());
+            questionJson.put("questionIndex", question.getQuestionIndex());
             questionJson.put("question", question.getQuestionText());
             //构造图片url数组
             JSONArray imageURLs = new JSONArray();
@@ -104,7 +106,7 @@ public class CourseHomeworkService {
                 for(String choose : choseText){
                     JSONObject chooseJson = new JSONObject();
                     String[] chooseIndexAndText = choose.split(":");
-                    chooseJson.put("choseID", chooseIndexAndText[0]);
+                    chooseJson.put("choseIndex", chooseIndexAndText[0]);
                     chooseJson.put("name", chooseIndexAndText[1]);
                     choseList.put(chooseJson);
                 }
@@ -205,5 +207,94 @@ public class CourseHomeworkService {
             return JsonManage.buildFailureMessage("学生未选择此课或作业不存在！");
         }
 
+    }
+
+    //发布作业
+    public String postHomework(String collegeName, String personNumber, long courseId,
+                               String homeworkName, long homeworkId,  JSONArray data){
+        JSONObject responseJson = new JSONObject(); //回应体
+        UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
+        if (currentUser == null) {
+            return JsonManage.buildFailureMessage("找不到用户！");
+        }
+        CourseEntity currentCourse = courseRepository.findById(courseId);
+        if(currentCourse == null){
+            return JsonManage.buildFailureMessage("找不到课程！");
+        }
+
+        //前置鉴权
+        if(currentUser.getUserType().equals("teacher") && currentCourse.getTeacherId() == currentUser.getId()){
+            //data == null 时删除
+            if(data == JSONObject.NULL){
+                try{
+                    courseHomeworkQuestionRepository.deleteAllByHomeworkId(homeworkId);
+                    courseHomeworkInfoRepository.deleteAllById(homeworkId);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    return JsonManage.buildFailureMessage("数据库删除失败！请联系管理员");
+                }
+                responseJson.put("success",true);
+                return responseJson.toString();
+            }
+            //添加作业基本信息
+            CourseHomeworkInfoEntity homeworkInfoEntity = new CourseHomeworkInfoEntity();
+            homeworkInfoEntity.setName(homeworkName);
+            homeworkInfoEntity.setCourseId(currentCourse.getId());
+            //添加作业题目
+            long newHomeworkId = homeworkInfoEntity.getId();
+            Iterator questionIterator = data.iterator();
+            for(;questionIterator.hasNext();){
+                JSONObject questionJson = (JSONObject)questionIterator.next();
+                CourseHomeworkQuestionEntity questionEntity = new CourseHomeworkQuestionEntity();
+                try{
+                    questionEntity.setQuestionType((byte)questionJson.getInt("type"));
+                    questionEntity.setHomeworkId(newHomeworkId);
+                    questionEntity.setQuestionText(questionJson.getString("question"));
+                    questionEntity.setQuestionIndex((byte)Integer.parseInt(questionJson.getString("questionIndex")));
+                    Iterator imageURLsIterator = questionJson.getJSONArray("imageURLs").iterator();
+                    String imageURLsString = "";
+                    for(; imageURLsIterator.hasNext();){
+                        JSONObject url = (JSONObject)imageURLsIterator.next();
+                        imageURLsString = imageURLsString + url.getString("url");
+                        if(imageURLsIterator.hasNext()){
+                            imageURLsString += ";";
+                        }
+                    }
+                    questionEntity.setImageUrls(imageURLsString);
+                    Iterator chooseIterator = questionJson.getJSONArray("choseList").iterator();
+                    String chooseString = "";
+                    for(; chooseIterator.hasNext();){
+                        JSONObject choose = (JSONObject)chooseIterator.next();
+                        chooseString += choose.getString("choseIndex") + ":";
+                        chooseString += choose.getString("name");
+                        if(chooseIterator.hasNext()){
+                            chooseString += ";";
+                        }
+                    }
+                    questionEntity.setChooseText(chooseString);
+                    String answerString = "";
+                    Iterator answerIterator = questionJson.getJSONArray("correctAnswer").iterator();
+                    for(; answerIterator.hasNext();){
+                        String answer = (String)answerIterator.next();
+                        answerString += answer;
+                        if(answerIterator.hasNext()){
+                            answerString += ",";
+                        }
+                    }
+                    questionEntity.setCorrectAnswer(answerString);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    return JsonManage.buildFailureMessage("数据格式错误！请检查格式");
+                }
+                //数据处理无误后才保存至数据库
+                courseHomeworkInfoRepository.save(homeworkInfoEntity);
+                courseHomeworkQuestionRepository.save(questionEntity);
+            }
+            responseJson.put("success", true);
+            return responseJson.toString();
+        }
+        else{
+            return JsonManage.buildFailureMessage("鉴权错误！请联系管理员");
+        }
     }
 }

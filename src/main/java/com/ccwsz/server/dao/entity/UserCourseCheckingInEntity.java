@@ -21,6 +21,7 @@ public class UserCourseCheckingInEntity {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
     }

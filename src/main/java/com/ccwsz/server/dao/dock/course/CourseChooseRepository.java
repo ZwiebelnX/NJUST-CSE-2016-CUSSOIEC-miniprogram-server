@@ -15,4 +15,6 @@ public interface CourseChooseRepository extends CrudRepository<CourseChooseEntit
     CourseChooseEntity findByStudentIdAndCourseId(long studentId,long courseId);
 
     boolean existsByCourseIdAndStudentId(long courseId, long studentId);
+
+    int countByCourseId(long courseId);
 }

@@ -10,15 +10,16 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "bbs_reply", schema = "online_cussoiec", catalog = "")
-public class BbsReplyEntity {
+@Table(name = "info_stream_bbs_reply", schema = "online_cussoiec", catalog = "")
+public class InfoStreamBbsReplyEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
-    private long topicId;
-    private long userId;
-    private String replyText;
-    private int clickingRate;
+    private long bbsTopic;
+    private long senderId;
+    private String description;
+    private Long targetId;
+    private byte isRead;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -54,61 +55,72 @@ public class BbsReplyEntity {
     }
 
     @Basic
-    @Column(name = "topic_id", nullable = false)
-    public long getTopicId() {
-        return topicId;
+    @Column(name = "bbs_topic", nullable = false)
+    public long getBbsTopic() {
+        return bbsTopic;
     }
 
-    public void setTopicId(long topicId) {
-        this.topicId = topicId;
-    }
-
-    @Basic
-    @Column(name = "user_id", nullable = false)
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setBbsTopic(long bbsTopic) {
+        this.bbsTopic = bbsTopic;
     }
 
     @Basic
-    @Column(name = "reply_text", nullable = false, length = 1000)
-    public String getReplyText() {
-        return replyText;
+    @Column(name = "sender_id", nullable = false)
+    public long getSenderId() {
+        return senderId;
     }
 
-    public void setReplyText(String replyText) {
-        this.replyText = replyText;
+    public void setSenderId(long senderId) {
+        this.senderId = senderId;
     }
 
     @Basic
-    @Column(name = "clicking_rate", nullable = false)
-    public int getClickingRate() {
-        return clickingRate;
+    @Column(name = "description", nullable = false, length = 100)
+    public String getDescription() {
+        return description;
     }
 
-    public void setClickingRate(int clickingRate) {
-        this.clickingRate = clickingRate;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Basic
+    @Column(name = "target_id", nullable = true)
+    public Long getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Long targetId) {
+        this.targetId = targetId;
+    }
+
+    @Basic
+    @Column(name = "is_read", nullable = false)
+    public byte getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(byte isRead) {
+        this.isRead = isRead;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BbsReplyEntity that = (BbsReplyEntity) o;
+        InfoStreamBbsReplyEntity that = (InfoStreamBbsReplyEntity) o;
         return id == that.id &&
-                topicId == that.topicId &&
-                userId == that.userId &&
-                clickingRate == that.clickingRate &&
+                bbsTopic == that.bbsTopic &&
+                senderId == that.senderId &&
+                isRead == that.isRead &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(replyText, that.replyText);
+                Objects.equals(description, that.description) &&
+                Objects.equals(targetId, that.targetId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, topicId, userId, replyText, clickingRate);
+        return Objects.hash(id, gmtCreate, gmtModified, bbsTopic, senderId, description, targetId, isRead);
     }
 }

@@ -10,15 +10,15 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
-@Table(name = "bbs_reply", schema = "online_cussoiec", catalog = "")
-public class BbsReplyEntity {
+@Table(name = "info_stream_score", schema = "online_cussoiec", catalog = "")
+public class InfoStreamScoreEntity {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
-    private long topicId;
-    private long userId;
-    private String replyText;
-    private int clickingRate;
+    private int score;
+    private String gp;
+    private long targetUserId;
+    private long courseId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -54,61 +54,61 @@ public class BbsReplyEntity {
     }
 
     @Basic
-    @Column(name = "topic_id", nullable = false)
-    public long getTopicId() {
-        return topicId;
+    @Column(name = "score", nullable = false)
+    public int getScore() {
+        return score;
     }
 
-    public void setTopicId(long topicId) {
-        this.topicId = topicId;
-    }
-
-    @Basic
-    @Column(name = "user_id", nullable = false)
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     @Basic
-    @Column(name = "reply_text", nullable = false, length = 1000)
-    public String getReplyText() {
-        return replyText;
+    @Column(name = "gp", nullable = false, length = 10)
+    public String getGp() {
+        return gp;
     }
 
-    public void setReplyText(String replyText) {
-        this.replyText = replyText;
+    public void setGp(String gp) {
+        this.gp = gp;
     }
 
     @Basic
-    @Column(name = "clicking_rate", nullable = false)
-    public int getClickingRate() {
-        return clickingRate;
+    @Column(name = "target_user_id", nullable = false)
+    public long getTargetUserId() {
+        return targetUserId;
     }
 
-    public void setClickingRate(int clickingRate) {
-        this.clickingRate = clickingRate;
+    public void setTargetUserId(long targetUserId) {
+        this.targetUserId = targetUserId;
+    }
+
+    @Basic
+    @Column(name = "course_id", nullable = false)
+    public long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(long courseId) {
+        this.courseId = courseId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BbsReplyEntity that = (BbsReplyEntity) o;
+        InfoStreamScoreEntity that = (InfoStreamScoreEntity) o;
         return id == that.id &&
-                topicId == that.topicId &&
-                userId == that.userId &&
-                clickingRate == that.clickingRate &&
+                score == that.score &&
+                targetUserId == that.targetUserId &&
+                courseId == that.courseId &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
-                Objects.equals(replyText, that.replyText);
+                Objects.equals(gp, that.gp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, topicId, userId, replyText, clickingRate);
+        return Objects.hash(id, gmtCreate, gmtModified, score, gp, targetUserId, courseId);
     }
 }
