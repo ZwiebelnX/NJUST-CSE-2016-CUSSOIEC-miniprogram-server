@@ -1,10 +1,15 @@
 package com.ccwsz.server.dao.entity;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "bbs_topic", schema = "online_cussoiec", catalog = "")
 public class BbsTopicEntity {
     private long id;
@@ -18,7 +23,7 @@ public class BbsTopicEntity {
     private long sectorId;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     public long getId() {
         return id;
     }
@@ -28,6 +33,7 @@ public class BbsTopicEntity {
     }
 
     @Basic
+    @CreatedDate
     @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
@@ -38,6 +44,7 @@ public class BbsTopicEntity {
     }
 
     @Basic
+    @LastModifiedDate
     @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
@@ -48,7 +55,6 @@ public class BbsTopicEntity {
     }
 
     @Basic
-<<<<<<< HEAD
     @Column(name = "user_id")
     public long getUserId() {
         return userId;
@@ -60,9 +66,6 @@ public class BbsTopicEntity {
 
     @Basic
     @Column(name = "title")
-=======
-    @Column(name = "title", nullable = false, length = 45)
->>>>>>> origin/master
     public String getTitle() {
         return title;
     }
@@ -72,11 +75,7 @@ public class BbsTopicEntity {
     }
 
     @Basic
-<<<<<<< HEAD
     @Column(name = "topic_text")
-=======
-    @Column(name = "topic_text", nullable = false, length = 1000)
->>>>>>> origin/master
     public String getTopicText() {
         return topicText;
     }
@@ -86,11 +85,7 @@ public class BbsTopicEntity {
     }
 
     @Basic
-<<<<<<< HEAD
     @Column(name = "reply_count")
-=======
-    @Column(name = "reply_count", nullable = false)
->>>>>>> origin/master
     public int getReplyCount() {
         return replyCount;
     }
@@ -100,11 +95,7 @@ public class BbsTopicEntity {
     }
 
     @Basic
-<<<<<<< HEAD
     @Column(name = "clicking_rate")
-=======
-    @Column(name = "clicking_rate", nullable = false)
->>>>>>> origin/master
     public int getClickingRate() {
         return clickingRate;
     }
@@ -114,11 +105,7 @@ public class BbsTopicEntity {
     }
 
     @Basic
-<<<<<<< HEAD
     @Column(name = "sector_id")
-=======
-    @Column(name = "sector_id", nullable = false)
->>>>>>> origin/master
     public long getSectorId() {
         return sectorId;
     }
@@ -133,10 +120,7 @@ public class BbsTopicEntity {
         if (o == null || getClass() != o.getClass()) return false;
         BbsTopicEntity that = (BbsTopicEntity) o;
         return id == that.id &&
-<<<<<<< HEAD
                 userId == that.userId &&
-=======
->>>>>>> origin/master
                 replyCount == that.replyCount &&
                 clickingRate == that.clickingRate &&
                 sectorId == that.sectorId &&
@@ -148,10 +132,6 @@ public class BbsTopicEntity {
 
     @Override
     public int hashCode() {
-<<<<<<< HEAD
         return Objects.hash(id, gmtCreate, gmtModified, userId, title, topicText, replyCount, clickingRate, sectorId);
-=======
-        return Objects.hash(id, gmtCreate, gmtModified, title, topicText, replyCount, clickingRate, sectorId);
->>>>>>> origin/master
     }
 }
