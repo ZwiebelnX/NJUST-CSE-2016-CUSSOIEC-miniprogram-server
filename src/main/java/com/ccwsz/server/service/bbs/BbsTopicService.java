@@ -59,8 +59,8 @@ public class BbsTopicService {
     @Transactional
     public String getTopic(long courseId,int startIndex){
         int pageSize=5;
-        Pageable page=PageRequest.of(startIndex, pageSize, Sort.by(Sort.Direction.ASC, "gmt_modified"));
-        List<BbsTopicEntity> topicList=bbsTopicRepository.findTopics(page,courseId);
+        Pageable page=PageRequest.of(startIndex, pageSize, Sort.by(Sort.Direction.DESC, "gmtModified"));
+        List<BbsTopicEntity> topicList=bbsTopicRepository.findByCourseId(page,courseId);
         if(topicList.size()==0){
             return JsonManage.buildFailureMessage("该门课还没有帖子！");
         }

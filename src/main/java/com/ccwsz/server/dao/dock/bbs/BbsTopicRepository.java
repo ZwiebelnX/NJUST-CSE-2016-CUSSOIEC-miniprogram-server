@@ -10,6 +10,5 @@ import java.util.List;
 
 public interface BbsTopicRepository extends CrudRepository<BbsTopicEntity,Integer> {
     boolean existsById(long topicId);
-    @Query(value = "select * from bbs_topic where course_id=:an", nativeQuery = true)
-    List<BbsTopicEntity> findTopics(Pageable pageable, @Param("an") long userId);
+    List<BbsTopicEntity> findByCourseId(Pageable pageable,long courseId);
 }
