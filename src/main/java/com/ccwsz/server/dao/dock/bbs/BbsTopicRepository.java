@@ -12,4 +12,5 @@ public interface BbsTopicRepository extends CrudRepository<BbsTopicEntity,Intege
     boolean existsById(long topicId);
 //    @Query(value = "select t from bbs_topic t where t.course_id=:an", nativeQuery = true)
 //    List<BbsTopicEntity> findTopicPage(Pageable pageable, @Param("an")long courseId);
+
 }
