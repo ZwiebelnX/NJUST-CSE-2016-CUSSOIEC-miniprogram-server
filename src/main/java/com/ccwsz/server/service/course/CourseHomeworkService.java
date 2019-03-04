@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Iterator;
 import java.util.List;
 
@@ -210,6 +211,7 @@ public class CourseHomeworkService {
     }
 
     //发布作业
+    @Transactional
     public String postHomework(String collegeName, String personNumber, long courseId,
                                String homeworkName, long homeworkId,  JSONArray data){
         JSONObject responseJson = new JSONObject(); //回应体
@@ -240,6 +242,7 @@ public class CourseHomeworkService {
             CourseHomeworkInfoEntity homeworkInfoEntity = new CourseHomeworkInfoEntity();
             homeworkInfoEntity.setName(homeworkName);
             homeworkInfoEntity.setCourseId(currentCourse.getId());
+            courseHomeworkInfoRepository.save(homeworkInfoEntity);
             //添加作业题目
             long newHomeworkId = homeworkInfoEntity.getId();
             Iterator questionIterator = data.iterator();
@@ -265,7 +268,7 @@ public class CourseHomeworkService {
                     StringBuilder chooseString = new StringBuilder();
                     for(; chooseIterator.hasNext();){
                         JSONObject choose = (JSONObject)chooseIterator.next();
-                        chooseString.append(choose.getString("index"));
+                        chooseString.append(choose.getString("choseIndex"));
                         chooseString.append(":");
                         chooseString.append(choose.getString("name"));
                         if(chooseIterator.hasNext()){
@@ -288,7 +291,6 @@ public class CourseHomeworkService {
                     return JsonManage.buildFailureMessage("数据格式错误！请检查格式");
                 }
                 //数据处理无误后才保存至数据库
-                courseHomeworkInfoRepository.save(homeworkInfoEntity);
                 courseHomeworkQuestionRepository.save(questionEntity);
             }
             responseJson.put("success", true);
