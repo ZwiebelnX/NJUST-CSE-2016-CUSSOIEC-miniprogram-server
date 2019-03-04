@@ -7,6 +7,7 @@ import com.ccwsz.server.dao.entity.BbsSectorEntity;
 import com.ccwsz.server.dao.entity.BbsTopicEntity;
 import com.ccwsz.server.dao.entity.UserEntity;
 import com.ccwsz.server.service.util.JsonManage;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -57,9 +59,31 @@ public class BbsTopicService {
     @Transactional
     public String getTopic(long courseId,int startIndex){
         int pageSize=5;
-        Pageable page=PageRequest.of(startIndex, pageSize, Sort.by(Sort.Direction.DESC, "age"));
-        //List<BbsTopicEntity> topicList=bbsTopicRepository.findTopicPage(page,courseId);
-
-        return "1";
+        Pageable page=PageRequest.of(startIndex, pageSize, Sort.by(Sort.Direction.ASC, "gmt_modified"));
+        List<BbsTopicEntity> topicList=bbsTopicRepository.findTopics(page,courseId);
+        if(topicList.size()==0){
+            return JsonManage.buildFailureMessage("该门课还没有帖子！");
+        }
+        JSONArray result=new JSONArray();
+        for(BbsTopicEntity topicTmp:topicList){
+            JSONObject resultTmp=new JSONObject();
+            long topicID=topicTmp.getId();
+            resultTmp.put("topicID",topicID);
+            long userId=topicTmp.getUserId();
+            UserEntity user=userRepository.findById(userId);
+            String userName=user.getRealName();
+            resultTmp.put("user",userName);
+            Timestamp time=topicTmp.getGmtModified();
+            resultTmp.put("time",time.toString());
+            resultTmp.put("title",topicTmp.getTitle());
+            resultTmp.put("content",topicTmp.getTopicText());
+            resultTmp.put("replyCount",topicTmp.getReplyCount());
+            resultTmp.put("clickingRate",topicTmp.getClickingRate());
+            result.put(resultTmp);
+        }
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("success",true);
+        jsonObject.put("result",result);
+        return  jsonObject.toString();
     }
 }

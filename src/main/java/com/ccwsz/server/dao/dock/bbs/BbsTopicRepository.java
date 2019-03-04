@@ -5,12 +5,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface BbsTopicRepository extends CrudRepository<BbsTopicEntity,Integer> {
     boolean existsById(long topicId);
-//    @Query(value = "select t from bbs_topic t where t.course_id=:an", nativeQuery = true)
-//    List<BbsTopicEntity> findTopicPage(Pageable pageable, @Param("an")long courseId);
-
+    @Query(value = "select * from bbs_topic where course_id=:an", nativeQuery = true)
+    List<BbsTopicEntity> findTopics(Pageable pageable, @Param("an") long userId);
 }
