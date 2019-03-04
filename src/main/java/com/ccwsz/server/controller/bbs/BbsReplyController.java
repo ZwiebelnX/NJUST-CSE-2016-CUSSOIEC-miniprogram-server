@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class BbsReplyController {
     private final BbsReplyService bbsReplyService;
@@ -31,5 +33,19 @@ public class BbsReplyController {
             ex.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！请检查代码！");
         }
+    }
+    //回复列表
+    @RequestMapping(value = "/bbs/replys", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getSectors(HttpServletRequest request){
+        long topicID;
+        try {
+            topicID = Integer.parseInt(request.getParameter("topicID"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JsonManage.buildFailureMessage("数据格式错误");
+        }
+        int startIndex=Integer.parseInt(request.getParameter("startIndex"));
+        return bbsReplyService.getReply(topicID,startIndex);
     }
 }

@@ -12,5 +12,6 @@ public interface CourseRepository extends CrudRepository<CourseEntity,Integer> {
     @Nullable
     CourseEntity findByCourseNumber(String CourseNumber);
 
+    boolean existsById(long courseId);
 
 }

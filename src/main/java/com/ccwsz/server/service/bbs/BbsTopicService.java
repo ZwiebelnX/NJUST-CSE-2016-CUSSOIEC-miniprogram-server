@@ -2,6 +2,7 @@ package com.ccwsz.server.service.bbs;
 
 import com.ccwsz.server.dao.dock.bbs.BbsSectorRepository;
 import com.ccwsz.server.dao.dock.bbs.BbsTopicRepository;
+import com.ccwsz.server.dao.dock.course.CourseRepository;
 import com.ccwsz.server.dao.dock.user.UserRepository;
 import com.ccwsz.server.dao.entity.BbsSectorEntity;
 import com.ccwsz.server.dao.entity.BbsTopicEntity;
@@ -24,12 +25,14 @@ public class BbsTopicService {
     private final UserRepository userRepository;
     private final BbsSectorRepository bbsSectorRepository;
     private final BbsTopicRepository bbsTopicRepository;
+    private final CourseRepository courseRepository;
     @Autowired
     //发帖
-    public BbsTopicService(UserRepository userRepository,BbsSectorRepository bbsSectorRepository,BbsTopicRepository bbsTopicRepository){
+    public BbsTopicService(UserRepository userRepository,BbsSectorRepository bbsSectorRepository,BbsTopicRepository bbsTopicRepository,CourseRepository courseRepository){
         this.userRepository=userRepository;
         this.bbsSectorRepository=bbsSectorRepository;
         this.bbsTopicRepository=bbsTopicRepository;
+        this.courseRepository=courseRepository;
     }
     public String postTopic(long courseID,String college,String personNumber,String title,String content){
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(college, personNumber);
@@ -58,32 +61,34 @@ public class BbsTopicService {
     //获取主贴表
     @Transactional
     public String getTopic(long courseId,int startIndex){
-        int pageSize=5;
-        Pageable page=PageRequest.of(startIndex, pageSize, Sort.by(Sort.Direction.DESC, "gmtModified"));
-        List<BbsTopicEntity> topicList=bbsTopicRepository.findByCourseId(page,courseId);
-        if(topicList.size()==0){
-            return JsonManage.buildFailureMessage("该门课还没有帖子！");
+        if(courseRepository.existsById(courseId)){
+            int pageSize=5;
+            Pageable page=PageRequest.of(startIndex, pageSize, Sort.by(Sort.Direction.DESC, "gmtModified"));
+            List<BbsTopicEntity> topicList=bbsTopicRepository.findByCourseId(page,courseId);
+            JSONArray result=new JSONArray();
+            for(BbsTopicEntity topicTmp:topicList){
+                JSONObject resultTmp=new JSONObject();
+                long topicID=topicTmp.getId();
+                resultTmp.put("topicID",topicID);
+                long userId=topicTmp.getUserId();
+                UserEntity user=userRepository.findById(userId);
+                String userName=user.getRealName();
+                resultTmp.put("user",userName);
+                Timestamp time=topicTmp.getGmtModified();
+                resultTmp.put("time",time.toString());
+                resultTmp.put("title",topicTmp.getTitle());
+                resultTmp.put("content",topicTmp.getTopicText());
+                resultTmp.put("replyCount",topicTmp.getReplyCount());
+                resultTmp.put("clickingRate",topicTmp.getClickingRate());
+                result.put(resultTmp);
+            }
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("success",true);
+            jsonObject.put("result",result);
+            return  jsonObject.toString();
         }
-        JSONArray result=new JSONArray();
-        for(BbsTopicEntity topicTmp:topicList){
-            JSONObject resultTmp=new JSONObject();
-            long topicID=topicTmp.getId();
-            resultTmp.put("topicID",topicID);
-            long userId=topicTmp.getUserId();
-            UserEntity user=userRepository.findById(userId);
-            String userName=user.getRealName();
-            resultTmp.put("user",userName);
-            Timestamp time=topicTmp.getGmtModified();
-            resultTmp.put("time",time.toString());
-            resultTmp.put("title",topicTmp.getTitle());
-            resultTmp.put("content",topicTmp.getTopicText());
-            resultTmp.put("replyCount",topicTmp.getReplyCount());
-            resultTmp.put("clickingRate",topicTmp.getClickingRate());
-            result.put(resultTmp);
+        else{
+            return JsonManage.buildFailureMessage("您未选该门课，不能查看相关主贴！");
         }
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("success",true);
-        jsonObject.put("result",result);
-        return  jsonObject.toString();
     }
 }
