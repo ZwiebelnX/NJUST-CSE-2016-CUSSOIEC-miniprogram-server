@@ -22,7 +22,6 @@ public class BbsReplyEntity {
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
@@ -33,7 +32,7 @@ public class BbsReplyEntity {
 
     @Basic
     @CreatedDate
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -44,7 +43,7 @@ public class BbsReplyEntity {
 
     @Basic
     @LastModifiedDate
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -54,7 +53,7 @@ public class BbsReplyEntity {
     }
 
     @Basic
-    @Column(name = "topic_id", nullable = false)
+    @Column(name = "topic_id")
     public long getTopicId() {
         return topicId;
     }
@@ -64,7 +63,7 @@ public class BbsReplyEntity {
     }
 
     @Basic
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     public long getUserId() {
         return userId;
     }
@@ -74,7 +73,7 @@ public class BbsReplyEntity {
     }
 
     @Basic
-    @Column(name = "reply_text", nullable = false, length = 1000)
+    @Column(name = "reply_text")
     public String getReplyText() {
         return replyText;
     }
@@ -84,7 +83,7 @@ public class BbsReplyEntity {
     }
 
     @Basic
-    @Column(name = "clicking_rate", nullable = false)
+    @Column(name = "clicking_rate")
     public int getClickingRate() {
         return clickingRate;
     }

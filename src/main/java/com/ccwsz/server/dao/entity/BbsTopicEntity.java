@@ -21,6 +21,7 @@ public class BbsTopicEntity {
     private int replyCount;
     private int clickingRate;
     private long sectorId;
+    private long courseId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -114,6 +115,16 @@ public class BbsTopicEntity {
         this.sectorId = sectorId;
     }
 
+    @Basic
+    @Column(name = "course_id")
+    public long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(long courseId) {
+        this.courseId = courseId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -124,6 +135,7 @@ public class BbsTopicEntity {
                 replyCount == that.replyCount &&
                 clickingRate == that.clickingRate &&
                 sectorId == that.sectorId &&
+                courseId == that.courseId &&
                 Objects.equals(gmtCreate, that.gmtCreate) &&
                 Objects.equals(gmtModified, that.gmtModified) &&
                 Objects.equals(title, that.title) &&
@@ -132,6 +144,6 @@ public class BbsTopicEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, gmtCreate, gmtModified, userId, title, topicText, replyCount, clickingRate, sectorId);
+        return Objects.hash(id, gmtCreate, gmtModified, userId, title, topicText, replyCount, clickingRate, sectorId, courseId);
     }
 }

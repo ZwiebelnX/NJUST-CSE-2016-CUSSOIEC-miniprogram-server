@@ -6,10 +6,16 @@ import com.ccwsz.server.dao.dock.user.UserRepository;
 import com.ccwsz.server.dao.entity.CourseChooseEntity;
 import com.ccwsz.server.dao.entity.UserEntity;
 import com.ccwsz.server.service.util.JsonManage;
+import com.ccwsz.server.dao.entity.BbsSectorEntity;
+import com.ccwsz.server.dao.entity.CourseChooseEntity;
+import com.ccwsz.server.dao.entity.UserEntity;
+import com.ccwsz.server.service.util.JsonManage;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +30,7 @@ public class BbsSectorService {
         this.userRepository=userRepository;
         this.courseChooseRepository=courseChooseRepository;
     }
+    @Transactional
     public String getSectors(String collegeName,String personNumber){
         JSONObject responseJson = new JSONObject(); //为最后传出的json
         UserEntity currentUser = userRepository.findByCollegeAndPersonNumber(collegeName, personNumber);
