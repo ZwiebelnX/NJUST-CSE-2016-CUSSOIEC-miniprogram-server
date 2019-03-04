@@ -90,7 +90,7 @@ public class CourseHomeworkController {
             collegeName = json.getString("college");
             homeworkName = json.getString("homeworkName");
             courseId = Integer.parseInt(json.getString("courseID"));
-            homeworkId = Integer.parseInt(json.getString("homeworkID"));
+            homeworkId = json.isNull("homeworkID") ? -1 : Integer.parseInt(json.getString("homeworkID"));
             data = json.getJSONArray("data");
         } catch (Exception e){
             e.printStackTrace();

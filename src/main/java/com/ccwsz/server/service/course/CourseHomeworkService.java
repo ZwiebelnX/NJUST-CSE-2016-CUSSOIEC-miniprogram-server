@@ -252,36 +252,37 @@ public class CourseHomeworkService {
                     questionEntity.setQuestionText(questionJson.getString("question"));
                     questionEntity.setQuestionIndex((byte)Integer.parseInt(questionJson.getString("questionIndex")));
                     Iterator imageURLsIterator = questionJson.getJSONArray("imageURLs").iterator();
-                    String imageURLsString = "";
+                    StringBuilder imageURLsString = new StringBuilder();
                     for(; imageURLsIterator.hasNext();){
                         JSONObject url = (JSONObject)imageURLsIterator.next();
-                        imageURLsString = imageURLsString + url.getString("url");
+                        imageURLsString.append(url.getString("url"));
                         if(imageURLsIterator.hasNext()){
-                            imageURLsString += ";";
+                            imageURLsString.append(";");
                         }
                     }
-                    questionEntity.setImageUrls(imageURLsString);
+                    questionEntity.setImageUrls(imageURLsString.toString());
                     Iterator chooseIterator = questionJson.getJSONArray("choseList").iterator();
-                    String chooseString = "";
+                    StringBuilder chooseString = new StringBuilder();
                     for(; chooseIterator.hasNext();){
                         JSONObject choose = (JSONObject)chooseIterator.next();
-                        chooseString += choose.getString("choseIndex") + ":";
-                        chooseString += choose.getString("name");
+                        chooseString.append(choose.getString("index"));
+                        chooseString.append(":");
+                        chooseString.append(choose.getString("name"));
                         if(chooseIterator.hasNext()){
-                            chooseString += ";";
+                            chooseString.append(";");
                         }
                     }
-                    questionEntity.setChooseText(chooseString);
-                    String answerString = "";
+                    questionEntity.setChooseText(chooseString.toString());
+                    StringBuilder answerString = new StringBuilder();
                     Iterator answerIterator = questionJson.getJSONArray("correctAnswer").iterator();
                     for(; answerIterator.hasNext();){
                         String answer = (String)answerIterator.next();
-                        answerString += answer;
+                        answerString.append(answer);
                         if(answerIterator.hasNext()){
-                            answerString += ",";
+                            answerString.append(",");
                         }
                     }
-                    questionEntity.setCorrectAnswer(answerString);
+                    questionEntity.setCorrectAnswer(answerString.toString());
                 } catch (Exception e){
                     e.printStackTrace();
                     return JsonManage.buildFailureMessage("数据格式错误！请检查格式");
