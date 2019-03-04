@@ -1,4 +1,4 @@
-package com.ccwsz.server.controller.course;
+package com.ccwsz.server.controller.info;
 
 import com.ccwsz.server.service.info.InfoStreamService;
 import com.ccwsz.server.service.util.JsonManage;

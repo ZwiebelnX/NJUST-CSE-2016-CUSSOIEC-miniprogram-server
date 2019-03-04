@@ -88,7 +88,7 @@ public class CourseHomeworkController {
             JSONObject json = new JSONObject(jsonString);
             personNumber = json.getString("personID");
             collegeName = json.getString("college");
-            homeworkName = json.getString("homeworkName");
+            homeworkName = json.isNull("homeworkName") ? null : json.getString("homeworkName");
             courseId = Integer.parseInt(json.getString("courseID"));
             homeworkId = json.isNull("homeworkID") ? -1 : Integer.parseInt(json.getString("homeworkID"));
             data = json.getJSONArray("data");

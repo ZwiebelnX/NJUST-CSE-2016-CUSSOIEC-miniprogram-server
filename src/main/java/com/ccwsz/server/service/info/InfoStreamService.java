@@ -49,7 +49,7 @@ public class InfoStreamService {
         return null;
     }
 
-    private JSONArray getTypeNotice(){
+    private JSONArray getNotice(){
         return null;
     }
 }
