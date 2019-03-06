@@ -15,6 +15,7 @@ import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class CourseHomeworkService {
         for (CourseHomeworkInfoEntity homeworkInfo : courseHomeworkList) {
             JSONObject homeworkInfoJson = new JSONObject();
             homeworkInfoJson.put("name", homeworkInfo.getName());
-            homeworkInfoJson.put("homeworkID", homeworkInfo.getId());
+            homeworkInfoJson.put("homeworkID", BigInteger.valueOf(homeworkInfo.getId()).toString());
             //设置当前用户是否已经作答本作业
             if(userHomeworkAnswerRepository.existsByUserIdAndHomeworkId(currentUser.getId(), homeworkInfo.getId())){
                 homeworkInfoJson.put("isFinished", true);
