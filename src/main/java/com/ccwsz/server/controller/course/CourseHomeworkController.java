@@ -91,7 +91,7 @@ public class CourseHomeworkController {
             homeworkName = json.isNull("homeworkName") ? null : json.getString("homeworkName");
             courseId = Integer.parseInt(json.getString("courseID"));
             homeworkId = json.isNull("homeworkID") ? -1 : Integer.parseInt(json.getString("homeworkID"));
-            data = json.getJSONArray("data");
+            data = json.isNull("data") ? null : json.getJSONArray("data");
         } catch (Exception e){
             e.printStackTrace();
             return JsonManage.buildFailureMessage("数据格式错误！请检查代码");

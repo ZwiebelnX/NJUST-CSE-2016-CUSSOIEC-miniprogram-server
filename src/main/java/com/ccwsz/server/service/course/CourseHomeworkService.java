@@ -229,6 +229,9 @@ public class CourseHomeworkService {
         if(currentUser.getUserType().equals("teacher") && currentCourse.getTeacherId() == currentUser.getId()){
             //data == null 时删除
             if(data == JSONObject.NULL){
+                if(homeworkId == -1){
+                    return JsonManage.buildFailureMessage("请指定要删除的作业ID！");
+                }
                 try{
                     courseHomeworkQuestionRepository.deleteAllByHomeworkId(homeworkId);
                     courseHomeworkInfoRepository.deleteAllById(homeworkId);
