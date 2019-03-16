@@ -1,7 +1,13 @@
 package com.ccwsz.server.dao.dock.info;
 
 import com.ccwsz.server.dao.entity.InfoStreamNoticeEntity;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface InfoStreamNoticeRepository extends PagingAndSortingRepository<InfoStreamNoticeEntity, Integer> {
+import java.util.Collection;
+import java.util.List;
+
+public interface InfoStreamNoticeRepository extends CrudRepository<InfoStreamNoticeEntity, Long> {
+    List<InfoStreamNoticeEntity> findAllByTargetCourseIdInOrTargetCourseIdIsNullOrderByGmtModified(Collection courseIds);
+
+    List<InfoStreamNoticeEntity> findAllByType(String type);
 }

@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @EntityListeners(AuditingEntityListener.class) //启动自动生成时间
 @Table(name = "info_stream_notice", schema = "online_cussoiec", catalog = "")
-public class InfoStreamNoticeEntity {
+public class InfoStreamNoticeEntity implements IInfoStream {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;

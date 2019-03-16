@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface CourseChooseRepository extends CrudRepository<CourseChooseEntity,Integer> {
     //通过学生id返回所有选课信息
-    @Nullable
     List<CourseChooseEntity> findByStudentId(long studentId);
 
     @Nullable
@@ -17,4 +16,5 @@ public interface CourseChooseRepository extends CrudRepository<CourseChooseEntit
     boolean existsByCourseIdAndStudentId(long courseId, long studentId);
 
     int countByCourseId(long courseId);
+
 }
