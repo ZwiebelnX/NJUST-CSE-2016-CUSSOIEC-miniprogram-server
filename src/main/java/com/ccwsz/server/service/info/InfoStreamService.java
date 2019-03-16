@@ -7,10 +7,7 @@ import com.ccwsz.server.dao.dock.info.InfoStreamExamRepository;
 import com.ccwsz.server.dao.dock.info.InfoStreamNoticeRepository;
 import com.ccwsz.server.dao.dock.info.InfoStreamScoreRepository;
 import com.ccwsz.server.dao.dock.user.UserRepository;
-import com.ccwsz.server.dao.entity.CourseChooseEntity;
-import com.ccwsz.server.dao.entity.InfoStreamExamEntity;
-import com.ccwsz.server.dao.entity.InfoStreamNoticeEntity;
-import com.ccwsz.server.dao.entity.UserEntity;
+import com.ccwsz.server.dao.entity.*;
 import com.ccwsz.server.service.util.JsonManage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,20 +53,21 @@ public class InfoStreamService {
         switch (type) {
             case "all":
             case "notice":
-                result = getNotice(currentUser, "notice");
+                result = getNotice(currentUser);
                 break;
             case "activity":
                 result = getActivities();
             case "exam":
                 result = getExams(currentUser);
             case "score":
-
+                result = getScore(currentUser);
             case "community":
+
         }
         return null;
     }
 
-    private JSONArray getNotice(UserEntity user, String type) {
+    private JSONArray getNotice(UserEntity user) {
         List<CourseChooseEntity> courseChooses = courseChooseRepository.findByStudentId(user.getId());
         List<Long> courseIds = new ArrayList<>();
         for (CourseChooseEntity courseChoose : courseChooses) {
@@ -148,6 +146,24 @@ public class InfoStreamService {
             examJson.put("seatNumber", exam.getSetNumber());
 
             result.put(examJson);
+        }
+
+        return result;
+    }
+
+    private JSONArray getScore(UserEntity user){
+        List<InfoStreamScoreEntity> scores = infoStreamScoreRepository.findAllByTargetUserId(user.getId());
+        JSONArray result = new JSONArray();
+
+        for (InfoStreamScoreEntity score : scores) {
+            JSONObject scoreJson = new JSONObject();
+
+            scoreJson.put("type", "score");
+            scoreJson.put("name", courseRepository.findById(score.getCourseId()).getCourseName());
+            scoreJson.put("score", score.getScore());
+            scoreJson.put("GPA", score.getGp());
+
+            result.put(scoreJson);
         }
 
         return result;
